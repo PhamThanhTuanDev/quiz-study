@@ -16,6 +16,11 @@ paths:
 - React Router dùng ở chế độ SPA (library mode), không dùng framework mode/SSR.
 
 ## Giao diện
+- **Màu dùng token ngữ nghĩa** trong `src/index.css` (D-028): `bg-canvas`, `bg-surface`, `text-ink`, `text-muted`, `border-line`, `bg-primary`, `text-danger`… Không dùng màu cụ thể của Tailwind (`bg-teal-700`, `text-slate-600`). Cần màu mới thì thêm token.
+- Dùng lại component có sẵn trong `components/` (`Button`, `ButtonLink`, `Card`, `AsyncContent`, `LoadingState`, `ErrorState`, `EmptyState`) trước khi viết mới.
+- Phần trang tải dữ liệu: `const { state, reload } = useAsync(load)` rồi `<AsyncContent state={state} onRetry={reload}>{(data) => …}</AsyncContent>`. `AsyncContent` lo trạng thái đang tải / lỗi / giữ focus khi bấm "Thử lại"; `load` phải ổn định (hàm trong `services/` hoặc `useCallback`).
+- Chỉ hiện cho người dùng thông điệp của `ApiError` (tiếng Việt); lỗi khác hiện thông điệp chung.
+- Đặt tiêu đề tab cho mỗi trang bằng thẻ `<title>` trong component (React 19 tự đưa lên `<head>`).
 - **Mobile-first**: class Tailwind không tiền tố áp dụng cho mobile; mở rộng bằng `sm:` `md:` `lg:`. Kiểm tra ở 360px, 768px, 1280px.
 - Vùng bấm tối thiểu khoảng 44×44px; chữ đủ lớn trên điện thoại.
 - HTML ngữ nghĩa (`button`, `nav`, `main`, `label`), điều hướng được bằng bàn phím.

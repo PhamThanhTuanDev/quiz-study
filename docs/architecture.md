@@ -53,20 +53,26 @@ flowchart TD
 | State | `useState` / `useReducer` / Context. **Không** dùng Redux |
 | Test | Vitest + React Testing Library (unit/component); Playwright (E2E) |
 | Lint | Oxlint, mặc định của template `create-vite` (D-023) |
+| Thiết kế | Hướng "bàn học yên tĩnh" (D-028). Token màu trong `src/index.css`, component dùng class ngữ nghĩa (`bg-primary`, `text-muted`…) |
+| Tải dữ liệu | Hook `useAsync(load)` trả `loading` / `success` / `error` + `reload`; component `AsyncContent` hiển thị đúng trạng thái và giữ focus khi bấm "Thử lại". Chỉ thông điệp của `ApiError` (tiếng Việt) được hiện cho người dùng |
 
-Cấu trúc thư mục dự kiến:
+Cấu trúc thư mục (✔ = đã có từ Phase 3):
 
 ```
 frontend/src/
-├── components/   # UI tái sử dụng: Button, Card, QuestionCard, AnswerOption...
-├── pages/        # Mỗi route một trang: HomePage, SubjectPage, QuizPage, ResultPage...
-├── layouts/      # Khung trang: MainLayout (header, nav mobile)
-├── services/     # Gọi API: apiClient.ts, subjectService.ts, quizService.ts
-├── hooks/        # Custom hooks: useSubjects, useQuizAttempt...
-├── types/        # Kiểu TypeScript khớp với DTO của backend
-├── App.tsx       # Khai báo routes
+├── components/   # UI tái sử dụng. ✔ Button, ButtonLink, Card, AsyncContent, LoadingState, ErrorState, EmptyState, LetterBadge
+│                 #   Sau này: QuestionCard, AnswerOption...
+├── pages/        # Mỗi route một trang. ✔ HomePage, NotFoundPage, RouteErrorPage. Sau này: SubjectPage, QuizPage...
+├── layouts/      # ✔ MainLayout (header, điều hướng, footer) + navigation.ts (danh sách mục điều hướng)
+├── services/     # Chỗ duy nhất gọi fetch. ✔ apiClient.ts, healthService.ts
+├── hooks/        # ✔ useAsync. Sau này: useQuizAttempt...
+├── types/        # Kiểu khớp DTO backend. ✔ api.ts (ProblemDetail, InvalidField), health.ts
+├── routes.tsx    # ✔ pageRoutes (danh sách trang) + createAppRoutes() (layout + trang lỗi), dùng chung cho App và test
+├── App.tsx       # Tạo router từ routes.tsx
 └── main.tsx      # Điểm vào
 ```
+
+Xử lý lỗi gọi API: `apiClient` luôn ném `ApiError` có `message` tiếng Việt hiển thị được: lấy `detail` của Problem Details; mất mạng → `status = 0`; body không phải Problem Details (ví dụ proxy trả 502) hoặc response thành công nhưng không phải JSON → thông điệp chung. Lỗi 400 kèm `errors` (danh sách trường lỗi).
 
 Các trang dự kiến (chốt dần theo phase):
 

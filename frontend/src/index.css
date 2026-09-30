@@ -1,1 +1,44 @@
 @import 'tailwindcss';
+
+/*
+ * Token thiết kế (D-028): hướng "bàn học yên tĩnh".
+ * Component dùng tên ngữ nghĩa (bg-primary, text-muted, border-line…), không dùng màu cụ thể,
+ * để đổi màu hoặc thêm chế độ tối sau này chỉ cần sửa ở đây.
+ * Font: giữ font hệ thống mặc định của Tailwind (Segoe UI / Roboto / San Francisco), hiển thị
+ * tiếng Việt tốt và không phải tải thêm.
+ */
+@theme {
+  /* Nền và bề mặt */
+  --color-canvas: #fafaf9; /* nền trang, giấy ấm (stone-50) */
+  --color-surface: #ffffff; /* thẻ, header */
+  --color-line: #e7e5e4; /* viền nhạt (stone-200) */
+  --color-line-strong: #d6d3d1; /* viền nút, ô nhập (stone-300) */
+
+  /* Chữ */
+  --color-ink: #1c1917; /* chữ chính (stone-900) */
+  --color-muted: #57534e; /* chữ phụ (stone-600), tương phản ≈ 7:1 trên nền */
+
+  /* Màu chính, chỉ dùng cho hành động và điểm nhấn */
+  --color-primary: #0f766e; /* teal-700, tương phản ≈ 5.5:1 với chữ trắng */
+  --color-primary-hover: #115e59; /* teal-800 */
+  --color-primary-soft: #f0fdfa; /* teal-50, nền mục đang chọn */
+
+  /* Màu ngữ nghĩa: đúng / sai / cần chú ý */
+  --color-success: #15803d; /* green-700 */
+  --color-success-soft: #f0fdf4;
+  --color-danger: #b91c1c; /* red-700 */
+  --color-danger-soft: #fef2f2;
+  --color-warning: #b45309; /* amber-700 */
+  --color-warning-soft: #fffbeb;
+}
+
+@layer base {
+  body {
+    @apply bg-canvas text-ink antialiased;
+  }
+
+  /* Viền focus rõ ràng cho người dùng bàn phím, thống nhất trên mọi phần tử bấm được. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+}
