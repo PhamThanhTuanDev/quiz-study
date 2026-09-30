@@ -1,10 +1,16 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { NETWORK_ERROR_MESSAGE } from '../services/apiClient'
-import HomePage from './HomePage'
+import { renderRoute } from '../test/renderRoute'
+import type { SubjectSummary } from '../types/subject'
 
-function healthResponse(body: unknown) {
-  return Response.json(body)
+const GDQP: SubjectSummary = {
+  slug: 'gdqp',
+  name: 'Giáo dục quốc phòng và an ninh',
+  code: null,
+  description: null,
+  chapterCount: 11,
+  questionCount: 230,
 }
 
 afterEach(() => {
@@ -12,53 +18,49 @@ afterEach(() => {
 })
 
 describe('HomePage', () => {
-  it('shows backend and database as working when the health check succeeds', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(healthResponse({ status: 'UP', database: 'UP' })))
+  it('lists the subjects, each linking to its own page', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json([GDQP])))
 
-    render(<HomePage />)
+    renderRoute('/')
 
-    expect(await screen.findByText('Backend: hoạt động')).toBeInTheDocument()
-    expect(screen.getByText('Database: hoạt động')).toBeInTheDocument()
+    const link = await screen.findByRole('link', { name: /Giáo dục quốc phòng và an ninh/ })
+    expect(link).toHaveAttribute('href', '/subjects/gdqp')
+    expect(link).toHaveTextContent('11 bài · 230 câu hỏi')
+    expect(fetch).toHaveBeenCalledWith('/api/v1/subjects', expect.anything())
   })
 
-  it('shows that the database is down when the backend reports it', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(healthResponse({ status: 'UP', database: 'DOWN' })))
+  it('says so when there is no subject yet', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json([])))
 
-    render(<HomePage />)
+    renderRoute('/')
 
-    expect(await screen.findByText('Database: không hoạt động')).toBeInTheDocument()
+    expect(await screen.findByText('Chưa có môn học nào')).toBeInTheDocument()
   })
 
-  it('shows a loading message before the health check finishes', () => {
+  it('shows a loading message while the subjects are loading', () => {
     vi.stubGlobal('fetch', vi.fn().mockReturnValue(new Promise(() => {})))
 
-    render(<HomePage />)
+    renderRoute('/')
 
-    expect(screen.getByRole('status')).toHaveTextContent('Đang kiểm tra kết nối backend')
+    expect(screen.getByRole('status')).toHaveTextContent('Đang tải danh sách môn')
   })
 
-  it('explains the problem when the backend cannot be reached', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
-
-    render(<HomePage />)
-
-    const alert = await screen.findByRole('alert')
-    expect(alert).toHaveTextContent('Không kiểm tra được trạng thái hệ thống')
-    expect(alert).toHaveTextContent(NETWORK_ERROR_MESSAGE)
-  })
-
-  it('checks again when the user clicks retry', async () => {
+  it('explains the problem and loads again when the user clicks retry', async () => {
     vi.stubGlobal(
       'fetch',
       vi
         .fn()
         .mockRejectedValueOnce(new TypeError('Failed to fetch'))
-        .mockResolvedValueOnce(healthResponse({ status: 'UP', database: 'UP' })),
+        .mockResolvedValueOnce(Response.json([GDQP])),
     )
-    render(<HomePage />)
+    renderRoute('/')
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Thử lại' }))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('Không tải được danh sách môn')
+    expect(alert).toHaveTextContent(NETWORK_ERROR_MESSAGE)
 
-    expect(await screen.findByText('Backend: hoạt động')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Thử lại' }))
+
+    expect(await screen.findByRole('link', { name: /Giáo dục quốc phòng và an ninh/ })).toBeInTheDocument()
   })
 })

@@ -24,7 +24,7 @@ describe('useAsync', () => {
 
     const { result } = renderHook(() => useAsync(load))
 
-    await waitFor(() => expect(result.current.state).toEqual({ kind: 'error', message: 'Máy chủ đang gặp sự cố.' }))
+    await waitFor(() => expect(result.current.state).toEqual({ kind: 'error', message: 'Máy chủ đang gặp sự cố.', status: 502 }))
   })
 
   it('hides technical messages of other errors and logs them for developers', async () => {
@@ -36,7 +36,7 @@ describe('useAsync', () => {
 
     const { result } = renderHook(() => useAsync(load))
 
-    await waitFor(() => expect(result.current.state).toEqual({ kind: 'error', message: UNKNOWN_ERROR_MESSAGE }))
+    await waitFor(() => expect(result.current.state).toEqual({ kind: 'error', message: UNKNOWN_ERROR_MESSAGE, status: null }))
     expect(consoleError).toHaveBeenCalledWith(bug)
   })
 

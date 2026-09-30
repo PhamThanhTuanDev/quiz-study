@@ -1,13 +1,10 @@
-import { render, screen } from '@testing-library/react'
-import { createMemoryRouter } from 'react-router'
-import { RouterProvider } from 'react-router/dom'
+import { screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { createAppRoutes } from '../routes'
+import { renderRoute } from '../test/renderRoute'
 
 describe('NotFoundPage', () => {
   it('is shown for an unknown address, inside the normal page layout', () => {
-    const router = createMemoryRouter(createAppRoutes(), { initialEntries: ['/khong-co-trang-nay'] })
-    render(<RouterProvider router={router} />)
+    renderRoute('/khong-co-trang-nay')
 
     expect(screen.getByRole('heading', { name: 'Không tìm thấy trang' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Về trang chủ' })).toHaveAttribute('href', '/')

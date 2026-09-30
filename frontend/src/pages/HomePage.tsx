@@ -1,45 +1,56 @@
+import { Link } from 'react-router'
 import AsyncContent from '../components/AsyncContent'
-import Card from '../components/Card'
+import EmptyState from '../components/EmptyState'
 import { useAsync } from '../hooks/useAsync'
-import { getHealth } from '../services/healthService'
-import type { HealthStatus } from '../types/health'
+import { getSubjects } from '../services/subjectService'
+import type { SubjectSummary } from '../types/subject'
 
 export default function HomePage() {
-  const { state, reload } = useAsync(getHealth)
+  const { state, reload } = useAsync(getSubjects)
 
   return (
     <div className="space-y-6">
       <title>Quiz Study</title>
       <div>
-        <h1 className="text-2xl font-bold sm:text-3xl">Quiz Study</h1>
-        <p className="mt-2 text-muted">Học tập và luyện thi trắc nghiệm nhiều môn.</p>
+        <h1 className="text-2xl font-bold sm:text-3xl">Môn học</h1>
+        <p className="mt-2 text-muted">Chọn một môn để xem các bài.</p>
       </div>
 
-      <Card title="Trạng thái hệ thống">
-        <AsyncContent
-          state={state}
-          onRetry={reload}
-          loadingMessage="Đang kiểm tra kết nối backend…"
-          errorTitle="Không kiểm tra được trạng thái hệ thống"
-        >
-          {(health) => (
-            <ul className="space-y-2">
-              <StatusRow label="Backend" status={health.status} />
-              <StatusRow label="Database" status={health.database} />
+      <AsyncContent
+        state={state}
+        onRetry={reload}
+        loadingMessage="Đang tải danh sách môn…"
+        errorTitle="Không tải được danh sách môn"
+      >
+        {(subjects) =>
+          subjects.length === 0 ? (
+            <EmptyState title="Chưa có môn học nào" description="Môn học sẽ xuất hiện ở đây khi được thêm." />
+          ) : (
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {subjects.map((subject) => (
+                <li key={subject.slug}>
+                  <SubjectCard subject={subject} />
+                </li>
+              ))}
             </ul>
-          )}
-        </AsyncContent>
-      </Card>
+          )
+        }
+      </AsyncContent>
     </div>
   )
 }
 
-function StatusRow({ label, status }: { label: string; status: HealthStatus }) {
-  const isUp = status === 'UP'
+function SubjectCard({ subject }: { subject: SubjectSummary }) {
   return (
-    <li className="flex items-center gap-2">
-      <span aria-hidden="true" className={`size-2.5 rounded-full ${isUp ? 'bg-success' : 'bg-danger'}`} />
-      {label}: {isUp ? 'hoạt động' : 'không hoạt động'}
-    </li>
+    <Link
+      to={`/subjects/${encodeURIComponent(subject.slug)}`}
+      className="block h-full rounded-xl border border-line bg-surface p-4 shadow-sm transition-colors hover:border-primary sm:p-5"
+    >
+      <h2 className="font-semibold sm:text-lg">{subject.name}</h2>
+      {subject.code && <p className="text-sm text-muted">{subject.code}</p>}
+      <p className="mt-3 text-sm text-muted">
+        {subject.chapterCount} bài · {subject.questionCount} câu hỏi
+      </p>
+    </Link>
   )
 }

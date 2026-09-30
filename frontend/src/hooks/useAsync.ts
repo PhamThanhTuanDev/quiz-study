@@ -4,7 +4,8 @@ import { ApiError } from '../services/apiClient'
 export type AsyncState<T> =
   | { kind: 'loading' }
   | { kind: 'success'; data: T }
-  | { kind: 'error'; message: string }
+  /** `status`: mã HTTP khi lỗi đến từ backend (0 = mất kết nối); null với lỗi khác. */
+  | { kind: 'error'; message: string; status: number | null }
 
 export interface AsyncResult<T> {
   state: AsyncState<T>
@@ -57,7 +58,7 @@ export function useAsync<T>(load: Loader<T>): AsyncResult<T> {
       .catch((error: unknown) => {
         // Request bị huỷ (rời trang, tải lại): không phải lỗi, bỏ qua.
         if (controller.signal.aborted) return
-        settle({ kind: 'error', message: toUserMessage(error) })
+        settle({ kind: 'error', message: toUserMessage(error), status: error instanceof ApiError ? error.status : null })
       })
 
     return () => controller.abort()

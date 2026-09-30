@@ -3,10 +3,12 @@ import MainLayout from './layouts/MainLayout'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import RouteErrorPage from './pages/RouteErrorPage'
+import SubjectPage from './pages/SubjectPage'
 
 /** Các trang hiển thị bên trong layout chung. Thêm trang mới: thêm một mục vào đây. */
 export const pageRoutes: RouteObject[] = [
   { index: true, element: <HomePage /> },
+  { path: 'subjects/:slug', element: <SubjectPage /> },
   { path: '*', element: <NotFoundPage /> },
 ]
 
