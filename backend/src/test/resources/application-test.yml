@@ -1,0 +1,4 @@
+# Profile "test": test tích hợp dùng database riêng, không đụng dữ liệu dev.
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_TEST_NAME:quiz_study_test}

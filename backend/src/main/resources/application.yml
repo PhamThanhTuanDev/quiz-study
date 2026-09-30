@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: quiz-study-backend
+  config:
+    # Nạp biến môi trường từ file .env (không commit), ở thư mục backend/ hoặc thư mục gốc project.
+    import: "optional:file:.env[.properties],optional:file:../.env[.properties]"
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:quiz_study}
+    username: ${DB_USERNAME:quiz_app}
+    # Không có giá trị mặc định: thiếu DB_PASSWORD thì ứng dụng dừng ngay với thông báo rõ ràng.
+    password: ${DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Schema do Flyway quản lý; Hibernate chỉ kiểm tra entity khớp với bảng.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    locations: classpath:db/migration
+
+server:
+  port: 8080
