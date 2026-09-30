@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-09-30 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Đang làm: Phase 3**, bước lập kế hoạch chi tiết để chủ dự án duyệt. Chưa viết code Phase 3.
+> **Đang làm: Phase 4**, bước lập kế hoạch chi tiết để chủ dự án duyệt. Chưa viết code Phase 4.
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -24,6 +24,14 @@
 - **Kiểm tra:** 27/27 test (`mvnw.cmd clean verify`); chạy `dev` thật: Flyway tạo bảng, lỗi 404/405 trả tiếng Việt. Agent `java-reviewer` chấp thuận; 5 góp ý đã sửa.
 - Ghi chú: test thứ tự phương án vẫn đạt khi bỏ `@OrderBy` (MySQL đọc qua index UNIQUE `(question_id, display_order)`); vẫn giữ `@OrderBy` để không phụ thuộc cách MySQL chọn index.
 
+### Phase 3: ✅ xong, chủ dự án đã duyệt (2026-09-30)
+- **Thiết kế** (D-028): hướng "bàn học yên tĩnh"; token màu trong `frontend/src/index.css`, component dùng class ngữ nghĩa; logo huy hiệu "Q" (`LetterBadge`).
+- **Component:** `Button`, `ButtonLink`, `Card`, `AsyncContent`, `LoadingState`, `ErrorState`, `EmptyState`, `LetterBadge`.
+- **Khung trang:** `MainLayout` (header + điều hướng từ `layouts/navigation.ts`, link "Bỏ qua điều hướng", footer). Chưa có menu thu gọn (khi có từ 3 mục).
+- **Route:** `routes.tsx` (`pageRoutes` + `createAppRoutes()`), trang 404, trang lỗi (giữ header khi một trang lỗi).
+- **Dữ liệu:** `useAsync` (suy ra trạng thái khi render, bỏ kết quả cũ, huỷ request khi rời trang); `apiClient` luôn ném `ApiError` với thông điệp tiếng Việt.
+- **Kiểm tra:** 40/40 test, lint sạch, build đạt; chụp màn hình Chrome headless ở 360 / 768 / 1280px, không tràn ngang. Agent `typescript-reviewer`: không có lỗi nghiêm trọng, 6 góp ý đã sửa.
+
 ### Điểm kỹ thuật đã phát hiện
 - ID `4.1.1.RELEASE` trong metadata của Spring Initializr **không phải** phiên bản Maven. Trên Maven Central là `4.1.1`; `pom.xml` đã được sửa.
 - Flyway 12.4 bản Community hỗ trợ MySQL từ 8.0, nên MySQL 8.0.46 dùng được.
@@ -36,6 +44,7 @@
 - Spring Boot 4 đổi package của annotation test JPA: `DataJpaTest` ở `org.springframework.boot.data.jpa.test.autoconfigure`, `AutoConfigureTestDatabase` ở `org.springframework.boot.jdbc.test.autoconfigure`, `TestEntityManager` ở `org.springframework.boot.jpa.test.autoconfigure`. `@DataJpaTest` cần `@AutoConfigureTestDatabase(replace = NONE)` để dùng MySQL thật thay vì database nhúng.
 - Khoá của Map trong YAML (`spring.jpa.properties`, `hikari.data-source-properties`) có ký tự đặc biệt như `_` thì viết trong ngoặc vuông, ví dụ `"[hibernate.jdbc.time_zone]"`.
 - Controller giả lồng trong class test không được component scan tự nhận (Spring Boot loại trừ class lồng trong test). Cần `@WebMvcTest(controllers = X.class)` + `@Import(X.class)`.
+- Kiểm tra giao diện không cần Playwright: chạy Chrome `--headless=new --remote-debugging-port=…` và điều khiển qua Chrome DevTools Protocol bằng `WebSocket` có sẵn của Node 24 (đặt kích thước màn hình, mở trang, đo `scrollWidth`, chụp ảnh). Script tạm của phiên 2 nằm ngoài repo.
 - VS Code trên máy 2 tự tạo `.github/modernize/` (có `.gitignore` bỏ qua toàn bộ) và `.vscode/settings.json` (đã bị `.gitignore` bỏ qua). Không thuộc dự án, không commit.
 
 ## Trạng thái
@@ -45,8 +54,8 @@
 | 0 | Khởi tạo: khảo sát, tài liệu, skill, cấu trúc thư mục | ✅ Xong, đã duyệt |
 | 1 | Project setup | ✅ Xong, đã duyệt |
 | 2 | Database + Backend foundation | ✅ Xong, đã duyệt |
-| 3 | Frontend foundation | 🔄 Đang lập kế hoạch (xem "Tiến độ hiện tại") |
-| 4 | Subject / Chapter / Question / Answer | |
+| 3 | Frontend foundation | ✅ Xong, đã duyệt |
+| 4 | Subject / Chapter / Question / Answer | 🔄 Đang lập kế hoạch (xem "Tiến độ hiện tại") |
 | 5 | Quiz engine | |
 | 6 | Result / history | |
 | 7 | Authentication | |

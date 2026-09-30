@@ -143,6 +143,15 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Câu không tạo được 3 phương án sai rõ ràng (ví dụ nhiều cách điền đều đúng) thì để `NEEDS_REVIEW` và hỏi chủ dự án.
 - Hệ quả: enum `QuestionType` hiện chỉ có `SINGLE_CHOICE`. Cột `question_type` vẫn giữ để sau này thêm dạng câu khác cho các môn mới.
 
+### D-028 · Hướng thiết kế giao diện "bàn học yên tĩnh" · Đã chốt (kế hoạch Phase 3, 2026-09-30)
+- Mục đích: sinh viên ôn và luyện thi trắc nghiệm, chủ yếu trên điện thoại, nhiều lượt ngắn. Ưu tiên đọc rõ, bấm dễ, ít phân tâm; không gradient, không khối trang trí.
+- Màu: nền giấy ấm (họ `stone`), chữ đậm như mực, **một màu chính** teal-700 chỉ dành cho hành động và điểm nhấn. Màu ngữ nghĩa: xanh lá = đúng, đỏ = sai, hổ phách = cần chú ý. Độ tương phản đạt WCAG AA.
+- Token khai báo **một chỗ** trong `frontend/src/index.css` (`@theme` của Tailwind 4): `canvas`, `surface`, `line`, `line-strong`, `ink`, `muted`, `primary` (+ `-hover`, `-soft`), `success`, `danger`, `warning` (+ `-soft`). Component dùng class ngữ nghĩa (`bg-primary`, `text-muted`…), không dùng màu cụ thể như `bg-teal-700`. Đổi màu hay thêm chế độ tối sau này chỉ sửa file này.
+- Chữ: font hệ thống mặc định của Tailwind (Segoe UI / Roboto / San Francisco), không tải font ngoài.
+- Dấu nhận diện: **huy hiệu chữ cái** (`LetterBadge`): logo "Q", sau này là nhãn phương án A/B/C/D.
+- Vùng bấm ≥ 44px (`min-h-11`); viền focus bàn phím thống nhất (`:focus-visible` màu `primary`); link "Bỏ qua điều hướng".
+- Chưa làm: menu thu gọn trên điện thoại (khi có từ 3 mục điều hướng), chế độ tối.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.
