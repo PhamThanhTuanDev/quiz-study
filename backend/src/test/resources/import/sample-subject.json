@@ -1,0 +1,71 @@
+{
+  "formatVersion": 1,
+  "subject": {
+    "slug": "mon-thu-nghiem",
+    "name": "Môn thử nghiệm",
+    "code": "TN01",
+    "description": "Dữ liệu giả, chỉ dùng trong test",
+    "displayOrder": 5,
+    "published": true
+  },
+  "chapters": [
+    {
+      "code": "Bài 1",
+      "title": "Bài mở đầu",
+      "displayOrder": 1,
+      "questions": [
+        {
+          "type": "SINGLE_CHOICE",
+          "content": "Câu hỏi thứ nhất?",
+          "codeSnippet": null,
+          "explanation": null,
+          "shuffleAnswers": true,
+          "status": "PUBLISHED",
+          "reviewNote": null,
+          "source": { "file": "tai-lieu-mau.pdf", "page": 3, "label": "Bài 1 – Câu 1" },
+          "answers": [
+            { "content": "Phương án sai thứ nhất", "correct": false },
+            { "content": "Phương án đúng", "correct": true },
+            { "content": "Phương án sai thứ hai", "correct": false }
+          ]
+        },
+        {
+          "type": "SINGLE_CHOICE",
+          "content": "Câu có phương án phụ thuộc vị trí?",
+          "codeSnippet": "print(1)\n    print(2)",
+          "explanation": null,
+          "shuffleAnswers": false,
+          "status": "PUBLISHED",
+          "reviewNote": "Đáp án theo quyết định X",
+          "source": { "file": "tai-lieu-mau.pdf", "page": 4, "label": "Bài 1 – Câu 2" },
+          "answers": [
+            { "content": "Ý thứ nhất", "correct": false },
+            { "content": "Ý thứ hai", "correct": false },
+            { "content": "Tất cả đều đúng", "correct": true }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "Bài 2",
+      "title": "Bài thứ hai",
+      "displayOrder": 2,
+      "questions": [
+        {
+          "type": "SINGLE_CHOICE",
+          "content": "Câu chưa có đáp án?",
+          "codeSnippet": null,
+          "explanation": null,
+          "shuffleAnswers": true,
+          "status": "DRAFT",
+          "reviewNote": "Tài liệu không có đáp án",
+          "source": null,
+          "answers": [
+            { "content": "A", "correct": false },
+            { "content": "B", "correct": false }
+          ]
+        }
+      ]
+    }
+  ]
+}

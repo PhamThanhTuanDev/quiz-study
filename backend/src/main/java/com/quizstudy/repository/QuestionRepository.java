@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.quizstudy.entity.Question;
 import com.quizstudy.entity.QuestionStatus;
@@ -17,4 +20,12 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
      */
     @EntityGraph(attributePaths = "answers")
     List<Question> findByChapterIdAndStatusOrderByIdAsc(Long chapterId, QuestionStatus status);
+
+    /**
+     * Xoá mọi câu hỏi của một môn trong một câu lệnh (dùng khi import thay toàn bộ môn).
+     * Phương án bị xoá theo nhờ khoá ngoại ON DELETE CASCADE trong database.
+     */
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("delete from Question q where q.chapter.id in (select c.id from Chapter c where c.subject.id = :subjectId)")
+    int deleteAllBySubjectId(@Param("subjectId") Long subjectId);
 }

@@ -2,10 +2,12 @@ package com.quizstudy.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.assertj.core.api.Assertions.within;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,10 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.quizstudy.entity.Chapter;
+import com.quizstudy.entity.Question;
+import com.quizstudy.entity.QuestionStatus;
+import com.quizstudy.entity.QuestionType;
 import com.quizstudy.entity.Subject;
 
 // Chạy trên MySQL thật (database quiz_study_test), không thay bằng database nhúng.
@@ -94,6 +100,40 @@ class SubjectRepositoryTest {
                 .executeUpdate();
 
         assertThat(secondsFromUtcNow("vat-ly")).isLessThan(60);
+    }
+
+    @Test
+    void findPublishedSummaries_listsOnlyPublishedSubjects_countingChaptersAndPublishedQuestions() {
+        Subject subjectB = entityManager.persist(publishedSubject("mon-b", "Môn B", 2));
+        Subject subjectA = entityManager.persist(publishedSubject("mon-a", "Môn A", 1));
+        entityManager.persist(new Subject("mon-an", "Môn chưa publish"));
+        Chapter first = entityManager.persist(new Chapter(subjectA, "Bài 1", 1));
+        entityManager.persist(new Chapter(subjectA, "Bài 2", 2));
+        persistQuestion(first, QuestionStatus.PUBLISHED);
+        persistQuestion(first, QuestionStatus.PUBLISHED);
+        persistQuestion(first, QuestionStatus.DRAFT);
+        entityManager.flush();
+        entityManager.clear();
+
+        List<SubjectSummaryRow> rows = subjectRepository.findPublishedSummaries(QuestionStatus.PUBLISHED);
+
+        assertThat(rows)
+                .extracting(SubjectSummaryRow::slug, SubjectSummaryRow::chapterCount, SubjectSummaryRow::questionCount)
+                .containsExactly(tuple("mon-a", 2L, 2L), tuple(subjectB.getSlug(), 0L, 0L));
+    }
+
+    private static Subject publishedSubject(String slug, String name, int displayOrder) {
+        Subject subject = new Subject(slug, name);
+        subject.setPublished(true);
+        subject.setDisplayOrder(displayOrder);
+        return subject;
+    }
+
+    private void persistQuestion(Chapter chapter, QuestionStatus status) {
+        Question question = new Question(chapter, QuestionType.SINGLE_CHOICE, "Câu hỏi", status);
+        question.addAnswer("Đúng", true);
+        question.addAnswer("Sai", false);
+        entityManager.persist(question);
     }
 
     private long secondsFromUtcNow(String slug) {
