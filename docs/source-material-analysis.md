@@ -10,7 +10,10 @@
 > - **P2**: **Claude xác định đáp án đúng** cho mọi câu Python (câu có code phải chạy thật để kiểm chứng).
 > - **P4**: câu điền khuyết **được đưa vào** hệ thống, dưới dạng trắc nghiệm A–D do Claude tạo phương án (D-026).
 > - **P3**: giải quyết theo P2 (Claude xác định đáp án đúng).
-> - Còn mở: G4, G5, P5–P14.
+> - **G5** (D-031): tên môn "Giáo dục quốc phòng và an ninh", slug `gdqp`.
+> - Còn mở: G4, P5–P14.
+>
+> **Cập nhật Phase 4A (2026-10-01):** đã trích xuất và import đủ 230 câu GDQP; cách làm và kết quả kiểm tra ở [development-plan.md](development-plan.md).
 
 ## 1. Tóm tắt
 
@@ -71,7 +74,8 @@ D. <phương án>
 - Khoảng 18 câu có chỗ trống "…" trong đề nhưng vẫn là trắc nghiệm 4 phương án.
 - Câu bị ngắt dòng giữa chừng do layout PDF. Khi import chỉ nên chuẩn hoá khoảng trắng/xuống dòng, không sửa chữ.
 - `pdftotext` làm hỏng dấu tiếng Việt; PyMuPDF đọc đúng Unicode.
-- Ở Bài 9, nhãn "Câu 11:" và "Câu 12:" nằm trong khung chữ hẹp nên khi trích xuất bị tách thành từng ký tự theo chiều dọc. Nội dung câu hỏi vẫn đầy đủ. Đây là lỗi trích xuất, **không phải lỗi tài liệu**, nhưng bộ import phải xử lý.
+- Ở Bài 9 (trang 30), nhãn "Câu 11:" và "Câu 12:" nằm trong khung chữ hẹp nên khi trích xuất bị tách thành từng ký tự theo chiều dọc. *(Sửa ở Phase 4A: khảo sát ban đầu ghi "không phải lỗi tài liệu" là chưa đúng.)* Khi xem trang 30 thành ảnh, **chính PDF bị chồng chữ** ở Câu 11–13 (lỗi dàn trang khi xuất từ Word). Thứ tự chữ trong file vẫn đúng (nhãn → đề → phương án), nên script đọc theo thứ tự đó thay vì theo toạ độ; nội dung đọc ra hợp nghĩa và đã đưa vào `review.md` để duyệt.
+- Tên Bài 2 trong tài liệu viết "MÁC- LÊNIN" (có dấu cách sau gạch nối). Chủ dự án quyết định sửa tên bài thành "Mác-Lênin" (D-032); nội dung câu hỏi giữ nguyên.
 
 ### 2.4 Điểm chưa rõ, cần bạn xác nhận
 
@@ -81,7 +85,7 @@ D. <phương án>
 | G2 | Bài 4 – Câu 13 (trang 13) | Chỉ hai chữ "Tấn công" trong phương án A được tô đỏ, không phải toàn bộ phương án. Cần xác nhận đáp án là A. |
 | G3 | Bài 10 | Có **hai câu cùng đánh số "Câu 19"** (câu thứ hai nằm giữa Câu 20 và Câu 21), nên bài có 36 câu nhưng chỉ đánh số tới 35. Đánh số lại, hay giữ số gốc làm tham chiếu? |
 | G4 | Tên file | "CĐ" và "LT CĐ-ĐH" nghĩa là gì? Bộ câu hỏi thuộc học phần nào? Điều này ảnh hưởng tới cách đặt tên môn/chương. |
-| G5 | Tên môn | Hiển thị là "Giáo dục quốc phòng" hay "Giáo dục quốc phòng và an ninh" (tên dùng trong tài liệu)? |
+| G5 | Tên môn | ✅ Đã quyết (D-031): "Giáo dục quốc phòng và an ninh". |
 
 ---
 

@@ -110,7 +110,8 @@ backend/src/main/java/com/quizstudy/
 ├── entity/        # @Entity: Subject, Chapter, Question, Answer, Quiz, QuizResult, UserAnswer, User
 ├── dto/           # Request/Response record: SubjectResponse, SubmitAnswerRequest, ...
 ├── mapper/        # Chuyển Entity <-> DTO (viết tay, không thêm MapStruct)
-└── exception/     # Exception nghiệp vụ + @RestControllerAdvice xử lý lỗi tập trung
+├── exception/     # Exception nghiệp vụ + @RestControllerAdvice xử lý lỗi tập trung
+└── command/       # Lệnh chạy từ dòng lệnh, không qua HTTP (Phase 4: ImportCommandRunner, --import=<file>)
 ```
 
 Trách nhiệm từng tầng:
@@ -141,8 +142,8 @@ API dự kiến (chốt chi tiết ở từng phase):
 | Method | Endpoint | Mục đích | Phase |
 |---|---|---|---|
 | GET | `/api/v1/health` | Kiểm tra backend chạy | 1 |
-| GET | `/api/v1/subjects` | Danh sách môn đã publish | 4 |
-| GET | `/api/v1/subjects/{slug}` | Chi tiết môn + chương | 4 |
+| GET | `/api/v1/subjects` | ✔ Danh sách môn đã publish, kèm số bài và số câu `PUBLISHED` | 4 |
+| GET | `/api/v1/subjects/{slug}` | ✔ Chi tiết môn + các bài (số câu mỗi bài). Không có hoặc chưa publish → 404 | 4 |
 | GET | `/api/v1/subjects/{slug}/quizzes` | Các đề của môn | 5 |
 | POST | `/api/v1/quizzes/{quizId}/attempts` | Bắt đầu lượt làm; trả câu hỏi **không kèm đáp án đúng** | 5 |
 | PUT | `/api/v1/attempts/{attemptId}/answers/{questionId}` | Lưu lựa chọn cho một câu | 5 |
@@ -188,13 +189,16 @@ sequenceDiagram
 
 ```
 PDF nguồn (chỉ đọc)
-   └─► scripts/ : trích xuất (GDQP: tự động theo chữ đỏ; Python: bán tự động)
-         └─► file JSON trung gian + danh sách câu cần duyệt
-               └─► BẠN DUYỆT (sửa trạng thái, xác nhận đáp án nghi vấn)
-                     └─► import vào MySQL (công cụ import của backend, Phase 4)
+   └─► scripts/extract_<môn>.py (Python + PyMuPDF, D-029): trích xuất + tự kiểm tra
+         └─► database/seed/<slug>/generated/import.json + review.md (không commit, D-030)
+               └─► CHỦ DỰ ÁN DUYỆT review.md (quyết định ghi vào database/seed/<slug>/subject.json)
+                     └─► scripts/import-subject.ps1 -Slug <slug> [-Replace]
+                           └─► backend (ImportCommandRunner → SubjectImportService): kiểm tra toàn bộ, ghi một transaction
 ```
 
-Chi tiết định dạng JSON: [database-design.md](database-design.md#7-dữ-liệu-trung-gian-khi-import). Công cụ trích xuất (Python + PyMuPDF, hay Java + PDFBox trong backend) **chưa chốt**.
+- GDQP: tự động theo chữ đỏ (Phase 4A). Python: bán tự động, Claude xác định đáp án (Phase 4B, D-020, D-026).
+- Định dạng JSON và quy tắc kiểm tra: [database-design.md](database-design.md#7-dữ-liệu-trung-gian-khi-import).
+- Cách chạy: [scripts/README.md](../scripts/README.md).
 
 ## 9. Thêm một môn mới
 

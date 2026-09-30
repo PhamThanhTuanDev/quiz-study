@@ -152,6 +152,26 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Vùng bấm ≥ 44px (`min-h-11`); viền focus bàn phím thống nhất (`:focus-visible` màu `primary`); link "Bỏ qua điều hướng".
 - Chưa làm: menu thu gọn trên điện thoại (khi có từ 3 mục điều hướng), chế độ tối.
 
+### D-029 · Trích xuất câu hỏi bằng Python + PyMuPDF · Đã chốt (Q-10, 2026-09-30)
+- Script trong `scripts/`, chạy thủ công, **chỉ đọc** PDF; không phải một phần của web app.
+- PyMuPDF (phiên bản ghi trong `scripts/requirements.txt`) cài trong môi trường ảo `scripts/.venv` (không commit, không ảnh hưởng Python chung của máy). Có bản cài sẵn cho Python 3.14.
+- Giấy phép AGPL chấp nhận được vì chỉ là công cụ nội bộ, không đóng gói vào ứng dụng.
+- Lý do chọn: khi khảo sát (Phase 0) PyMuPDF đọc đúng tiếng Việt, màu chữ và highlight; `pdftotext` làm hỏng dấu.
+
+### D-030 · Không commit nội dung câu hỏi vào Git · Đã chốt (2026-09-30)
+- Cùng lý do với D-019 (PDF): nội dung câu hỏi thuộc tài liệu của trường.
+- Git chỉ chứa: script trích xuất + file cấu hình nhỏ mỗi môn (`database/seed/<slug>/subject.json`: tên môn, tên bài, quyết định về đáp án như G1, G2).
+- File sinh ra (`database/seed/<slug>/generated/`: JSON để import, báo cáo duyệt) bị `.gitignore` bỏ qua. Máy khác chạy lại script từ PDF để tạo lại.
+
+### D-031 · Tên môn GDQP · Đã chốt (G5, Q-12, 2026-09-30)
+- Slug `gdqp`, tên "Giáo dục quốc phòng và an ninh" (theo tài liệu). Chưa có mã học phần (G4 chưa rõ nghĩa "CĐ", "LT CĐ-ĐH").
+- Tên bài viết hoa/thường chuẩn (PDF viết HOA toàn bộ); nhãn bài (`chapters.code`) là "Bài 1" … "Bài 11", hiển thị trực tiếp được.
+
+### D-032 · Sửa tên Bài 2 GDQP thành "Mác-Lênin" · Đã chốt (chủ dự án, 2026-10-01)
+- Tài liệu viết "MÁC- LÊNIN" (dấu cách thừa sau gạch nối). Tên hiển thị sửa thành "Mác-Lênin".
+- **Chỉ tên bài.** Nội dung câu hỏi giữ nguyên cách viết của tài liệu ("Mác - Lênin").
+- Cách ghi: `database/seed/gdqp/subject.json` có `title` (tên hiển thị), `sourceTitle` (nguyên văn PDF) và `titleDecision`. Script vẫn đối chiếu với `sourceTitle`, và bắt buộc có `titleDecision` khi tên hiển thị khác PDF.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

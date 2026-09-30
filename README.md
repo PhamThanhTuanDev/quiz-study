@@ -98,6 +98,19 @@ npm run dev
 
 Mở http://localhost:5173. Trang chủ hiện "Backend: hoạt động" và "Database: hoạt động". Vite chuyển các request `/api` sang backend ở cổng 8080.
 
+### Nhập câu hỏi (một lần mỗi máy, hoặc khi dữ liệu thay đổi)
+
+Database mới tạo chưa có câu hỏi. Cần file PDF nguồn ở thư mục gốc (không có trong Git), rồi:
+
+```powershell
+py -m venv scripts\.venv
+scripts\.venv\Scripts\python -m pip install -r scripts\requirements.txt
+scripts\.venv\Scripts\python scripts\extract_gdqp.py
+powershell -ExecutionPolicy Bypass -File scripts\import-subject.ps1 -Slug gdqp
+```
+
+Giải thích từng bước: [scripts/README.md](scripts/README.md).
+
 ### Kiểm tra
 
 | Phần | Thư mục | Lệnh |

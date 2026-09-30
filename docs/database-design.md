@@ -290,30 +290,43 @@ Ràng buộc: UNIQUE `(quiz_result_id, question_id)` và UNIQUE `(quiz_result_id
 
 ## 7. Dữ liệu trung gian khi import
 
-Câu hỏi đi từ PDF vào database qua một file JSON trung gian để bạn duyệt trước khi import (định dạng dự kiến, chốt ở Phase 4):
+Câu hỏi đi từ PDF vào database qua một file JSON trung gian (**đã chốt ở Phase 4**, D-029, D-030):
+
+```
+PDF (chỉ đọc) ──scripts/extract_<môn>.py──► database/seed/<slug>/generated/import.json + review.md
+                                            (không commit; tạo lại từ PDF bất cứ lúc nào)
+       database/seed/<slug>/subject.json ──┘  (commit: tên môn, tên bài, quyết định về đáp án)
+
+import.json ──scripts/import-subject.ps1──► backend kiểm tra toàn bộ ──► ghi trong một transaction
+```
+
+Định dạng `import.json` (khớp `SubjectImportFile` ở backend; ví dụ đầy đủ với dữ liệu giả: `backend/src/test/resources/import/sample-subject.json`):
 
 ```json
 {
-  "subject": { "slug": "gdqp", "name": "Giáo dục quốc phòng và an ninh" },
+  "formatVersion": 1,
+  "subject": {
+    "slug": "gdqp", "name": "Giáo dục quốc phòng và an ninh",
+    "code": null, "description": null, "displayOrder": 1, "published": true
+  },
   "chapters": [
     {
-      "code": "BAI-01",
+      "code": "Bài 1",
       "title": "Đối tượng, nhiệm vụ, phương pháp nghiên cứu môn học",
-      "order": 1,
+      "displayOrder": 1,
       "questions": [
         {
           "type": "SINGLE_CHOICE",
           "content": "Nội dung chương trình giáo dục quốc phòng và an ninh Học phần I là:",
           "codeSnippet": null,
+          "explanation": null,
           "shuffleAnswers": true,
           "status": "PUBLISHED",
           "reviewNote": null,
           "source": { "file": "1.CÓ ĐÁP ÁN - CĐ HỆ THỐNG CÂU HỎI ÔN TẬP LT CĐ-ĐH.pdf", "page": 1, "label": "Bài 1 – Câu 1" },
           "answers": [
             { "content": "Đường lối quốc phòng và an ninh của Đảng Cộng sản Việt Nam.", "correct": true },
-            { "content": "Đường lối cách mạng của Đảng Cộng sản Việt Nam.", "correct": false },
-            { "content": "Đường lối quốc phòng, an ninh của Đảng Cộng sản Việt Nam.", "correct": false },
-            { "content": "Đường lối chiến lược quân sự của Đảng Cộng sản Việt Nam.", "correct": false }
+            { "content": "Đường lối cách mạng của Đảng Cộng sản Việt Nam.", "correct": false }
           ]
         }
       ]
@@ -321,6 +334,12 @@ Câu hỏi đi từ PDF vào database qua một file JSON trung gian để bạn
   ]
 }
 ```
+
+Quy tắc khi import (kiểm tra **toàn bộ** file trước, có lỗi thì không ghi gì và liệt kê mọi lỗi):
+- Mọi trường bắt buộc phải có; độ dài không vượt cột trong database. `shuffleAnswers` bắt buộc ghi rõ.
+- Mỗi câu có ít nhất 2 phương án; câu `SINGLE_CHOICE` có tối đa 1 phương án đúng; câu `PUBLISHED` có **đúng 1** phương án đúng.
+- Thứ tự phương án giữ đúng thứ tự trong file (1 = A, 2 = B…).
+- Slug đã có trong database: dừng, trừ khi chạy với `-Replace` (thay toàn bộ bài và câu hỏi của môn đó). An toàn vì chưa có bài làm tham chiếu tới câu hỏi; Phase 5 sẽ xem lại quy tắc này.
 
 ## 8. Chưa làm ngay, để mở rộng sau
 

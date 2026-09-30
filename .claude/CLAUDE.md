@@ -60,6 +60,7 @@ Có hiệu lực từ Phase 1; cập nhật khi thay đổi.
   - `verify` chạy cả `QuizStudyApplicationTests` (profile `test`), nên cần MySQL và database `quiz_study_test`. Tạo database bằng `scripts/setup-database.ps1` (chủ dự án chạy, vì cần mật khẩu root). Máy 2 đã tạo xong.
   - Test repository (`@DataJpaTest`) cũng chạy trên `quiz_study_test` thật (không Testcontainers, D-015), mỗi test tự rollback.
   - Test không cần database: `mvnw.cmd test "-Dtest=HealthServiceTest,HealthControllerTest,GlobalExceptionHandlerTest"`.
+- Script trích xuất (`scripts/`, Python trong `scripts\.venv`): `scripts\.venv\Scripts\python scripts\extract_gdqp.py`. Script tự kiểm tra (số câu, đáp án, ghép lại phải bằng đúng toàn văn PDF) và dừng nếu sai. Import: `scripts\import-subject.ps1 -Slug <slug> [-Replace]`. Chi tiết: `scripts/README.md`.
 - Chỉ sửa tài liệu thì không cần build, nhưng kiểm tra link/đường dẫn trong tài liệu.
 
 ## Skill và agent (ECC, chi tiết: `docs/skills.md`)
@@ -71,5 +72,5 @@ Có hiệu lực từ Phase 1; cập nhật khi thay đổi.
 
 - Vị trí project: `D:\Learn\quiz-study` (D-018). Không đặt project trong thư mục được Google Drive/OneDrive đồng bộ. Bản cũ ở `G:\My Drive\HCMUTE\quiz-study` chỉ có Phase 0, **không dùng**.
 - Máy gốc: Windows 10; Node 26, Java 21 (**phải cài JDK 25** trước khi build backend, D-024), Maven 3.9, MySQL 8.0 (service `MySQL80`, cổng 3306; `mysql.exe` chưa có trong PATH), Git. Chưa có Docker và `gh`.
-- Máy 2 (Windows 11, kiểm tra ngày 2026-09-30): Node 24.20, `JAVA_HOME` (cấp User) = `C:\Program Files\Java\jdk-25.0.4`, MySQL 8.0.46 (`MySQL80`, cổng 3306; `mysql.exe` chưa có trong PATH; database và user `quiz_app` đã tạo), Maven 3.9.16, Git, Docker 29.8, Python 3.14 (dùng lệnh `py`). Chưa có `gh`.
+- Máy 2 (Windows 11, kiểm tra ngày 2026-09-30): Node 24.20, `JAVA_HOME` (cấp User) = `C:\Program Files\Java\jdk-25.0.4`, MySQL 8.0.46 (`MySQL80`, cổng 3306; `mysql.exe` chưa có trong PATH; database và user `quiz_app` đã tạo; môn GDQP đã import), `scripts\.venv` đã tạo, Maven 3.9.16, Git, Docker 29.8, Python 3.14 (dùng lệnh `py`). Chưa có `gh`.
 - Khi chạy trên máy khác: kiểm tra lại các công cụ trên (`node -v`, `java -version`, `mvn -v`, MySQL) trước khi làm tiếp. Không mặc định máy mới giống máy gốc.

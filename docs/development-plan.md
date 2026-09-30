@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-09-30 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Đang làm: Phase 4**, bước lập kế hoạch chi tiết để chủ dự án duyệt. Chưa viết code Phase 4.
+> **Đang làm: Phase 4B (Python)**, bước lập kế hoạch chi tiết để chủ dự án duyệt. Phase 4A (GDQP) đã xong và được duyệt.
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -32,6 +32,17 @@
 - **Dữ liệu:** `useAsync` (suy ra trạng thái khi render, bỏ kết quả cũ, huỷ request khi rời trang); `apiClient` luôn ném `ApiError` với thông điệp tiếng Việt.
 - **Kiểm tra:** 40/40 test, lint sạch, build đạt; chụp màn hình Chrome headless ở 360 / 768 / 1280px, không tràn ngang. Agent `typescript-reviewer`: không có lỗi nghiêm trọng, 6 góp ý đã sửa.
 
+### Phase 4A (GDQP): ✅ xong, chủ dự án đã duyệt (2026-10-01)
+- **Trích xuất** (D-029, D-030): `scripts/extract_gdqp.py` + `database/seed/gdqp/subject.json` → `generated/import.json` + `review.md` (không commit). 11 bài, **230 câu**, 9 câu không xáo trộn. Đáp án theo chữ đỏ (chỉ tính chữ và số của nội dung phương án); G2 theo quyết định; tên Bài 2 sửa thành "Mác-Lênin" (D-032).
+- **Kiểm chứng:** script tự kiểm tra (ghép lại toàn bộ dữ liệu phải bằng đúng mọi ký tự của PDF, số câu từng bài, đủ A–D, đúng 1 đáp án); đối chiếu ảnh 9 trang (~50 câu) khớp 100%; so từng câu DB với JSON khớp hoàn toàn.
+- **Import:** `scripts/import-subject.ps1 -Slug gdqp [-Replace]` → `command/ImportCommandRunner` → `service/SubjectImportService` (kiểm tra toàn bộ, ghi một transaction). Định dạng: `database-design.md` §7.
+- **API:** `GET /api/v1/subjects`, `GET /api/v1/subjects/{slug}` (truy vấn gộp, chỉ môn publish, chỉ đếm câu PUBLISHED, không trả đáp án).
+- **Frontend:** trang chủ = danh sách môn; `/subjects/:slug` = chi tiết môn + các bài; môn không có → trang "Không tìm thấy môn học".
+- **Kiểm tra:** backend 46/46, frontend 44/44 + lint + build; chụp màn hình 360 / 768 / 1280px; agent `code-reviewer` (không có lỗi nghiêm trọng, góp ý đã sửa).
+
+### Phase 4B (Python): lập kế hoạch
+Chưa bắt đầu. Kế hoạch riêng sẽ được trình chủ dự án duyệt (xác định đáp án bằng cách chạy code theo D-020, tạo phương án cho câu điền khuyết theo D-026, các điểm P5–P14).
+
 ### Điểm kỹ thuật đã phát hiện
 - ID `4.1.1.RELEASE` trong metadata của Spring Initializr **không phải** phiên bản Maven. Trên Maven Central là `4.1.1`; `pom.xml` đã được sửa.
 - Flyway 12.4 bản Community hỗ trợ MySQL từ 8.0, nên MySQL 8.0.46 dùng được.
@@ -45,6 +56,10 @@
 - Khoá của Map trong YAML (`spring.jpa.properties`, `hikari.data-source-properties`) có ký tự đặc biệt như `_` thì viết trong ngoặc vuông, ví dụ `"[hibernate.jdbc.time_zone]"`.
 - Controller giả lồng trong class test không được component scan tự nhận (Spring Boot loại trừ class lồng trong test). Cần `@WebMvcTest(controllers = X.class)` + `@Import(X.class)`.
 - Kiểm tra giao diện không cần Playwright: chạy Chrome `--headless=new --remote-debugging-port=…` và điều khiển qua Chrome DevTools Protocol bằng `WebSocket` có sẵn của Node 24 (đặt kích thước màn hình, mở trang, đo `scrollWidth`, chụp ảnh). Script tạm của phiên 2 nằm ngoài repo.
+- Hibernate 7: JPQL `select new <record>(…)` dùng được cả subquery trong danh sách tham số; record nên dùng kiểu bọc (`Long`, `Integer`) cho kết quả `count`.
+- Test `@SpringBootTest @Transactional` không commit: phải `entityManager.flush()` trước `clear()` thì mới đọc lại được thay đổi (thay đổi chưa flush bị bỏ khi clear).
+- Xoá hàng loạt bằng JPQL (`@Modifying(clearAutomatically = true)`) bỏ qua cascade của JPA; phương án được xoá nhờ `ON DELETE CASCADE` trong database. Sau lệnh xoá phải đọc lại entity cần sửa.
+- Chạy backend kiểm tra mà cổng 8080 đang bận (chủ dự án tự chạy): dùng `--server.port=8081` và một cấu hình Vite tạm ngoài repo (cổng 5174, proxy sang 8081), không tắt tiến trình của chủ dự án.
 - VS Code trên máy 2 tự tạo `.github/modernize/` (có `.gitignore` bỏ qua toàn bộ) và `.vscode/settings.json` (đã bị `.gitignore` bỏ qua). Không thuộc dự án, không commit.
 
 ## Trạng thái
@@ -55,7 +70,7 @@
 | 1 | Project setup | ✅ Xong, đã duyệt |
 | 2 | Database + Backend foundation | ✅ Xong, đã duyệt |
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
-| 4 | Subject / Chapter / Question / Answer | 🔄 Đang lập kế hoạch (xem "Tiến độ hiện tại") |
+| 4 | Subject / Chapter / Question / Answer | 🔄 4A (GDQP) xong; 4B (Python) đang lập kế hoạch |
 | 5 | Quiz engine | |
 | 6 | Result / history | |
 | 7 | Authentication | |
