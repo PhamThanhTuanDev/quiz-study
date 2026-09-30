@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-09-30 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Đang làm: Phase 2**, bước lập kế hoạch chi tiết để chủ dự án duyệt. Chưa viết code Phase 2.
+> **Đang làm: Phase 3**, bước lập kế hoạch chi tiết để chủ dự án duyệt. Chưa viết code Phase 3.
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -15,6 +15,14 @@
 - **Database:** `database/init/01-create-database.sql` + `scripts/setup-database.ps1` tạo `quiz_study`, `quiz_study_test`, user `quiz_app`@`localhost`. Máy 2 đã chạy.
 - **Kiểm tra tích hợp:** backend + frontend chạy cùng lúc, `/api/v1/health` qua proxy Vite trả `{"status":"UP","database":"UP"}`.
 - **Git:** commit đầu tiên trên nhánh `main` (Q-15), chưa push.
+
+### Phase 2: ✅ xong, chủ dự án đã duyệt (2026-09-30)
+- **Schema:** migration `V1__create_content_tables.sql` tạo `subjects`, `chapters`, `questions`, `answers` đúng [database-design.md](database-design.md) (InnoDB, `utf8mb4_0900_ai_ci`, FK `answers` CASCADE, `chapters`/`questions` RESTRICT, UNIQUE, index).
+- **Câu điền khuyết** chuyển thành trắc nghiệm A–D (D-026), nên `QuestionType` chỉ có `SINGLE_CHOICE`.
+- **Thời gian UTC** (D-027): `Instant` + Hibernate tự điền; phiên MySQL đặt UTC qua `hikari.data-source-properties`.
+- **Code:** `entity/` (`BaseEntity`, `Subject`, `Chapter`, `Question` + `addAnswer()`, `Answer`, 2 enum), `repository/` (3 repository, `@EntityGraph` tránh N+1), `exception/` (`GlobalExceptionHandler`, `ResourceNotFoundException`), `dto/InvalidField`, `messages.properties` (thông điệp lỗi tiếng Việt), profile `dev` (log SQL).
+- **Kiểm tra:** 27/27 test (`mvnw.cmd clean verify`); chạy `dev` thật: Flyway tạo bảng, lỗi 404/405 trả tiếng Việt. Agent `java-reviewer` chấp thuận; 5 góp ý đã sửa.
+- Ghi chú: test thứ tự phương án vẫn đạt khi bỏ `@OrderBy` (MySQL đọc qua index UNIQUE `(question_id, display_order)`); vẫn giữ `@OrderBy` để không phụ thuộc cách MySQL chọn index.
 
 ### Điểm kỹ thuật đã phát hiện
 - ID `4.1.1.RELEASE` trong metadata của Spring Initializr **không phải** phiên bản Maven. Trên Maven Central là `4.1.1`; `pom.xml` đã được sửa.
@@ -25,6 +33,9 @@
 - Vitest 5 yêu cầu Node `^22.12 || ^24 || >=26` (chặt hơn Vite 8). Trên máy 2 (Node 24.20): test, lint, build frontend đều đạt.
 - Máy 2: `JAVA_HOME` (cấp User) = `C:\Program Files\Java\jdk-25.0.4` (D-024).
 - Cảnh báo "Mockito is currently self-attaching…" của JDK 21+ đã xử lý bằng cách nạp Mockito làm Java agent trong `maven-surefire-plugin`, kèm `-Xshare:off` (D-025).
+- Spring Boot 4 đổi package của annotation test JPA: `DataJpaTest` ở `org.springframework.boot.data.jpa.test.autoconfigure`, `AutoConfigureTestDatabase` ở `org.springframework.boot.jdbc.test.autoconfigure`, `TestEntityManager` ở `org.springframework.boot.jpa.test.autoconfigure`. `@DataJpaTest` cần `@AutoConfigureTestDatabase(replace = NONE)` để dùng MySQL thật thay vì database nhúng.
+- Khoá của Map trong YAML (`spring.jpa.properties`, `hikari.data-source-properties`) có ký tự đặc biệt như `_` thì viết trong ngoặc vuông, ví dụ `"[hibernate.jdbc.time_zone]"`.
+- Controller giả lồng trong class test không được component scan tự nhận (Spring Boot loại trừ class lồng trong test). Cần `@WebMvcTest(controllers = X.class)` + `@Import(X.class)`.
 - VS Code trên máy 2 tự tạo `.github/modernize/` (có `.gitignore` bỏ qua toàn bộ) và `.vscode/settings.json` (đã bị `.gitignore` bỏ qua). Không thuộc dự án, không commit.
 
 ## Trạng thái
@@ -33,8 +44,8 @@
 |---|---|---|
 | 0 | Khởi tạo: khảo sát, tài liệu, skill, cấu trúc thư mục | ✅ Xong, đã duyệt |
 | 1 | Project setup | ✅ Xong, đã duyệt |
-| 2 | Database + Backend foundation | 🔄 Đang lập kế hoạch (xem "Tiến độ hiện tại") |
-| 3 | Frontend foundation | |
+| 2 | Database + Backend foundation | ✅ Xong, đã duyệt |
+| 3 | Frontend foundation | 🔄 Đang lập kế hoạch (xem "Tiến độ hiện tại") |
 | 4 | Subject / Chapter / Question / Answer | |
 | 5 | Quiz engine | |
 | 6 | Result / history | |

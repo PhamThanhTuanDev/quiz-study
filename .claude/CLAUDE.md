@@ -22,6 +22,7 @@
 3. **Không thay đổi nội dung câu hỏi.** Quy tắc về đáp án (chi tiết: `.claude/rules/source-material.md`, D-020, D-021 trong `docs/decisions.md`):
    - **GDQP:** lấy đáp án theo chữ đỏ trong tài liệu, không tự sửa.
    - **Python:** dấu tô trong tài liệu là bài làm chưa kiểm chứng của chủ dự án, **không dùng**. Claude tự xác định đáp án đúng; câu có code phải **chạy thật bằng Python 3** để kiểm chứng; ghi lý do cho từng câu.
+   - **Câu điền khuyết** được chuyển thành trắc nghiệm A–D; Claude tạo phương án, phương án sai cũng phải kiểm chứng (D-026).
    - Câu lỗi đề hoặc mơ hồ thì đánh dấu `NEEDS_REVIEW`, ghi lý do và hỏi chủ dự án.
 4. **Không thêm dependency** (npm, Maven, công cụ) khi chưa nêu lý do và được đồng ý. Ghi quyết định vào `docs/decisions.md`.
 5. **Trước feature lớn phải lập plan**: file sẽ tạo/sửa, dependency, cách kiểm tra. Trình bày và chờ duyệt.
@@ -57,7 +58,8 @@ Có hiệu lực từ Phase 1; cập nhật khi thay đổi.
 - Frontend (`frontend/`): `npm run build` · `npm run test` · `npm run lint`
 - Backend (`backend/`): `mvnw.cmd verify` (Windows) hoặc `./mvnw verify`. **Cần JDK 25** (`JAVA_HOME` trỏ JDK 25).
   - `verify` chạy cả `QuizStudyApplicationTests` (profile `test`), nên cần MySQL và database `quiz_study_test`. Tạo database bằng `scripts/setup-database.ps1` (chủ dự án chạy, vì cần mật khẩu root). Máy 2 đã tạo xong.
-  - Test không cần database: `mvnw.cmd test "-Dtest=HealthServiceTest,HealthControllerTest"`.
+  - Test repository (`@DataJpaTest`) cũng chạy trên `quiz_study_test` thật (không Testcontainers, D-015), mỗi test tự rollback.
+  - Test không cần database: `mvnw.cmd test "-Dtest=HealthServiceTest,HealthControllerTest,GlobalExceptionHandlerTest"`.
 - Chỉ sửa tài liệu thì không cần build, nhưng kiểm tra link/đường dẫn trong tài liệu.
 
 ## Skill và agent (ECC, chi tiết: `docs/skills.md`)

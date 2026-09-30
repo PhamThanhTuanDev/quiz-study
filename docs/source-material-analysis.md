@@ -8,7 +8,7 @@
 > - **G1** Bài 3 Câu 6: đáp án **C**. **G2** Bài 4 Câu 13: đáp án **A**. **G3**: số thứ tự không quan trọng, đánh số lại được.
 > - **P1**: dấu tô trong file Python là **bài làm của chủ dự án, chưa kiểm chứng**, không dùng làm đáp án.
 > - **P2**: **Claude xác định đáp án đúng** cho mọi câu Python (câu có code phải chạy thật để kiểm chứng).
-> - **P4**: câu điền khuyết **được đưa vào** hệ thống.
+> - **P4**: câu điền khuyết **được đưa vào** hệ thống, dưới dạng trắc nghiệm A–D do Claude tạo phương án (D-026).
 > - **P3**: giải quyết theo P2 (Claude xác định đáp án đúng).
 > - Còn mở: G4, G5, P5–P14.
 

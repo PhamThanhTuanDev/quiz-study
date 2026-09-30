@@ -106,7 +106,7 @@ Tên biến/hàm/lớp/bảng bằng tiếng Anh; nội dung hiển thị cho ng
 - G2: Bài 4 – Câu 13, đáp án **A**.
 - G3: số thứ tự câu không quan trọng, quan trọng là nội dung câu hỏi và đáp án. Được đánh số lại theo thứ tự xuất hiện; số gốc giữ trong `source_label` để đối chiếu.
 
-### D-022 · Đưa câu điền khuyết vào hệ thống · Đã chốt (Q-04, P4)
+### D-022 · Đưa câu điền khuyết vào hệ thống · Đã chốt (Q-04, P4) · **Cách làm được thay thế bởi D-026**
 Có khoảng 60 câu Python dạng điền khuyết, nên `FILL_IN_BLANK` nằm trong phạm vi MVP. Thiết kế chi tiết (lưu nhiều chỗ trống, cách người học nhập, quy tắc so khớp đáp án) chốt khi làm schema ở Phase 2 và giao diện ở Phase 5.
 
 ### D-007, D-008, D-009 · Đã được đồng ý (2026-09-30)
@@ -134,11 +134,27 @@ Có khoảng 60 câu Python dạng điền khuyết, nên `FILL_IN_BLANK` nằm 
 - Lưu ý: nếu sau này thêm JaCoCo (cũng dùng `argLine`), phải đổi thành `@{argLine} -javaagent:…` để hai cấu hình không ghi đè nhau.
 - Chạy test trong IDE (không qua Maven) có thể vẫn thấy cảnh báo Mockito. Không ảnh hưởng kết quả test.
 
+### D-026 · Câu điền khuyết được chuyển thành trắc nghiệm A–D · Đã chốt (chủ dự án yêu cầu, 2026-09-30)
+Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không phải gõ.
+- Đề giữ nguyên chữ của tài liệu, kể cả dấu `…`.
+- Claude tạo **4 phương án A–D**: 1 phương án đúng (xác định theo D-020, câu có code thì chạy thật bằng Python 3) và 3 phương án sai. Phương án sai phải được kiểm chứng là sai; câu có code thì chạy thử. Không được có phương án sai mà thực ra cũng đúng.
+- Câu nhiều chỗ trống: mỗi phương án ghi đủ giá trị cho mọi chỗ trống theo thứ tự xuất hiện.
+- Lưu như câu `SINGLE_CHOICE` bình thường, **không cần thay đổi schema**. Nguồn gốc: `source_label` ghi thêm "(gốc: điền khuyết)". Lý do chọn từng phương án ghi trong file JSON trung gian ở Phase 4, để chủ dự án duyệt trước khi import.
+- Câu không tạo được 3 phương án sai rõ ràng (ví dụ nhiều cách điền đều đúng) thì để `NEEDS_REVIEW` và hỏi chủ dự án.
+- Hệ quả: enum `QuestionType` hiện chỉ có `SINGLE_CHOICE`. Cột `question_type` vẫn giữ để sau này thêm dạng câu khác cho các môn mới.
+
+### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
+- Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
+- Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.
+- Khoá `hibernate.jdbc.time_zone` viết trong ngoặc vuông (`"[hibernate.jdbc.time_zone]"`), vì Spring có thể bỏ dấu `_` trong khoá của Map.
+- Test: `SubjectRepositoryTest` kiểm tra `@@session.time_zone` là UTC, và thời gian lưu/đọc lại khớp giờ UTC.
+- Frontend chịu trách nhiệm đổi sang giờ Việt Nam khi hiển thị.
+
 ---
 
 ## C. Cần bạn quyết định
 
-Đã quyết: Q-01 → D-018 · Q-02 → D-019 · Q-04 → D-022 · Q-05 → D-020 (Claude xác định đáp án) · Q-11 → D-008 · Q-15: commit đầu tiên ngày 2026-09-30 khi Phase 1 được duyệt (chưa có repo GitHub). Q-03: G1–G3, P1, P2, P4 đã quyết; các mục còn lại vẫn mở.
+Đã quyết: Q-01 → D-018 · Q-02 → D-019 · Q-04 → D-022, D-026 · Q-05 → D-020 (Claude xác định đáp án) · Q-11 → D-008 · Q-15: commit đầu tiên ngày 2026-09-30 khi Phase 1 được duyệt (chưa có repo GitHub). Q-03: G1–G3, P1, P2, P4 đã quyết; các mục còn lại vẫn mở.
 
 | ID | Câu hỏi | Đề xuất của tôi | Cần trước |
 |---|---|---|---|
