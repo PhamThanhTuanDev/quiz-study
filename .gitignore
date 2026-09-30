@@ -1,0 +1,109 @@
+# =====================================================================
+# Quiz Study: .gitignore
+# =====================================================================
+
+# ---------- Environment & secrets (KHÔNG BAO GIỜ COMMIT) ----------
+.env
+.env.*
+!.env.example
+*.env
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets/
+**/application-local.yml
+**/application-local.yaml
+**/application-local.properties
+**/application-secret*.yml
+**/application-secret*.properties
+
+# ---------- Node / npm / Vite (frontend) ----------
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+.npm/
+.eslintcache
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- Test output ----------
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# ---------- Java / Maven (backend) ----------
+target/
+*.class
+hs_err_pid*
+replay_pid*
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ---------- IntelliJ IDEA ----------
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ---------- VS Code ----------
+.vscode/*
+!.vscode/extensions.json
+
+# ---------- Eclipse / NetBeans ----------
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# ---------- Python (công cụ trong scripts/) ----------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---------- Logs ----------
+logs/
+*.log
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+
+# ---------- Google Drive ----------
+.tmp.driveupload/
+.tmp.drivedownload/
+
+# ---------- Claude Code: cấu hình cá nhân trên máy ----------
+.claude/settings.local.json
+
+# ---------- Database dumps (có thể chứa dữ liệu cá nhân) ----------
+*.sql.gz
+dump*.sql
+backup*.sql
+
+# ---------- Tài liệu nguồn PDF ----------
+# Không đưa tài liệu nguồn vào Git (quyết định của chủ dự án, xem Q-02 trong docs/decisions.md).
+# Các file PDF vẫn nằm ở thư mục gốc trên máy và là nguồn chỉ đọc.
+*.pdf

@@ -1,0 +1,35 @@
+# Tuỳ chọn: chạy MySQL bằng Docker thay cho MySQL cài trên máy.
+#
+# LƯU Ý:
+# - Máy hiện CHƯA cài Docker, nên file này chưa được chạy thử.
+# - Dùng cổng 3307 để không xung đột với MySQL80 đang chạy ở cổng 3306.
+# - Mật khẩu đọc từ file .env (không commit). Tạo .env từ .env.example trước khi chạy.
+#
+# Chạy:  docker compose up -d
+# Dừng:  docker compose down        (giữ dữ liệu trong volume)
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: quiz-study-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-quiz_study}
+      MYSQL_USER: ${DB_USERNAME:?Hay dat DB_USERNAME trong .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Hay dat DB_PASSWORD trong .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Hay dat MYSQL_ROOT_PASSWORD trong .env}
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "${DB_DOCKER_PORT:-3307}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql-data:
