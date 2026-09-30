@@ -1,7 +1,7 @@
-# Thiết kế cơ sở dữ liệu (đề xuất)
+# Thiết kế cơ sở dữ liệu
 
-> Trạng thái: **ĐỀ XUẤT, chờ bạn duyệt.** Chưa tạo database hay bảng nào.
-> DBMS: MySQL (máy hiện có MySQL Server 8.0.46).
+> Trạng thái: đã duyệt. **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. Các bảng làm bài (`quizzes`, `quiz_results`, `user_answers`) tạo ở Phase 5, `users` ở Phase 7.
+> DBMS: MySQL 8.0 (máy hiện có MySQL Server 8.0.46).
 
 ## 1. Mục tiêu thiết kế
 
@@ -20,7 +20,7 @@
 | Tên bảng / cột | `snake_case`, tên bảng số nhiều (`subjects`, `quiz_results`) |
 | Khoá chính | `id BIGINT AUTO_INCREMENT` |
 | Khoá ngoại | `<bảng_số_ít>_id`, ví dụ `subject_id` |
-| Thời gian | `DATETIME(6)`, lưu theo **UTC**; mọi bảng nội dung có `created_at`, `updated_at` |
+| Thời gian | `DATETIME(6)`, lưu theo **UTC** (D-027); mọi bảng nội dung có `created_at`, `updated_at`. Hibernate tự điền; `DEFAULT CURRENT_TIMESTAMP(6)` trong bảng chỉ để dự phòng khi thêm dữ liệu bằng SQL tay |
 | Giá trị liệt kê | Lưu `VARCHAR` (JPA `@Enumerated(EnumType.STRING)`), không dùng kiểu `ENUM` của MySQL, để thêm giá trị mới không phải ALTER bảng |
 | Xoá dữ liệu | Câu hỏi đã từng được dùng trong bài làm thì **không xoá cứng**, chỉ chuyển sang `ARCHIVED` để lịch sử làm bài vẫn đúng |
 
@@ -180,7 +180,7 @@ Index: `(subject_id, display_order)`. Môn không chia chương thì tạo một
 |---|---|---|---|
 | `id` | BIGINT | **PK** | |
 | `chapter_id` | BIGINT | NOT NULL, **FK → chapters.id** (ON DELETE RESTRICT) | Biết môn qua chương |
-| `question_type` | VARCHAR(30) | NOT NULL | `SINGLE_CHOICE` (MVP). Dự phòng `MULTIPLE_CHOICE`, `FILL_IN_BLANK` (chờ quyết định P3, P4) |
+| `question_type` | VARCHAR(30) | NOT NULL | Hiện chỉ có `SINGLE_CHOICE`. Câu điền khuyết của tài liệu được chuyển thành trắc nghiệm A–D (D-026). Dạng khác (`MULTIPLE_CHOICE`…) thêm khi có môn cần, xem mục 8 |
 | `content` | TEXT | NOT NULL | Nội dung đề, giữ nguyên chữ của tài liệu |
 | `code_snippet` | TEXT | NULL | Đoạn code kèm đề (Python). Hiển thị dạng `<pre>` giữ thụt lề |
 | `explanation` | TEXT | NULL | Giải thích (tài liệu hiện chưa có; để trống, **không tự viết**) |
@@ -335,5 +335,6 @@ Câu hỏi đi từ PDF vào database qua một file JSON trung gian để bạn
 
 ## 9. Quản lý thay đổi schema
 
-Đề xuất dùng **Flyway**: mỗi thay đổi schema là một file SQL có đánh số (`V1__create_content_tables.sql`, `V2__create_quiz_tables.sql`…), chạy tự động khi backend khởi động, và được lưu trong Git. Hibernate chỉ để `ddl-auto=validate` (kiểm tra entity khớp schema, không tự sửa bảng).
-Đây là một dependency mới (`flyway-core` + `flyway-mysql`), **cần bạn đồng ý**. Xem [decisions.md](decisions.md) mục D-009.
+Dùng **Flyway** (D-009): mỗi thay đổi schema là một file SQL có đánh số trong `backend/src/main/resources/db/migration/` (`V1__create_content_tables.sql`, sau này `V2__create_quiz_tables.sql`…), chạy tự động khi backend khởi động, và được lưu trong Git. Hibernate chỉ để `ddl-auto=validate` (kiểm tra entity khớp schema, không tự sửa bảng).
+
+Quy tắc: **không sửa file migration đã chạy**. Flyway lưu checksum của từng file trong bảng `flyway_schema_history`; sửa file cũ sẽ làm backend không khởi động được. Muốn đổi schema thì tạo file mới với số tiếp theo.

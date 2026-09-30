@@ -20,6 +20,10 @@ paths:
 - Không hard-code môn học; nhận diện môn bằng `slug`/`id` từ dữ liệu.
 - Cấu hình nhạy cảm (URL, user, password DB) lấy từ biến môi trường, ví dụ `${DB_PASSWORD}`. Không ghi giá trị thật vào `application.yml`.
 - Không log mật khẩu, token, hay nội dung request nhạy cảm.
+- Lỗi trả Problem Details, `detail` bằng tiếng Việt:
+  - Ràng buộc Bean Validation luôn ghi `message` tiếng Việt, ví dụ `@NotBlank(message = "Tên không được để trống")`.
+  - Lỗi chuẩn của Spring MVC: thông điệp trong `src/main/resources/messages.properties` (khoá `problemDetail.<tên exception>`).
+  - Service báo không tìm thấy bằng `ResourceNotFoundException`; không tự tạo response lỗi trong controller.
 
 ## Test
 - Unit test Service: JUnit 5 + Mockito.

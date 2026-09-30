@@ -1,0 +1,5 @@
+# Profile "dev": chạy backend trên máy để phát triển (mặc định, xem spring.profiles.default).
+logging:
+  level:
+    # In các câu SQL Hibernate gửi tới MySQL, để thấy backend truy vấn gì và phát hiện lỗi N+1.
+    org.hibernate.SQL: debug

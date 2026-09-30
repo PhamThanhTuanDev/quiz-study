@@ -1,6 +1,9 @@
 spring:
   application:
     name: quiz-study-backend
+  profiles:
+    # Chạy backend trên máy mà không chọn profile thì dùng "dev". Test tự chọn "test".
+    default: dev
   config:
     # Nạp biến môi trường từ file .env (không commit), ở thư mục backend/ hoặc thư mục gốc project.
     import: "optional:file:.env[.properties],optional:file:../.env[.properties]"
@@ -9,15 +12,20 @@ spring:
     username: ${DB_USERNAME:quiz_app}
     # Không có giá trị mặc định: thiếu DB_PASSWORD thì ứng dụng dừng ngay với thông báo rõ ràng.
     password: ${DB_PASSWORD}
+    hikari:
+      # Phiên MySQL dùng múi giờ UTC, nên CURRENT_TIMESTAMP trong database cũng là UTC (D-027).
+      # Đặt ở đây thay vì trong URL để profile test (có URL riêng) cũng được áp dụng.
+      data-source-properties:
+        connectionTimeZone: UTC
+        forceConnectionTimeZoneToSession: true
   jpa:
     open-in-view: false
     hibernate:
       # Schema do Flyway quản lý; Hibernate chỉ kiểm tra entity khớp với bảng.
       ddl-auto: validate
     properties:
-      hibernate:
-        jdbc:
-          time_zone: UTC
+      # Ngoặc vuông giữ nguyên tên khoá (có dấu "_") khi Spring đọc vào Map; thiếu ngoặc thì "_" có thể bị bỏ.
+      "[hibernate.jdbc.time_zone]": UTC
   flyway:
     locations: classpath:db/migration
 

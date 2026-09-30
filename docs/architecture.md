@@ -122,9 +122,13 @@ Cấu hình: `application.yml` + profile `dev` / `test`. Thông tin nhạy cảm
 
 - Tiền tố: `/api/v1/…`. Tên tài nguyên là danh từ số nhiều: `/subjects`, `/chapters`, `/quizzes`.
 - Danh sách lớn dùng phân trang `?page=0&size=20`.
-- Lỗi trả theo chuẩn **Problem Details (RFC 9457)**, có sẵn trong Spring, ví dụ:
-  `{ "type": "...", "title": "Not Found", "status": 404, "detail": "Subject 'java' not found" }`
-- Validation lỗi trả `400` kèm danh sách field lỗi.
+- Lỗi trả theo chuẩn **Problem Details (RFC 9457)**, `Content-Type: application/problem+json`. Xử lý tập trung ở `exception/GlobalExceptionHandler`. `detail` bằng tiếng Việt, frontend hiển thị trực tiếp:
+  `{ "title": "Not Found", "status": 404, "detail": "Không tìm thấy môn học 'java'", "instance": "/api/v1/subjects/java" }`
+- Lỗi chuẩn của Spring MVC (JSON hỏng, sai kiểu tham số, thiếu tham số, sai method, URL không tồn tại…) cũng trả `detail` tiếng Việt, lấy từ `backend/src/main/resources/messages.properties`.
+- Validation lỗi (body `@Valid` hoặc tham số `@RequestParam` / `@PathVariable`) trả `400`, kèm danh sách field lỗi trong `errors` (`field` là null nếu lỗi thuộc cả request):
+  `{ "status": 400, "detail": "Dữ liệu gửi lên không hợp lệ.", "errors": [ { "field": "name", "message": "Tên không được để trống" } ] }`
+- Lỗi không lường trước trả `500` với thông báo chung; chi tiết chỉ ghi vào log của server, không gửi cho client.
+- Service báo "không tìm thấy" bằng `ResourceNotFoundException` (→ 404), không tự tạo response HTTP.
 
 API dự kiến (chốt chi tiết ở từng phase):
 
