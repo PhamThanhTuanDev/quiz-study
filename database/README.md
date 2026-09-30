@@ -4,11 +4,12 @@ Tài nguyên hỗ trợ cho MySQL, **không** phải nơi đặt migration chín
 
 ## Nội dung
 
-| Thư mục/file | Nội dung | Phase |
+| Thư mục/file | Nội dung | Commit? |
 |---|---|---|
-| `init/01-create-database.sql` | Tạo database `quiz_study`, `quiz_study_test` và user `quiz_app`@`localhost` (chỉ có quyền trên hai database này). Mật khẩu là placeholder, **không ghi mật khẩu thật**. Chạy qua [scripts/setup-database.ps1](../scripts/setup-database.ps1), không chạy trực tiếp | 1 |
-| `seed/<slug-môn>/` | (Dự kiến) File JSON câu hỏi **đã được chủ dự án duyệt**, dùng để import (ví dụ `seed/gdqp/`) | 4 |
+| `init/01-create-database.sql` | Tạo database `quiz_study`, `quiz_study_test` và user `quiz_app`@`localhost` (chỉ có quyền trên hai database này). Mật khẩu là placeholder; chạy qua [scripts/setup-database.ps1](../scripts/setup-database.ps1) | Có |
+| `seed/<slug>/subject.json` | Cấu hình trích xuất một môn: tên môn, tên bài, số câu mong đợi, quyết định về đáp án (ví dụ G1, G2 của GDQP) | Có |
+| `seed/<slug>/generated/` | Kết quả trích xuất: `import.json` (để import) và `review.md` (để duyệt). Chứa nội dung câu hỏi nên **không commit** (D-030); tạo lại bằng script trong `scripts/` | Không |
 
-Thư mục con chỉ được tạo khi thật sự cần, kèm giải thích.
+Cách trích xuất và import: [scripts/README.md](../scripts/README.md). Định dạng `import.json`: [docs/database-design.md](../docs/database-design.md#7-dữ-liệu-trung-gian-khi-import).
 
 Quy ước: [.claude/rules/database.md](../.claude/rules/database.md)

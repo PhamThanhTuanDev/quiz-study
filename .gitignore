@@ -103,6 +103,10 @@ desktop.ini
 dump*.sql
 backup*.sql
 
+# ---------- Dữ liệu câu hỏi sinh ra từ PDF (D-030) ----------
+# Chứa nội dung câu hỏi; tạo lại bằng script trong scripts/. Chỉ commit subject.json (cấu hình nhỏ).
+database/seed/*/generated/
+
 # ---------- Tài liệu nguồn PDF ----------
 # Không đưa tài liệu nguồn vào Git (quyết định của chủ dự án, xem Q-02 trong docs/decisions.md).
 # Các file PDF vẫn nằm ở thư mục gốc trên máy và là nguồn chỉ đọc.

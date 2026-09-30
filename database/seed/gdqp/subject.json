@@ -1,0 +1,49 @@
+{
+  "$comment": "Cấu hình trích xuất môn GDQP (D-030, D-031). Chỉ chứa thông tin môn, tên bài và quyết định về đáp án; nội dung câu hỏi được tạo lại từ PDF bằng scripts/extract_gdqp.py. answerOverrides: thêm \"occurrence\": 2 nếu quyết định dành cho câu trùng số lần thứ hai trong cùng bài.",
+  "source": {
+    "file": "1.CÓ ĐÁP ÁN - CĐ HỆ THỐNG CÂU HỎI ÔN TẬP LT CĐ-ĐH.pdf"
+  },
+  "subject": {
+    "slug": "gdqp",
+    "name": "Giáo dục quốc phòng và an ninh",
+    "code": null,
+    "description": null,
+    "displayOrder": 1,
+    "published": true
+  },
+  "chapters": [
+    { "number": 1, "title": "Đối tượng, nhiệm vụ, phương pháp nghiên cứu môn học", "expectedQuestions": 6 },
+    {
+      "number": 2,
+      "title": "Quan điểm cơ bản của chủ nghĩa Mác-Lênin, tư tưởng Hồ Chí Minh về chiến tranh, quân đội và bảo vệ Tổ quốc",
+      "sourceTitle": "Quan điểm cơ bản của chủ nghĩa Mác- Lênin, tư tưởng Hồ Chí Minh về chiến tranh, quân đội và bảo vệ Tổ quốc",
+      "titleDecision": "D-032: chủ dự án sửa \"Mác- Lênin\" thành \"Mác-Lênin\" (chỉ tên bài, không đổi nội dung câu hỏi).",
+      "expectedQuestions": 30
+    },
+    { "number": 3, "title": "Xây dựng nền quốc phòng toàn dân, an ninh nhân dân", "expectedQuestions": 26 },
+    { "number": 4, "title": "Những vấn đề cơ bản về lịch sử nghệ thuật quân sự Việt Nam", "expectedQuestions": 24 },
+    { "number": 5, "title": "Xây dựng phong trào toàn dân bảo vệ an ninh Tổ quốc", "expectedQuestions": 10 },
+    { "number": 6, "title": "Những vấn đề cơ bản về bảo vệ an ninh quốc gia và bảo đảm trật tự an toàn xã hội", "expectedQuestions": 12 },
+    { "number": 7, "title": "Phòng, chống vi phạm pháp luật về bảo vệ môi trường", "expectedQuestions": 29 },
+    { "number": 8, "title": "Phòng, chống vi phạm pháp luật về đảm bảo trật tự an toàn giao thông", "expectedQuestions": 19 },
+    { "number": 9, "title": "Phòng, chống một số loại tội phạm xâm hại danh dự, nhân phẩm của người khác", "expectedQuestions": 18 },
+    { "number": 10, "title": "An toàn thông tin và phòng, chống vi phạm pháp luật trên không gian mạng", "expectedQuestions": 36 },
+    { "number": 11, "title": "An ninh phi truyền thống và các mối đe dọa an ninh phi truyền thống ở Việt Nam", "expectedQuestions": 20 }
+  ],
+  "answerOverrides": [
+    {
+      "chapter": 3,
+      "question": 6,
+      "correct": "C",
+      "decision": "G1 (D-021)",
+      "reason": "Phương án C tô đỏ toàn bộ; phương án D chỉ có dấu chấm cuối câu màu đỏ."
+    },
+    {
+      "chapter": 4,
+      "question": 13,
+      "correct": "A",
+      "decision": "G2 (D-021)",
+      "reason": "Chỉ hai chữ \"Tấn công\" trong phương án A được tô đỏ, không phải toàn bộ phương án."
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+# Thư viện cho các script trong scripts/ (D-029). Cài vào môi trường ảo scripts/.venv:
+#   py -m venv scripts\.venv
+#   scripts\.venv\Scripts\python -m pip install -r scripts\requirements.txt
+pymupdf==1.28.2
