@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch chi tiết ở mục Phase 10, **chờ chủ dự án duyệt** (có 2 dependency mới: `vite-plugin-pwa`, `@playwright/test`).
+> **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch đã duyệt cả 5 đề xuất (D-040, D-041); đang làm theo "Thứ tự làm", tiến độ ở mục "Tiến độ 10".
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -120,7 +120,7 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 | 7 | Authentication | Làm sau Phase 10 (D-039) |
 | 8 | Admin management | Làm sau Phase 10 (D-039) |
 | 9 | Ranking / statistics | Làm sau Phase 10 (D-039) |
-| 10 | PWA / mobile experience | 🔄 Kế hoạch chờ duyệt |
+| 10 | PWA / mobile experience | 🔄 Đang làm |
 
 ---
 
@@ -311,7 +311,7 @@ Công việc:
 - Thống kê câu hỏi: câu hay sai (hỗ trợ admin rà soát nội dung).
 - Tính từ `quiz_results` / `user_answers`; kiểm tra index, hiệu năng truy vấn.
 
-## Phase 10: PWA / mobile experience (kế hoạch chi tiết, ⏳ chờ duyệt; làm trước Phase 7–9 theo D-039)
+## Phase 10: PWA / mobile experience (kế hoạch chi tiết, ✅ đã duyệt 2026-10-01; làm trước Phase 7–9 theo D-039)
 
 **Mục tiêu:** dùng tốt trên điện thoại như một ứng dụng: cài lên màn hình chính, mở nhanh, thao tác chạm thuận tay; có E2E test cho luồng chính trên điện thoại.
 
@@ -341,6 +341,10 @@ Công việc:
 2. PWA (manifest, icon, service worker, thông báo offline / bản mới) + kiểm tra cài được.
 3. E2E Playwright.
 4. Rà code, tài liệu, báo cáo, dừng chờ xác nhận.
+
+**Tiến độ 10** (cập nhật sau mỗi bước; phiên sau làm tiếp từ bước chưa xong)
+- [x] Bước 1: thanh đồng hồ + số câu đã làm dính đầu màn hình khi thi thử; `useSwipe` (vuốt trái = câu sau, phải = câu trước; bỏ qua vuốt ngắn / dọc / trong ô code), dòng gợi ý vuốt chỉ hiện trên màn hình cảm ứng; `useHotkey` gắn listener bằng `useLayoutEffect` (trước đó test phím tắt thỉnh thoảng hỏng vì listener gắn trễ). Vùng bấm đã ≥ 44px; không đặt `viewport-fit=cover` nên nội dung tự nằm trong vùng an toàn (tai thỏ). Test 81/81 (chạy 3 lần + file làm bài 10 lần), lint, build đạt; chụp thử cuộn trang ở 390px: đồng hồ vẫn hiện.
+- [ ] Bước 2 · [ ] Bước 3 · [ ] Bước 4
 
 ---
 

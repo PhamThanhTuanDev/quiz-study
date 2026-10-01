@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
 export type HotkeyKey = 'Enter' | 'ArrowLeft' | 'ArrowRight'
 
@@ -13,12 +13,14 @@ export type HotkeyKey = 'Enter' | 'ArrowLeft' | 'ArrowRight'
  */
 export function useHotkey(key: HotkeyKey, onPress: () => void, enabled = true) {
   // Luôn gọi bản onPress mới nhất mà không phải gắn lại listener mỗi lần render.
+  // useLayoutEffect (chạy ngay khi giao diện cập nhật) thay vì useEffect (có thể chạy trễ hơn): bấm phím ngay
+  // khi câu mới vừa hiện thì phím tắt đã sẵn sàng và dùng đúng câu đang xem, không dùng hàm của lần render trước.
   const handlerRef = useRef(onPress)
-  useEffect(() => {
+  useLayoutEffect(() => {
     handlerRef.current = onPress
   })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!enabled) return
     const listener = (event: KeyboardEvent) => {
       if (event.key !== key || event.defaultPrevented || event.isComposing) return

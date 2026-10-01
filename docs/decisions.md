@@ -207,6 +207,16 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Sau Phase 6 (kèm phím tắt khi làm bài: Enter kiểm tra, ← → chuyển câu), làm luôn Phase 10 (PWA / trải nghiệm điện thoại). Phase 7 (đăng nhập), 8 (quản trị), 9 (xếp hạng, thống kê) làm sau.
 - Hệ quả: ứng dụng vẫn chỉ có khách (D-037); Q-07 (session cookie hay JWT) quyết khi làm Phase 7. Việc giới hạn số lượt làm của khách vẫn nằm ở Phase 7, phải làm trước khi đưa ứng dụng lên mạng công khai.
 
+### D-040 · PWA bằng `vite-plugin-pwa`, offline chỉ cho giao diện · Đã chốt (chủ dự án, 2026-10-01)
+- Thêm devDependency `vite-plugin-pwa` 1.3 (MIT, hỗ trợ Vite 8): Web App Manifest + service worker (Workbox) lưu sẵn file giao diện; có bản mới thì hỏi người dùng tải lại. Lý do: tự viết service worker phải tự quản lý phiên bản bộ nhớ đệm, dễ làm app kẹt ở bản cũ.
+- Offline chỉ mở được giao diện và báo "Bạn đang offline"; không làm bài offline (phải tải đáp án về máy, trái nguyên tắc chấm ở server, D-037). Không lưu đệm kết quả API.
+- Icon tạo từ logo chữ "Q" (SVG) bằng Chrome headless sẵn có; không thêm công cụ.
+
+### D-041 · E2E bằng Playwright, dùng Chrome đã cài · Đã chốt (chủ dự án, 2026-10-01)
+- Thêm devDependency `@playwright/test` 1.63 (Apache-2.0). Chạy bằng Chrome đã cài trên máy (`channel: 'chrome'`), không tải trình duyệt riêng của Playwright.
+- E2E chạy với backend + database dev đang chạy (dữ liệu thật), lệnh riêng `npm run test:e2e`, không gộp vào `npm run test`.
+- Trên điện thoại: vuốt trái / phải để chuyển câu (tương đương phím ← →); đồng hồ thi thử luôn hiện khi cuộn.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

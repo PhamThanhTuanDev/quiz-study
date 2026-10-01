@@ -377,6 +377,37 @@ describe('AttemptPage – phím tắt', () => {
   })
 })
 
+describe('AttemptPage – vuốt trên điện thoại', () => {
+  function swipe(element: Element, from: { x: number; y: number }, to: { x: number; y: number }) {
+    fireEvent.touchStart(element, { touches: [{ clientX: from.x, clientY: from.y }] })
+    fireEvent.touchEnd(element, { changedTouches: [{ clientX: to.x, clientY: to.y }] })
+  }
+
+  it('goes to the next question on a left swipe and back on a right swipe', async () => {
+    mockApi({ 'GET /api/v1/attempts/luot-1': EXAM })
+    renderRoute('/attempts/luot-1')
+    await screen.findByRole('heading', { name: 'Câu 1/2' })
+
+    swipe(screen.getByRole('article'), { x: 300, y: 200 }, { x: 100, y: 210 })
+    expect(screen.getByRole('heading', { name: 'Câu 2/2' })).toBeInTheDocument()
+
+    swipe(screen.getByRole('article'), { x: 100, y: 200 }, { x: 300, y: 190 })
+    expect(screen.getByRole('heading', { name: 'Câu 1/2' })).toBeInTheDocument()
+  })
+
+  it('ignores short or mostly vertical moves, and swipes inside the code', async () => {
+    mockApi({ 'GET /api/v1/attempts/luot-1': attempt({}) })
+    renderRoute('/attempts/luot-1')
+    await screen.findByRole('heading', { name: 'Câu 1/2' })
+
+    swipe(screen.getByRole('article'), { x: 300, y: 200 }, { x: 270, y: 200 }) // quá ngắn
+    swipe(screen.getByRole('article'), { x: 300, y: 100 }, { x: 200, y: 400 }) // đang cuộn trang
+    swipe(screen.getByRole('region', { name: 'Đoạn code' }), { x: 300, y: 200 }, { x: 50, y: 200 }) // cuộn code
+
+    expect(screen.getByRole('heading', { name: 'Câu 1/2' })).toBeInTheDocument()
+  })
+})
+
 describe('AttemptPage – không tìm thấy', () => {
   it('shows a not-found page for an unknown attempt and drops it from the recent list', async () => {
     rememberAttempt(attempt({ id: 'khong-co' }))

@@ -13,6 +13,7 @@ import SubmitConfirm from '../components/SubmitConfirm'
 import { useAsync } from '../hooks/useAsync'
 import { useFocusOnChange } from '../hooks/useFocusOnChange'
 import { useHotkey } from '../hooks/useHotkey'
+import { useSwipe } from '../hooks/useSwipe'
 import { useQuizAttempt } from '../hooks/useQuizAttempt'
 import { useStartAttempt } from '../hooks/useStartAttempt'
 import { getAttempt } from '../services/quizService'
@@ -64,6 +65,7 @@ function AttemptContent({ initial }: { initial: Attempt }) {
   const total = attempt.questions.length
   const answeredCount = attempt.questions.filter((question) => question.selectedAnswerId !== null).length
   const practiceDone = !isExam && answeredCount === total
+  const showTimerBar = isExam && !finished && attempt.remainingSeconds !== null
   const question = attempt.questions[currentIndex]
   const questionHeadingRef = useFocusOnChange<HTMLHeadingElement>(currentIndex)
   // Vừa nộp bài / vừa làm hết lượt luyện tập: nút đang focus biến mất, nên đưa focus tới kết quả.
@@ -77,9 +79,10 @@ function AttemptContent({ initial }: { initial: Attempt }) {
   const nextMistake = nextMistakeIndex(attempt, currentIndex)
   const goPrevious = () => goTo(currentIndex - 1)
   const goNext = () => goTo(currentIndex + 1)
-  // ← → chuyển câu, song song với bấm nút "Câu trước" / "Câu sau".
+  // ← → chuyển câu, song song với bấm nút "Câu trước" / "Câu sau"; trên điện thoại thì vuốt (như lật trang).
   useHotkey('ArrowLeft', goPrevious)
   useHotkey('ArrowRight', goNext)
+  const swipeHandlers = useSwipe({ onSwipeLeft: goNext, onSwipeRight: goPrevious })
 
   return (
     <div className="space-y-6">
@@ -95,14 +98,23 @@ function AttemptContent({ initial }: { initial: Attempt }) {
         <div>
           <p className="text-sm font-semibold text-primary">{MODE_LABEL[attempt.mode]}</p>
           <h1 className="text-2xl font-bold sm:text-3xl">{attempt.quizTitle}</h1>
-          <p className="mt-1 text-muted">
+          {!showTimerBar && (
+            <p className="mt-1 text-muted">
+              Đã trả lời {answeredCount}/{total} câu
+            </p>
+          )}
+        </div>
+      </header>
+
+      {showTimerBar && attempt.remainingSeconds !== null && (
+        // Dính ở đầu màn hình khi cuộn: câu hỏi dài (nhất là trên điện thoại), cuộn xuống vẫn thấy giờ còn lại.
+        <div className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 border-b border-line bg-canvas/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6">
+          <p className="text-sm text-muted">
             Đã trả lời {answeredCount}/{total} câu
           </p>
-        </div>
-        {isExam && !finished && attempt.remainingSeconds !== null && (
           <CountdownTimer remainingSeconds={attempt.remainingSeconds} onExpire={() => void submit()} />
-        )}
-      </header>
+        </div>
+      )}
 
       <div ref={outcomeRef} tabIndex={-1} className="focus:outline-none">
         {isExam && finished && attempt.result && (
@@ -120,7 +132,7 @@ function AttemptContent({ initial }: { initial: Attempt }) {
 
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-start lg:gap-8">
         <div className="space-y-6">
-          <div className="rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6">
+          <div className="rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6" {...swipeHandlers}>
             <QuestionView
               key={question.questionId}
               question={question}
@@ -145,6 +157,8 @@ function AttemptContent({ initial }: { initial: Attempt }) {
               </Button>
             </ShortcutHint>
           </div>
+          {/* Chỉ hiện trên màn hình cảm ứng: máy tính đã có gợi ý phím tắt trên nút. */}
+          <p className="text-center text-sm text-muted pointer-fine:hidden">Vuốt trái / phải trên câu hỏi để chuyển câu.</p>
 
           {isExam && !finished && (
             confirming ? (
