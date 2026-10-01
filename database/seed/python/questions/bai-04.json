@@ -1,0 +1,132 @@
+{
+  "$comment": "Bản đồ vị trí Bài 4 (D-035): w02.3 LT không có trang trắc nghiệm; w02.3 HW trang 3–6. Phương án sai của câu điền khuyết tránh gây vòng lặp vô hạn.",
+  "chapter": 4,
+  "questions": [
+    {
+      "ref": "w023-hw/3/1", "stem": ["L01"], "code": ["L02-L05"], "ownerAnswer": ["L06"],
+      "fill": [["if", ":"], ["while", ":"], ["for", ":"], ["while", ";"]], "answer": "B",
+      "reason": "while i < 6: lặp và in i cho tới khi i không còn nhỏ hơn 6. if chỉ chạy một lần; for i < 6 và dấu ; đều sai cú pháp.",
+      "verify": { "kind": "fill", "cases": [{ "want": "1\n2\n3\n4\n5" }] }
+    },
+    {
+      "ref": "w023-hw/3/2", "stem": ["L07"], "code": ["L08-L12"], "ownerAnswer": ["L13"],
+      "fill": [["pass"], ["break"], ["return"], ["stop"]], "answer": "B",
+      "reason": "break thoát ngay khỏi vòng lặp khi i == 3 (sau vòng lặp i vẫn là 3). pass không làm gì nên vòng lặp chạy tới i = 6; return chỉ dùng trong hàm; stop không phải lệnh Python.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(i)", "want": "3" }] }
+    },
+    {
+      "ref": "w023-hw/3/3", "stem": ["L14"], "code": ["L15-L17"], "ownerAnswer": ["L18"],
+      "fill": [["while", "in", ":"], ["for", "of", ":"], ["for", "in", ":"], ["for", "in", ";"]], "answer": "C",
+      "reason": "Duyệt từng phần tử của list: for x in fruits:. while x in fruits báo lỗi vì x chưa có; of không phải từ khoá Python; dấu ; sai cú pháp.",
+      "verify": { "kind": "fill", "cases": [{ "want": "apple\nbanana\ncherry" }] }
+    },
+    {
+      "ref": "w023-hw/3/4", "stem": ["R01"], "code": ["R02-R07"], "ownerAnswer": ["R08"],
+      "fill": [["continue"], ["break"], ["pass"], ["skip"]], "answer": "A",
+      "reason": "continue bỏ qua phần còn lại của lần lặp khi i == 3 (không in 3) và sang lần lặp tiếp theo. break dừng hẳn; pass vẫn in 3; skip không phải lệnh Python.",
+      "verify": { "kind": "fill", "cases": [{ "want": "1\n2\n4\n5\n6" }] }
+    },
+    {
+      "ref": "w023-hw/3/5", "stem": ["R09"], "code": ["R10-R15"], "ownerAnswer": ["R16"],
+      "fill": [["elif:"], ["finally:"], ["else:"], ["except:"]], "answer": "C",
+      "reason": "Khối else của while chạy một lần khi điều kiện lặp trở thành sai. elif phải có điều kiện; finally và except chỉ đi với try.",
+      "verify": { "kind": "fill", "cases": [{ "want": "1\n2\n3\n4\n5\ni is no longer less than 6" }] }
+    },
+    {
+      "ref": "w023-hw/4/6", "stem": ["L01-L02"], "code": ["L03-L07"], "ownerAnswer": ["L08"],
+      "fill": [["break"], ["pass"], ["continue"], ["return"]], "answer": "C",
+      "reason": "continue bỏ qua lệnh in khi gặp banana và chuyển sang phần tử tiếp theo. break dừng hẳn vòng lặp; pass vẫn in banana; return chỉ dùng trong hàm.",
+      "verify": { "kind": "fill", "cases": [{ "want": "apple\ncherry" }] }
+    },
+    {
+      "ref": "w023-hw/4/7", "stem": ["L09"], "code": ["L10-L11"], "ownerAnswer": ["L12"],
+      "fill": [["range(5)"], ["range(1, 6)"], ["range(6)"], ["range(6, 0)"]], "answer": "C",
+      "reason": "range(6) sinh 0, 1, …, 5: đúng 6 lần. range(5) và range(1, 6) chỉ 5 lần; range(6, 0) không có phần tử nào.",
+      "verify": { "kind": "fill", "cases": [{ "want": "0\n1\n2\n3\n4\n5" }] }
+    },
+    {
+      "ref": "w023-hw/4/8", "stem": ["L13-L14"], "options": ["L15-L18"], "answer": "B",
+      "reason": "range(<giá trị>) chỉ có một đối số thì bước nhảy mặc định là 1.",
+      "verify": { "kind": "run", "cases": [{ "setup": "r = range(10)\nprint(r[1] - r[0])", "expect": "1" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w023-hw/4/9", "stem": ["R01"], "code": ["R02-R06"], "ownerAnswer": ["R07"],
+      "fill": [["continue"], ["break"], ["pass"], ["return"]], "answer": "B",
+      "reason": "break thoát khỏi vòng lặp khi gặp banana nên chỉ in apple. continue bỏ qua banana nhưng vẫn in cherry; pass in cả ba; return chỉ dùng trong hàm.",
+      "verify": { "kind": "fill", "cases": [{ "want": "apple" }] }
+    },
+    {
+      "ref": "w023-hw/4/10", "stem": ["R08"], "options": ["R09-R12"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Viết trên một dòng như slide thì cả 4 phương án đều sai cú pháp: không được đặt lệnh for sau dấu ; trên cùng một dòng. Nếu hiểu là hai dòng (x = 0 rồi vòng for) thì chỉ A đúng (B, D dùng := sai chỗ, C thiếu dấu hai chấm).",
+      "reason": "Tách thành hai dòng thì A chạy được và x = 10.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(x)", "cases": [{ "replace": { "; for": "\nfor" }, "want": "10" }] }
+    },
+    {
+      "ref": "w023-hw/4/11", "stem": ["R13"], "code": ["R14-R17"], "options": ["R18-R21"], "answer": "D",
+      "reason": "i = 0, 1, 2: s = 0 + 0 + 2 + 4 = 6.",
+      "verify": { "kind": "run", "cases": [{ "expect": "6" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w023-hw/5/12", "stem": ["L01"], "code": ["L02-L06"], "options": ["L07-L10"], "answer": "D",
+      "reason": "range(1, 101) là các số 1 … 100; điều kiện dùng and nên chỉ cộng số chia hết cho cả 3 và 5 (15, 30, …, 90): tổng 315.",
+      "verify": { "kind": "run", "cases": [{ "expect": "315" }] }
+    },
+    {
+      "ref": "w023-hw/5/13", "stem": ["L11"], "options": ["L12-L17"], "answer": "D",
+      "reason": "for duyệt qua mọi đối tượng lặp được (list, chuỗi, dict…), không chỉ range(), nên D chưa chính xác. A, B, C là mô tả thường dùng của while và for.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/reference/compound_stmts.html#the-for-statement"] }
+    },
+    {
+      "ref": "w023-hw/5/14", "stem": ["R01"], "code": ["R02-R06"], "options": ["R07-R10"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề hỏi ý nghĩa của x nhưng đoạn chương trình không có biến x; các phương án nói về k (tên biến không khớp, P10). Nếu đề là k thì đáp án A: k là số chữ số của n.",
+      "reason": "Mỗi lần chia nguyên cho 10 bỏ đi một chữ số, k đếm số lần chia: k là số chữ số của n (n = 1000 cho k = 4, không phải 1 như D).",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          { "stdin": "1000\n", "append": "print(k)", "expect": "Nhập n <= 1000: 4" },
+          { "stdin": "-305\n", "append": "print(k)", "expect": "Nhập n <= 1000: 3" }
+        ]
+      }
+    },
+    {
+      "ref": "w023-hw/5/15", "stem": ["R11"], "code": ["R12-R16"], "options": ["R17-R20"], "answer": "D",
+      "reason": "x tăng khi i chẵn: i = 0, 2, 4, 6, 8 nên x = 5.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(x)", "expect": "5" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w023-hw/6/16", "stem": ["L01"], "code": ["L02-L06"], "options": ["L07-L09"], "answer": "A",
+      "reason": "Lấy số lớn trừ số nhỏ cho tới khi hai số bằng nhau là thuật toán Euclid (dạng phép trừ) tìm ước chung lớn nhất.",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          { "setup": "m, n = 12, 18", "append": "print(m)", "expect": "6" },
+          { "setup": "m, n = 21, 14", "append": "print(m)", "expect": "7" }
+        ]
+      }
+    },
+    {
+      "ref": "w023-hw/6/17", "stem": ["L10"], "code": ["L11-L17"], "options": ["L18-L21"], "answer": "C",
+      "reason": "In 0 … 9 liền nhau, tới i == 10 thì break. Khối else của for chỉ chạy khi vòng lặp không bị break, nên không in dấu *.",
+      "verify": { "kind": "run", "cases": [{ "expect": "0123456789" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w023-hw/6/18", "stem": ["R01"], "code": ["R02-R03"], "options": ["R04-R07"], "answer": "A",
+      "reason": "range(5, 7) là 5, 6; str(i) * 3 lặp chuỗi ba lần: 555 rồi 666.",
+      "verify": { "kind": "run", "cases": [{ "expect": "555\n666" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w023-hw/6/19", "stem": ["R08"], "code": ["R09-R10"], "options": ["R11-R14"], "answer": "C",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Với bước -2, range(6, 0, -2) là 6, 4, 2 nên in 66, 44, 22 (không phải chỉ 66 44 như đề); không phương án nào cho đúng 66 44. Đề xuất C (-2) nếu sửa đề thành 66 44 22.",
+      "reason": "Bước 0 báo lỗi ValueError; None báo lỗi TypeError; -1 in 66 55 44 33 22 11.",
+      "verify": { "kind": "runOptions", "intoBlanks": true, "cases": [{ "want": "66\n44\n22" }] }
+    },
+    {
+      "ref": "w023-hw/6/20", "stem": ["R15"], "code": ["R16-R20"], "options": ["R21-R24"], "answer": "B",
+      "reason": "in với dict kiểm tra khoá: 'toan' là khoá nên in 1. 'a' không có trong chuỗi 'cntt' nên không in 2. Lệnh cuối in 3.",
+      "verify": { "kind": "run", "cases": [{ "expect": "1\n3" }], "answerIsOutput": true }
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "$comment": "Cấu hình môn Python (D-033, D-035). Không chứa nội dung câu hỏi: nội dung được dựng lại từ PDF theo bản đồ vị trí trong questions/*.json. expectedQuestions lấy từ khảo sát (docs/source-material-analysis.md, mục 3.4) để phát hiện câu bị sót.",
+  "subject": {
+    "slug": "python",
+    "name": "Nhập môn lập trình Python",
+    "code": "IPPA233277",
+    "description": null,
+    "displayOrder": 2,
+    "published": true
+  },
+  "chapters": [
+    { "number": 1, "code": "Bài 1", "title": "Giới thiệu" },
+    { "number": 2, "code": "Bài 2", "title": "Các khái niệm cơ bản" },
+    { "number": 3, "code": "Bài 3", "title": "Kiểu dữ liệu và cấu trúc rẽ nhánh" },
+    { "number": 4, "code": "Bài 4", "title": "Cấu trúc lặp" },
+    { "number": 5, "code": "Bài 5", "title": "List" },
+    { "number": 6, "code": "Bài 6", "title": "Tuple, Set, Dictionary" },
+    { "number": 7, "code": "Bài 7", "title": "Hàm" },
+    { "number": 8, "code": "Bài 8", "title": "Xử lý chuỗi" },
+    { "number": 9, "code": "Bài 9", "title": "Module và thư viện" },
+    { "number": 10, "code": "Bài 10", "title": "Class" }
+  ],
+  "sources": [
+    { "key": "w01-lt", "label": "w01 LT", "chapter": 1, "expectedQuestions": 4, "file": "[IPPA233277] w01-c01_gioi-thieu (done).pdf" },
+    { "key": "w021-lt", "label": "w02.1 LT", "chapter": 2, "expectedQuestions": 8, "file": "[IPPA233277] w02.1-c02_cac-khai-niem-co-ban (done).pdf" },
+    { "key": "w021-hw", "label": "w02.1 HW", "chapter": 2, "expectedQuestions": 32, "file": "[IPPA233277] w02.1-c02_cac-khai-niem-co-ban_HW (choSV).pdf" },
+    { "key": "w022-lt", "label": "w02.2 LT", "chapter": 3, "expectedQuestions": 0, "file": "[IPPA233277] w02.2-c02_kieu-du-lieu_cau-truc-re-nhanh (done).pdf" },
+    { "key": "w022-hw", "label": "w02.2 HW", "chapter": 3, "expectedQuestions": 20, "file": "[IPPA233277] w02.2-c02_kieu-du-lieu_cau-truc-re-nhanh_HW (done).pdf" },
+    { "key": "w023-lt", "label": "w02.3 LT", "chapter": 4, "expectedQuestions": 0, "file": "[IPPA233277] w02.3-c02_cau-truc-lap (done).pdf" },
+    { "key": "w023-hw", "label": "w02.3 HW", "chapter": 4, "expectedQuestions": 20, "file": "[IPPA233277] w02.3-c02_cau-truc-lap_HW (done).pdf" },
+    { "key": "w03-lt", "label": "w03 LT", "chapter": 5, "expectedQuestions": 0, "file": "[IPPA233277] w03-c03_cac-kieu-du-lieu-phuc-hop_list (done).pdf" },
+    { "key": "w03-hw", "label": "w03 HW", "chapter": 5, "expectedQuestions": 41, "file": "[IPPA233277] w03-c03_cac-kieu-du-lieu-phuc-hop_list_HW (done)-sv.pdf" },
+    { "key": "w041-lt", "label": "w04.1 LT", "chapter": 6, "expectedQuestions": 17, "file": "[IPPA233277] w04.1-c03_cac-kieu-du-lieu-phuc-hop_tuple_set_dictionary (done).pdf" },
+    { "key": "w041-hw", "label": "w04.1 HW", "chapter": 6, "expectedQuestions": 32, "file": "[IPPA233277] w04.1-c03_cac-kieu-du-lieu-phuc-hop_tuple_set_dictionary_HW (-sv-).pdf" },
+    { "key": "w05-lt", "label": "w05 LT", "chapter": 7, "expectedQuestions": 7, "file": "[IPPA233277] w05-c04_ham (done).pdf" },
+    { "key": "w05-hw", "label": "w05 HW", "chapter": 7, "expectedQuestions": 49, "file": "[IPPA233277] w05-c04_ham_HW-sv (done).pdf" },
+    { "key": "w06-lt", "label": "w06 LT", "chapter": 8, "expectedQuestions": 8, "file": "[IPPA233277] w06-c04_xu-ly-chuoi (done).pdf" },
+    { "key": "w06-hw", "label": "w06 HW", "chapter": 8, "expectedQuestions": 30, "file": "[IPPA233277] w06-c04_xu-ly-chuoi_HW (done).pdf" },
+    { "key": "w07-lt", "label": "w07 LT", "chapter": 9, "expectedQuestions": 4, "file": "[IPPA233277] w07-c05_su-dung-modules-library-trong-python (done).pdf" },
+    { "key": "w07-hw", "label": "w07 HW", "chapter": 9, "expectedQuestions": 10, "file": "[IPPA233277] w07-c05_su-dung-modules-library-trong-python_HW (done).pdf" },
+    { "key": "w0809-lt", "label": "w08-09 LT", "chapter": 10, "expectedQuestions": 6, "file": "[IPPA233277] w08-w09-c06_class (done).pdf" },
+    { "key": "w0809-hw", "label": "w08-09 HW", "chapter": 10, "expectedQuestions": 10, "file": "[IPPA233277] w08-w09-c06_class_HW (done).pdf" }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "$comment": "Bản đồ vị trí Bài 10 (D-035): w08-09 LT trang 32–33; w08-09 HW trang 3–6. softWrap nối lại dòng code bị slide tự ngắt vì quá dài (dòng sau bắt đầu sát lề trái).",
+  "chapter": 10,
+  "questions": [
+    {
+      "ref": "w0809-lt/32/1", "stem": ["L01"], "code": ["L02-L03"], "ownerAnswer": ["L04"],
+      "fill": [["class"], ["def"], ["struct"], ["new class"]], "answer": "A",
+      "reason": "Khai báo lớp bằng từ khoá class. def dùng cho hàm (và cần cặp ngoặc); struct, new không phải từ khoá Python.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(my_class.x)", "want": "5" }] }
+    },
+    {
+      "ref": "w0809-lt/32/2", "stem": ["L05-L06"], "code": ["L07-L09"], "ownerAnswer": ["L10"],
+      "fill": [["cls1", "my_class"], ["my_class()", "cls1"], ["cls1", "new my_class()"], ["cls1", "my_class()"]], "answer": "D",
+      "reason": "Tạo đối tượng bằng cách gọi lớp: cls1 = my_class(). Thiếu ngoặc thì cls1 chỉ là tên khác của lớp; vế trái của phép gán phải là tên biến; Python không có từ khoá new.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(type(cls1).__name__, cls1.x)", "want": "my_class 5" }] }
+    },
+    {
+      "ref": "w0809-lt/32/3", "stem": ["R01"], "code": ["R02-R05"], "ownerAnswer": ["R06"],
+      "fill": [["cls1(x)"], ["cls1.x"], ["cls1->x"], ["cls1[\"x\"]"]], "answer": "B",
+      "reason": "Truy cập thuộc tính bằng dấu chấm: cls1.x. Đối tượng không gọi được như hàm, không dùng -> và không truy cập bằng ngoặc vuông.",
+      "verify": { "kind": "fill", "cases": [{ "want": "5" }] }
+    },
+    {
+      "ref": "w0809-lt/32/4", "stem": ["R07"], "code": ["R08-R11"], "ownerAnswer": ["R12"],
+      "fill": [["init"], ["_init_"], ["__init__"], ["constructor"]], "answer": "C",
+      "reason": "Hàm khởi tạo tên __init__ (hai dấu gạch dưới mỗi bên), tự chạy khi tạo đối tượng. Tên khác chỉ là phương thức thường nên Person(\"John\", 36) báo lỗi TypeError.",
+      "verify": { "kind": "fill", "cases": [{ "append": "p = Person(\"John\", 36)\nprint(p.name, p.age)", "want": "John 36" }] }
+    },
+    {
+      "ref": "w0809-lt/33/5", "stem": ["L01"], "code": ["L02"], "ownerAnswer": ["L03"],
+      "fill": [["Person(Student)"], ["Student(Person)"], ["Student extends Person"], ["Student: Person"]], "answer": "B",
+      "reason": "Lớp con ghi lớp cha trong ngoặc: class Student(Person):. Đảo lại là Person kế thừa Student; extends là cú pháp của Java.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "class Person:\n    pass", "append": "    pass\nprint(Student.__bases__[0].__name__)", "want": "Person" }] }
+    },
+    {
+      "ref": "w0809-lt/33/6", "stem": ["R01-R02"], "code": ["R03-R11"], "ownerAnswer": ["R12"],
+      "fill": [["std.firstname()"], ["Student.printname()"], ["std.printname()"], ["printname(std)"]], "answer": "C",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề nói đối tượng tên std nhưng code tạo x = Student(\"Mike\") (tên không khớp, P10), nên chạy nguyên văn thì mọi phương án báo lỗi NameError. Nếu sửa x thành std thì đáp án C std.printname().",
+      "reason": "Student kế thừa printname từ Person; gọi qua đối tượng: std.printname(). firstname là chuỗi, không gọi được; gọi qua lớp thì thiếu self; printname không phải hàm đứng riêng.",
+      "verify": { "kind": "fill", "cases": [{ "replace": { "x = Student": "std = Student" }, "want": "Mike" }] }
+    },
+
+    {
+      "ref": "w0809-hw/3/1", "stem": ["L01"], "code": ["L02-L07"], "options": ["L08-L11"], "answer": "C",
+      "softWrap": ["L03"],
+      "reason": "Truyền 'Java' thì tham số line nhận 'Java', giá trị mặc định 'Python' không được dùng.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Java" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w0809-hw/3/2", "stem": ["L12"], "code": ["L13-L18"], "options": ["L19-L21"], "answer": "B",
+      "reason": "Point() dùng giá trị mặc định x = 0, y = 0, rồi cộng thêm 1: in 1 1.",
+      "verify": { "kind": "run", "cases": [{ "expect": "1 1" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w0809-hw/3/3", "stem": ["R01"], "code": ["R02-R13"], "options": ["R14-R17"], "answer": "B",
+      "reason": "p1 - p2 gọi __sub__, nhưng hàm này lại cộng toạ độ: (3 + 1, 4 + 2) = (4, 6).",
+      "verify": { "kind": "run", "cases": [{ "expect": "4 6" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w0809-hw/4/4", "stem": ["L01"], "code": ["L02-L09"], "options": ["L10-L15"], "answer": "D",
+      "reason": "a là thuộc tính công khai nên gán obj.a = 45 bình thường; chương trình không đụng tới __b nên không lỗi và in 45.",
+      "verify": { "kind": "run", "cases": [{ "expect": "45" }] }
+    },
+    {
+      "ref": "w0809-hw/4/5", "stem": ["R01"], "code": ["R02-R05"], "options": ["R06-R08"], "answer": "D",
+      "reason": "Tạo đối tượng bằng cách gọi lớp với các đối số của __init__ (trừ self): Dog(\"Rufus\", 3). Lớp không có create; gọi thẳng __init__ qua lớp thì thiếu self; Dog() thiếu đối số.",
+      "verify": { "kind": "runOptions", "wrap": "{code}\nd = {option}\nprint(type(d).__name__, d.name, d.age)", "cases": [{ "want": "Dog Rufus 3" }] }
+    },
+    {
+      "ref": "w0809-hw/4/6", "stem": ["R09"], "code": ["R10-R19"], "options": ["R20-R23"], "answer": "D",
+      "reason": "JackRussellTerrier kế thừa walk từ Dog nên bobo.walk() trả về *walking*.",
+      "verify": { "kind": "run", "cases": [{ "expect": "*walking*" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w0809-hw/5/7", "stem": ["L01"], "code": ["L02-L11"], "options": ["L12-L14"], "answer": "B",
+      "reason": "Lớp con ghi đè speak nên gọi bản của lớp con: Arff!.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Arff!" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w0809-hw/5/8", "stem": ["R01"], "code": ["R02-R11"], "options": ["R12-R14"], "answer": "D",
+      "reason": "talk gọi super().speak(), tức speak của lớp cha Dog: Woof!.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Woof!" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w0809-hw/6/9", "stem": ["L01"], "code": ["L02-L15"], "options": ["L16-L19"], "answer": "A",
+      "softWrap": ["L09"],
+      "reason": "a == b gọi __eq__: 1 * 2 == 2 * 1 nên True.",
+      "verify": { "kind": "run", "cases": [{ "expect": "True" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w0809-hw/6/10", "stem": ["R01"], "code": ["R02-R16"], "options": ["R17-R20"], "answer": "D",
+      "reason": "B và C kế thừa __str__ của A (không ghi đè) nên cả ba đối tượng đều in ra A.",
+      "verify": { "kind": "run", "cases": [{ "expect": "A A A" }], "answerIsOutput": true }
+    }
+  ]
+}

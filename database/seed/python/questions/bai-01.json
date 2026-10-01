@@ -1,0 +1,42 @@
+{
+  "$comment": "Bản đồ vị trí Bài 1 (D-035): w01 LT trang 8 và 9 là cùng 4 câu (trang 9 có in đậm, trang 8 không). Giữ trang 9, trang 8 là câu trùng (D-034).",
+  "chapter": 1,
+  "questions": [
+    {
+      "ref": "w01-lt/9/1",
+      "stem": ["L01-L02"],
+      "options": ["L03-L10"],
+      "answer": "B",
+      "reason": "Guido van Rossum công bố Python 0.9.0 lần đầu (lên nhóm tin alt.sources) vào tháng 2/1991.",
+      "verify": { "kind": "reasoning", "source": "Guido van Rossum, \"A Brief Timeline of Python\", https://python-history.blogspot.com/2009/01/brief-timeline-of-python.html" }
+    },
+    {
+      "ref": "w01-lt/9/2",
+      "stem": ["L11-L13"],
+      "options": ["L14-L21"],
+      "answer": "D",
+      "reason": "Python chạy được trên Unix, Linux và Windows (tài liệu chính thức có hướng dẫn cho cả ba), nên cả ba đều đúng.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/using/index.html"] }
+    },
+    {
+      "ref": "w01-lt/9/3",
+      "stem": ["R01-R02"],
+      "options": ["R03-R10"],
+      "answer": "C",
+      "reason": "Python là ngôn ngữ thông dịch (interpreted): trình thông dịch đọc và thực thi mã nguồn, không cần bước biên dịch ra file chạy riêng. \"Phiên dịch\" không phải thuật ngữ lập trình.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/glossary.html#term-interpreted", "https://docs.python.org/3/tutorial/interpreter.html"] }
+    },
+    {
+      "ref": "w01-lt/9/4",
+      "stem": ["R11-R13"],
+      "options": ["R14-R21"],
+      "answer": "A",
+      "reason": "Theo chỉ số TIOBE tháng 6/2023, Python đứng thứ 1 (giữ vị trí này từ tháng 10/2021). Câu phụ thuộc thời điểm nhưng đề đã ghi rõ mốc 6/2023 (P11, D-034).",
+      "verify": { "kind": "reasoning", "source": "TIOBE Index, tháng 6/2023, https://www.tiobe.com/tiobe-index/" }
+    },
+    { "ref": "w01-lt/8/1", "stem": ["L01-L02"], "options": ["L03-L10"], "duplicateOf": "w01-lt/9/1" },
+    { "ref": "w01-lt/8/2", "stem": ["L11-L13"], "options": ["L14-L21"], "duplicateOf": "w01-lt/9/2" },
+    { "ref": "w01-lt/8/3", "stem": ["R01-R02"], "options": ["R03-R10"], "duplicateOf": "w01-lt/9/3" },
+    { "ref": "w01-lt/8/4", "stem": ["R11-R13"], "options": ["R14-R21"], "duplicateOf": "w01-lt/9/4" }
+  ]
+}

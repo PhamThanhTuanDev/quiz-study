@@ -1,0 +1,222 @@
+{
+  "$comment": "Bản đồ vị trí Bài 8 (D-035): w06 LT trang 16; w06 HW trang 2–6. Nháy cong chỉ ghi giá trị trong lời đề thì đọc theo nghĩa thông thường; nháy cong trong code hoặc trong phương án bị hỏi có hợp lệ không thì vào nhóm typography.",
+  "chapter": 8,
+  "questions": [
+    {
+      "ref": "w06-lt/16/1", "stem": ["L01"], "code": ["L02"], "ownerAnswer": ["L03"],
+      "fill": [["x.len()"], ["len(x)"], ["length(x)"], ["len[x]"]], "answer": "B",
+      "reason": "len(x) trả về độ dài chuỗi. Chuỗi không có phương thức len(); Python không có hàm length; len là hàm nên gọi bằng ngoặc tròn.",
+      "verify": { "kind": "fill", "cases": [{ "want": "11" }] }
+    },
+    {
+      "ref": "w06-lt/16/2", "stem": ["L04"], "code": ["L05"], "ownerAnswer": ["L06"],
+      "fill": [["txt[1]"], ["txt(0)"], ["txt.first()"], ["txt[0]"]], "answer": "D",
+      "reason": "Ký tự đầu tiên có chỉ số 0: txt[0]. txt[1] là ký tự thứ hai; chuỗi không gọi được như hàm và không có first().",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(x)", "want": "H" }] }
+    },
+    {
+      "ref": "w06-lt/16/3", "stem": ["L07"], "code": ["L08"], "ownerAnswer": ["L09"],
+      "fill": [["txt[1:4]"], ["txt[2:4]"], ["txt[1:3]"], ["txt(1, 4)"]], "answer": "A",
+      "reason": "Vị trí thứ 2 đến thứ 4 (đếm từ 1, như các câu khác) là chỉ số 1, 2, 3: lát cắt txt[1:4] = 'ell' (không lấy chỉ số 4). txt[2:4] chỉ lấy 'll'; txt[1:3] lấy 'el'; chuỗi không gọi được như hàm.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(x)", "want": "ell" }] }
+    },
+    {
+      "ref": "w06-lt/16/4", "stem": ["L10"], "code": ["L11"], "ownerAnswer": ["L12"],
+      "fill": [["txt.trim()"], ["txt.lstrip()"], ["txt.strip()"], ["strip(txt)"]], "answer": "C",
+      "reason": "strip() bỏ khoảng trắng ở cả đầu và cuối. lstrip() chỉ bỏ bên trái; Python không có trim(); strip là phương thức, không phải hàm đứng riêng.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(repr(x))", "want": "'Hello World'" }] }
+    },
+    {
+      "ref": "w06-lt/16/5", "stem": ["R01"], "code": ["R02"], "ownerAnswer": ["R03"],
+      "fill": [["txt.upper()"], ["txt.capitalize()"], ["txt.toUpperCase()"], ["upper(txt)"]], "answer": "A",
+      "reason": "upper() đổi toàn bộ thành chữ in hoa. capitalize() chỉ viết hoa chữ đầu; toUpperCase là của JavaScript; upper là phương thức, không phải hàm đứng riêng.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(txt)", "want": "HELLO WORLD" }] }
+    },
+    {
+      "ref": "w06-lt/16/6", "stem": ["R04"], "code": ["R05"], "ownerAnswer": ["R06"],
+      "fill": [["txt.swapcase()"], ["txt.toLower()"], ["txt.lower()"], ["lower(txt)"]], "answer": "C",
+      "reason": "lower() đổi toàn bộ thành chữ thường. swapcase() đảo hoa thường (thành hELLO wORLD); chuỗi không có toLower(); lower là phương thức, không phải hàm đứng riêng.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(txt)", "want": "hello world" }] }
+    },
+    {
+      "ref": "w06-lt/16/7", "stem": ["R07"], "code": ["R08"], "ownerAnswer": ["R09"],
+      "fill": [["replace", "'J'", "'H'"], ["replace", "'H'", "'J'"], ["change", "'H'", "'J'"], ["replace", "H", "J"]], "answer": "B",
+      "reason": "replace(cũ, mới): txt.replace('H', 'J'). Đảo thứ tự thì tìm 'J' để thay nên chuỗi không đổi; chuỗi không có change(); thiếu dấu nháy thì H, J là tên biến chưa có.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(txt)", "want": "Jello World" }] }
+    },
+    {
+      "ref": "w06-lt/16/8", "stem": ["R10"], "code": ["R11-R12"], "ownerAnswer": ["R13"],
+      "fill": [["%d"], ["{age}"], ["{}"], ["age"]], "answer": "C",
+      "reason": "format(age) điền giá trị vào cặp ngoặc nhọn {} trong chuỗi. %d dùng với toán tử %, không dùng với format; {age} cần gọi format(age=…) nên báo lỗi KeyError; chữ age chỉ là chữ thường.",
+      "verify": { "kind": "fill", "cases": [{ "want": "My name is John, and I am 36" }] }
+    },
+
+    {
+      "ref": "w06-hw/2/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "A",
+      "reason": "len(s) trả về độ dài chuỗi s. Python không có hàm length; chuỗi không có phương thức len() hay length().",
+      "verify": { "kind": "runOptions", "wrap": "s = 'abc'\nprint({option})", "cases": [{ "want": "3" }] }
+    },
+    {
+      "ref": "w06-hw/2/2", "stem": ["L06-L12"], "options": ["L13-L17", "R12"], "answer": "C",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong là nháy thẳng, khi đó 4 xâu hợp lệ (1, 2, 3, 5). Phương án F. 2 nằm lệch sang cột phải trong PDF nhưng thuộc câu này. Xâu phải đặt trong dấu nháy. python không có nháy là tên biến; 123456 là số nguyên.",
+      "verify": { "kind": "run", "cases": [{ "setup": "items = ['\"123_@##\"', '\"hoa hau\"', '\"346h7g84jd\"', 'python', '\"01028475\"', '123456']\ncount = 0\nfor item in items:\n    try:\n        count += isinstance(eval(item), str)\n    except NameError:\n        pass\nprint(count)", "expect": "4" }] }
+    },
+    {
+      "ref": "w06-hw/2/3", "stem": ["L18"], "options": ["L19-L22"], "answer": "A",
+      "reason": "1234 (4 ký tự) + %^^% (4) + TFRESDRG (8) = 16 ký tự.",
+      "verify": { "kind": "run", "cases": [{ "setup": "print(len(\"1234%^^%TFRESDRG\"))", "expect": "16" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w06-hw/2/4", "stem": ["L23"], "options": ["L24-L27"], "answer": "C",
+      "reason": "Chuỗi không thay đổi được: gán s[0] = … báo lỗi TypeError. Truy cập theo chỉ số từ 0 và Python không có kiểu ký tự riêng (một ký tự là chuỗi độ dài 1).",
+      "verify": { "kind": "run", "cases": [{ "setup": "s = 'abc'\nprint(s[0], type(s[0]).__name__)\ns[0] = 'x'", "expect": "ERROR: TypeError" }] }
+    },
+    {
+      "ref": "w06-hw/2/5", "stem": ["R01"], "code": ["R02-R07"], "options": ["R08-R10"], "answer": "B",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề hỏi biến s nhưng chương trình chỉ có s1 và s2 (tên biến không khớp, P10). Nếu hỏi s2 (biến được in ra) thì đáp án B 8644.",
+      "reason": "s2 ghép các chữ số chẵn của 3986443 theo thứ tự: 8, 6, 4, 4.",
+      "verify": { "kind": "run", "cases": [{ "expect": "8644" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w06-hw/2/6", "stem": ["R11", "R13-R15"], "options": ["R16-R19"], "answer": "B",
+      "reason": "\"45\" có trong \"12345\" và cũng có ở cuối \"3e4r45\" nên cả hai biểu thức đều True.",
+      "verify": { "kind": "run", "cases": [{ "setup": "S1 = \"12345\"; S2 = \"3e4r45\"; S3 = \"45\"\nprint(S3 in S1, S3 in S2)", "expect": "True True" }] }
+    },
+    {
+      "ref": "w06-hw/2/7", "stem": ["R20"], "code": ["R21"], "options": ["R22-R25"], "answer": "A",
+      "reason": "name[0] là ký tự đầu tiên: C (chữ hoa).",
+      "verify": { "kind": "run", "cases": [{ "expect": "C" }] }
+    },
+    {
+      "ref": "w06-hw/3/8", "stem": ["L01"], "code": ["L02-L07"], "options": ["L08-L11"], "answer": "B",
+      "reason": "Chương trình không có lệnh nào gán kq = True (gặp \"21\" chỉ break), nên luôn in False.",
+      "verify": { "kind": "run", "cases": [{ "stdin": "python1221\n", "expect": "Nhập xâu kí tự bất kì:False" }] }
+    },
+    {
+      "ref": "w06-hw/3/9", "stem": ["L12"], "code": ["L13"], "options": ["L14-L17"], "answer": "D",
+      "reason": "Chuỗi không thay đổi được: s[0] = '8' báo lỗi TypeError.",
+      "verify": { "kind": "run", "cases": [{ "expect": "ERROR: TypeError" }] }
+    },
+    {
+      "ref": "w06-hw/3/10", "stem": ["L18"], "options": ["L19-L23"], "answer": "C",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Cả 4 xâu đều hợp lệ nếu dấu chấm cuối dòng message = \"This is also a string\". là dấu chấm câu (phương án B, C cũng kết thúc bằng dấu chấm), khi đó đáp án C. Nếu coi dấu chấm đó là một phần của code thì dòng đó báo lỗi cú pháp và đáp án là A.",
+      "reason": "Xâu có thể dùng nháy đơn hoặc nháy kép, chứa được nháy loại kia bên trong, và dùng \\' để viết nháy đơn trong xâu nháy đơn.",
+      "verify": { "kind": "run", "cases": [{ "setup": "a = 'This is a string in Python'\nmessage = \"This is also a string\"\nb = '\"Beautiful is better than ugly.\". Said Tim Peters'\nd = 'It\\'s also a valid string'\nprint(d)", "expect": "It's also a valid string" }] }
+    },
+    {
+      "ref": "w06-hw/3/11", "stem": ["R01"], "code": ["R02"], "options": ["R03-R06"], "answer": "A",
+      "reason": "Chỉ số bắt đầu từ 0 nên s[2] là ký tự thứ ba: c.",
+      "verify": { "kind": "run", "cases": [{ "expect": "c" }] }
+    },
+    {
+      "ref": "w06-hw/3/12", "stem": ["R07"], "code": ["R08-R11"], "options": ["R12-R15"], "answer": "B",
+      "reason": "range(10) là 0 … 9, ghép lại thành chuỗi 0123456789.",
+      "verify": { "kind": "run", "cases": [{ "expect": "0123456789" }] }
+    },
+    {
+      "ref": "w06-hw/3/13", "stem": ["R16-R25"], "options": ["R26-R29"], "answer": "B",
+      "reason": "\"124\" và \"235\" không có liền nhau trong s; \"ab\" và s4 = \"56ab\" thì có. Có 2 biểu thức đúng.",
+      "verify": { "kind": "run", "cases": [{ "setup": "s = \"123456abcdefg\"\ns1 = \"124\"; s2 = \"235\"; s3 = \"ab\"; s4 = \"56\" + s3\nchecks = [s1 in s, s2 in s, s3 in s, s4 in s]\nprint(checks, sum(checks))", "expect": "[False, False, True, True] 2" }] }
+    },
+    {
+      "ref": "w06-hw/4/14", "stem": ["L01"], "code": ["L02-L07"], "options": ["L08-L11"], "answer": "B",
+      "reason": "input() trả về chuỗi nên range(n) báo lỗi TypeError (s là chuỗi nên s.append cũng lỗi).",
+      "verify": { "kind": "run", "cases": [{ "stdin": "5\n", "expect": "ERROR: TypeError" }] }
+    },
+    {
+      "ref": "w06-hw/4/15", "stem": ["L12"], "code": ["L13-L16"], "options": ["L17-L20"], "answer": "D",
+      "reason": "i chia hết cho 4 khi i = 0, 4, 8: in 3 lần.",
+      "verify": { "kind": "run", "cases": [{ "expect": "abcdefghi\nabcdefghi\nabcdefghi" }] }
+    },
+    {
+      "ref": "w06-hw/4/16", "stem": ["R01-R02"], "options": ["R03-R06"], "answer": "C",
+      "reason": "find() trả về vị trí đầu tiên của xâu con (hoặc -1 nếu không có). in chỉ cho biết có hay không; split() tách xâu; test() không có.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#str.find"] }
+    },
+    {
+      "ref": "w06-hw/4/17", "stem": ["R07"], "options": ["R08-R12"], "answer": "D",
+      "reason": "Toán tử in không phải cách duy nhất: find(), count(), index() cũng kiểm tra được xâu con. A, B, C mô tả đúng toán tử in.",
+      "verify": { "kind": "run", "cases": [{ "setup": "s = 'cab'\nprint('ab' in s, s.find('ab') != -1, s.count('ab') > 0, 'x' in s)", "expect": "True True True False" }] }
+    },
+    {
+      "ref": "w06-hw/4/18", "stem": ["R13"], "code": ["R14-R17"], "options": ["R18-R21"], "answer": "A",
+      "reason": "Dấu cách đầu tiên ở chỉ số 2; \"12\" ở chỉ số 0; \"34\" ở chỉ số 3.",
+      "verify": { "kind": "run", "cases": [{ "expect": "2\n0\n3" }] }
+    },
+    {
+      "ref": "w06-hw/4/19", "stem": ["R22-R23"], "options": ["R24-R27"], "answer": "C",
+      "reason": "find trả về vị trí đầu tiên của xâu con. Tên lệnh viết thường (find, không phải Find); find còn có dạng find(sub, start, end); Python có nhiều phương thức cho xâu chứ không chỉ một lệnh.",
+      "verify": { "kind": "run", "cases": [{ "setup": "print(\"abcab\".find(\"ab\"), \"abcab\".find(\"ab\", 1), \"abc\".find(\"x\"))", "expect": "0 3 -1" }] }
+    },
+    {
+      "ref": "w06-hw/5/20", "stem": ["L01"], "code": ["L02-L03"], "options": ["L04-L07"], "answer": "A",
+      "reason": "\"cd\" xuất hiện đầu tiên ở chỉ số 2; tìm từ chỉ số 4 trở đi thì gặp ở chỉ số 6.",
+      "verify": { "kind": "run", "cases": [{ "expect": "2\n6" }] }
+    },
+    {
+      "ref": "w06-hw/5/21", "stem": ["L08"], "options": ["L09-L11"], "answer": "A",
+      "reason": "split() tách xâu thành danh sách. join() thì nối; chuỗi không có remove() hay copy().",
+      "verify": { "kind": "runOptions", "wrap": "print('a b'.{option})", "cases": [{ "want": "['a', 'b']" }] }
+    },
+    {
+      "ref": "w06-hw/5/22", "stem": ["L12"], "code": ["L13-L16"], "options": ["L17-L21"], "answer": "B",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Chương trình không có print nên không in gì. Giá trị của st.split() (tách theo khoảng trắng) giữ cả dấu phẩy: ['a,', 'b,', …, 'h'], không khớp phương án nào. Nếu là st.split(', ') thì khớp B.",
+      "reason": "s.split() tách theo khoảng trắng: ['Một', 'năm', 'có', 'bốn', 'mùa'].",
+      "verify": { "kind": "run", "cases": [
+        { "replace": { "\ns.split()": "\nprint(s.split())", "\nst.split()": "\nprint(st.split())" }, "expect": "['Một', 'năm', 'có', 'bốn', 'mùa']\n['a,', 'b,', 'c,', 'd,', 'e,', 'f,', 'g,', 'h']" },
+        { "replace": { "\ns.split()": "\nprint(s.split())", "\nst.split()": "\nprint(st.split(', '))" }, "expect": "['Một', 'năm', 'có', 'bốn', 'mùa']\n['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']" }
+      ] }
+    },
+    {
+      "ref": "w06-hw/5/23", "stem": ["R01"], "options": ["R02-R06"], "answer": "A",
+      "reason": "join() nối bằng chính xâu gọi lệnh (ví dụ '-'.join(…)), không nhất thiết là dấu cách. B, C, D đúng.",
+      "verify": { "kind": "run", "cases": [{ "setup": "print('-'.join(['a', 'b', 'c']), 'a b c'.split())", "expect": "a-b-c ['a', 'b', 'c']" }] }
+    },
+    {
+      "ref": "w06-hw/5/24", "stem": ["R07-R11"], "options": ["R12-R15"], "answer": "D",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Điền A (câu lệnh, split(), nối) hay D (câu lệnh đặc biệt, split(), nối danh sách) đều cho phát biểu đúng. Đề xuất D vì khớp cách viết của bài học (lệnh đặc biệt; join nối danh sách các xâu thành một xâu).",
+      "reason": "split() tách câu thành danh sách; join() nối danh sách các xâu thành một xâu. B (join tách xâu) và C (copy()) sai.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#str.split", "https://docs.python.org/3/library/stdtypes.html#str.join"] }
+    },
+    {
+      "ref": "w06-hw/6/25", "stem": ["L01"], "code": ["L02-L04"], "options": ["L05-L08"],
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Chương trình in Hello world (w thường), không phương án nào khớp: A là hello worldB (h thường, thừa chữ B), B là Hello World (W hoa), C, D thiếu chữ. Gần nhất là B; cần chọn đáp án hoặc sửa phương án.",
+      "reason": "Nối \"Hello\", dấu cách và \"world\".",
+      "verify": { "kind": "run", "cases": [{ "expect": "Hello world" }] }
+    },
+    {
+      "ref": "w06-hw/6/26", "stem": ["L09"], "code": ["L10"], "options": ["L11-L13"], "answer": "B",
+      "reason": "len(x) trả về độ dài chuỗi. Chuỗi không có phương thức len() hay length(); copy không phải hàm có sẵn.",
+      "verify": { "kind": "runOptions", "intoBlanks": true, "cases": [{ "want": "11" }] }
+    },
+    {
+      "ref": "w06-hw/6/27", "stem": ["L14-L16"], "options": ["L17-L20"], "answer": "C",
+      "reason": "Tách xâu theo dấu phẩy bằng split(\",\") rồi nối lại bằng dấu cách với \" \".join(…). Chuỗi không có remove(); del không xoá được ký tự trong chuỗi; danh sách (kết quả split) không có replace().",
+      "verify": { "kind": "run", "cases": [{ "setup": "s = \"1, 2, 3, 4, 5\"\nprint(\" \".join(s.split(\",\")))", "expect": "1  2  3  4  5" }] }
+    },
+    {
+      "ref": "w06-hw/6/28", "stem": ["L21-L22"], "options": ["L23-L26"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Chỉ cần join: \" \".join(s) cho P y t h o n. split() không tách \"Python\" thành từng ký tự (cho ['Python']), nên \"split() và join()\" chưa chính xác; replace(\"\", \" \") cũng làm được nhưng thừa dấu cách ở đầu và cuối. Đề xuất A theo ý bài học (tách rồi nối).",
+      "reason": "Nối từng ký tự của xâu bằng dấu cách với join.",
+      "verify": { "kind": "run", "cases": [{ "setup": "s = \"Python\"\nprint(s.split())\nprint(\" \".join(s))\nprint(repr(s.replace(\"\", \" \")))", "expect": "['Python']\nP y t h o n\n' P y t h o n '" }] }
+    },
+    {
+      "ref": "w06-hw/6/29", "stem": ["R01"], "code": ["R02-R05"], "options": ["R06-R09"],
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Chương trình in Good Afternoon! (một dấu cách giữa hai từ, không có dấu cách trước !), không phương án nào khớp: B thiếu dấu cách giữa hai từ, D thừa dấu cách trước dấu !. Cần chọn đáp án hoặc sửa phương án.",
+      "reason": "'Good ' đã có dấu cách cuối, nối với 'Afternoon' và '!'.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Good Afternoon!" }] }
+    },
+    {
+      "ref": "w06-hw/6/30", "stem": ["R10"], "code": ["R11-R13"], "options": ["R14-R24"], "answer": "A",
+      "reason": "split() tách theo mọi khoảng trắng: 3 phần tử. split(' ', 1) chỉ tách tối đa 1 lần: 2 phần tử.",
+      "verify": { "kind": "run", "cases": [{ "expect": "['Geek1', 'Geek2', 'Geek3']\n['Geek1', 'Geek2 Geek3']" }] }
+    }
+  ]
+}

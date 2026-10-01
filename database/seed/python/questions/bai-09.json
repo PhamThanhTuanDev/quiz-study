@@ -1,0 +1,84 @@
+{
+  "$comment": "Bản đồ vị trí Bài 9 (D-035): w07 LT trang 15; w07 HW trang 3. Câu cần module tự viết thì setup tạo file module trong thư mục tạm rồi thêm thư mục đó vào sys.path (chạy chế độ -I nên thư mục hiện hành không tự có trong sys.path).",
+  "chapter": 9,
+  "questions": [
+    {
+      "ref": "w07-lt/15/1", "stem": ["L01-L02"], "code": ["L03"], "ownerAnswer": ["L04"],
+      "fill": [["import"], ["include"], ["using"], ["require"]], "answer": "A",
+      "reason": "Nạp module bằng từ khoá import. include, using, require là từ khoá của ngôn ngữ khác, viết trong Python báo lỗi cú pháp.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pathlib, sys\npathlib.Path('my_module.py').write_text('person1 = {\"name\": \"John\", \"age\": 36}\\n', encoding='utf-8')\nsys.path.insert(0, '')", "append": "print(my_module.person1['age'])", "want": "36" }] }
+    },
+    {
+      "ref": "w07-lt/15/2", "stem": ["L05-L06"], "code": ["L07"], "ownerAnswer": ["L08"],
+      "fill": [["alias"], ["as"], ["=>"], ["to"]], "answer": "B",
+      "reason": "import tên_module as tên_mới đặt tên thay thế cho module. alias, =>, to không dùng được trong lệnh import.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pathlib, sys\npathlib.Path('mymodule.py').write_text('person1 = {\"name\": \"John\", \"age\": 36}\\n', encoding='utf-8')\nsys.path.insert(0, '')", "append": "print(mx.person1['age'])", "want": "36" }] }
+    },
+    {
+      "ref": "w07-lt/15/3", "stem": ["R01-R02"], "code": ["R03-R04"], "ownerAnswer": ["R05"],
+      "fill": [["dir(mymodule)"], ["mymodule.dir()"], ["list(mymodule)"], ["dir.mymodule"]], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề nói my_module nhưng code import mymodule (tên không khớp, P10). Phương án viết theo code (mymodule); nếu sửa đề thành mymodule thì đáp án A dir(mymodule).",
+      "reason": "dir(module) trả về danh sách tên (biến, hàm…) có trong module. Module không có phương thức dir(), không duyệt được bằng list(), và dir là hàm nên gọi bằng ngoặc tròn.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pathlib, sys\npathlib.Path('mymodule.py').write_text('person1 = {\"name\": \"John\", \"age\": 36}\\n', encoding='utf-8')\nsys.path.insert(0, '')", "want": "['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'person1']" }] }
+    },
+    {
+      "ref": "w07-lt/15/4", "stem": ["R06-R07"], "code": ["R08"], "ownerAnswer": ["R09"],
+      "fill": [["import", "from"], ["from", "import"], ["from", "include"], ["using", "import"]], "answer": "B",
+      "reason": "from tên_module import tên_thành_phần nạp riêng person1 để dùng trực tiếp. Đảo thứ tự hoặc dùng include, using đều sai cú pháp.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pathlib, sys\npathlib.Path('my_module.py').write_text('person1 = {\"name\": \"John\", \"age\": 36}\\n', encoding='utf-8')\nsys.path.insert(0, '')", "append": "print(person1['age'])", "want": "36" }] }
+    },
+
+    {
+      "ref": "w07-hw/3/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "D",
+      "reason": "Module là một file .py nên chứa được biến, hàm, class và cả lệnh thực thi.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import pathlib, sys\npathlib.Path('mod.py').write_text('x = 1\\ndef f():\\n    return \"f\"\\nclass C:\\n    pass\\n', encoding='utf-8')\nsys.path.insert(0, '')\nimport mod\nprint(mod.x, mod.f(), mod.C.__name__)", "expect": "1 f C" }] }
+    },
+    {
+      "ref": "w07-hw/3/2", "stem": ["L06"], "options": ["L07-L10"], "answer": "A",
+      "reason": "Theo bài học, module gồm module có sẵn đi kèm Python (built-in, thư viện chuẩn) và module do người dùng tự viết (user-defined).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/modules.html", "https://docs.python.org/3/py-modindex.html"] }
+    },
+    {
+      "ref": "w07-hw/3/3", "stem": ["L11-L12"], "options": ["L13-L16"], "answer": "A",
+      "reason": "Module đi kèm bộ cài Python (math, random, os…) là built-in module (thư viện chuẩn).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/index.html"] }
+    },
+    {
+      "ref": "w07-hw/3/4", "stem": ["L17-L18"], "options": ["L19-L22"], "answer": "B",
+      "reason": "Module do người dùng hoặc cộng đồng viết thêm là user-defined module (theo cách phân loại của bài học ở câu 2).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/modules.html"] }
+    },
+    {
+      "ref": "w07-hw/3/5", "stem": ["L23"], "options": ["L24-L27"], "answer": "A",
+      "reason": "Một lệnh import nạp được nhiều module, cách nhau dấu phẩy. Dấu ; tách thành hai lệnh (random đứng riêng là tên chưa có); from phải đi với import.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(math.sqrt(4), random.__name__)", "cases": [{ "want": "2.0 random" }] }
+    },
+    {
+      "ref": "w07-hw/3/6", "stem": ["R01-R02"], "options": ["R03-R04"], "answer": "A",
+      "reason": "Cú pháp from tên_module import tên_hàm: from math import sqrt. Các cách viết còn lại sai cú pháp hoặc đảo vai trò module và hàm.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(sqrt(16))", "cases": [{ "want": "4.0" }] }
+    },
+    {
+      "ref": "w07-hw/3/7", "stem": ["R05"], "options": ["R06-R09"], "answer": "A",
+      "reason": "from tên_module import * nạp mọi thành phần công khai của module.",
+      "verify": { "kind": "runOptions", "wrap": "from math import {option}\nprint(sqrt(4))", "cases": [{ "replace": { "“": "", "”": "" }, "want": "2.0" }] }
+    },
+    {
+      "ref": "w07-hw/3/8", "stem": ["R10"], "options": ["R11-R12"], "answer": "C",
+      "spaceBefore": { "R12": "D. Đáp án khác" },
+      "reason": "Thuộc tính __name__ (hai dấu gạch dưới mỗi bên) chứa tên module. Trên slide \"__name__\" và \"D.\" dính liền nên khi tách phương án có chèn một dấu cách.",
+      "verify": { "kind": "runOptions", "wrap": "import math\nprint(math.{option})", "cases": [{ "want": "math" }] }
+    },
+    {
+      "ref": "w07-hw/3/9", "stem": ["R13-R14"], "options": ["R15-R18"], "answer": "A",
+      "reason": "sys.path bắt đầu bằng thư mục chứa script đang chạy, sau đó mới tới các thư mục trong PYTHONPATH và đường dẫn mặc định khi cài đặt.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/modules.html#the-module-search-path"] }
+    },
+    {
+      "ref": "w07-hw/3/10", "stem": ["R19"], "options": ["R20-R23"], "answer": "C",
+      "reason": "__all__ trong __init__.py là danh sách tên các module được nạp khi viết from package import *.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/modules.html#importing-from-a-package"] }
+    }
+  ]
+}

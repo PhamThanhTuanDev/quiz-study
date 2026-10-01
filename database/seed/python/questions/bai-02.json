@@ -1,0 +1,203 @@
+{
+  "$comment": "Bản đồ vị trí Bài 2 (D-035): w02.1 LT trang 29–30, w02.1 HW trang 3–6. Câu trùng theo D-034 (P5): HW câu 6 = câu 2, câu 18 = câu 16, câu 19 thứ hai = câu 19 thứ nhất (chỉ đổi chỗ C/D). Hai câu số 20 là hai câu khác nhau.",
+  "chapter": 2,
+  "questions": [
+    {
+      "ref": "w021-lt/29/1", "stem": ["L01-L02"], "options": ["L03-L10"], "answer": "B",
+      "reason": "Tiền tố 0o (hoặc 0O) đánh dấu số nguyên hệ bát phân (octal).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/reference/lexical_analysis.html#integer-literals"] }
+    },
+    {
+      "ref": "w021-lt/29/2", "stem": ["L11-L12"], "options": ["L13-L20"], "answer": "B",
+      "reason": "None chỉ bằng chính nó; so sánh với False cho kết quả False.",
+      "verify": { "kind": "run", "cases": [{ "setup": "print(None == False)", "expect": "False" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-lt/29/3", "stem": ["R01-R02"], "options": ["R03-R10"], "answer": "C",
+      "reason": "Tên biến không được bắt đầu bằng chữ số: 1number báo lỗi cú pháp; các tên còn lại hợp lệ.",
+      "verify": { "kind": "runOptions", "wrap": "{option} = 1", "cases": [{ "want": "ERROR: SyntaxError" }] }
+    },
+    {
+      "ref": "w021-lt/29/4", "stem": ["R11-R12"], "options": ["R13-R20"], "answer": "A",
+      "reason": "Ghi chú trong Python bắt đầu bằng #. //, -- và /// là cú pháp của ngôn ngữ khác, trong Python báo lỗi.",
+      "verify": { "kind": "runOptions", "wrap": "x = 1 {option} ghi chú\nprint(x)", "cases": [{ "want": "1" }] }
+    },
+    {
+      "ref": "w021-lt/30/5", "stem": ["L01-L02"], "options": ["L03-L10"], "answer": "A",
+      "reason": "Các phương án đều là dãy nhị phân nên a = 10011 là số nhị phân (0b10011). Dịch trái 2 bit là thêm hai số 0 vào cuối: 1001100.",
+      "verify": { "kind": "run", "cases": [{ "setup": "a = 0b10011\nprint(bin(a << 2)[2:])", "expect": "1001100" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-lt/30/6", "stem": ["L11-L12"], "code": ["L13"], "options": ["L14-L21"], "answer": "A",
+      "reason": "2024 % 4 == 0 là True và 2024 % 100 != 0 là True, nên and cho True.",
+      "verify": { "kind": "run", "wrap": "print({code})", "cases": [{ "setup": "x = 2024", "expect": "True" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-lt/30/7", "stem": ["R01-R02"], "code": ["R03"], "options": ["R04-R11"], "answer": "A",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi \"–\" là dấu trừ. 2 ** 3 = 8; 8 // 2 = 4; (1 == 2) là False (bằng 0): 9 - 4 - 0 = 5. Slide dùng dấu gạch ngang dài \"–\" thay cho dấu trừ; khi chạy thử thay bằng \"-\".",
+      "verify": { "kind": "run", "wrap": "print({code})", "cases": [{ "replace": { "–": "-" }, "expect": "5" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-lt/30/8", "stem": ["R12-R13"], "options": ["R14-R21"], "status": "NEEDS_REVIEW",
+      "reviewNote": "Câu mang tính nhận định, không kiểm chứng được: người mới học gặp cả ba loại lỗi, lỗi cú pháp là phổ biến nhất. Có thể chọn D (Tất cả đều đúng) hoặc A; chủ dự án quyết định.",
+      "reason": "Không có tài liệu chính thức xếp hạng mức độ thường gặp của các loại lỗi."
+    },
+
+    {
+      "ref": "w021-hw/3/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "D",
+      "reason": "5j là số phức (phần ảo 5). 3.5 + j báo lỗi vì j đứng một mình là tên biến chưa định nghĩa, không phải đơn vị ảo; 1.2e3 là số thực.",
+      "verify": { "kind": "runOptions", "wrap": "print(type({option}).__name__)", "cases": [{ "want": "complex" }] }
+    },
+    {
+      "ref": "w021-hw/3/2", "stem": ["L06"], "options": ["L07-L10"], "answer": "B",
+      "reason": "1.2e3 là số thực (float) 1200.0; -1991 là số nguyên; 5j là số phức; 3.5 + j báo lỗi. Phương án A dùng dấu gạch ngang dài \"–\" (khi chạy thử báo lỗi, vốn cũng không phải số thực).",
+      "verify": { "kind": "runOptions", "wrap": "print(type({option}).__name__)", "cases": [{ "want": "float" }] }
+    },
+    {
+      "ref": "w021-hw/3/3", "stem": ["L11"], "code": ["L12"], "options": ["L13-L16"], "answer": "C",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi \"–\" là dấu trừ. 3e2 = 300.0 (số thực) nên 2 - 300.0 = -298.0. Slide dùng dấu \"–\" thay cho dấu trừ.",
+      "verify": { "kind": "run", "cases": [{ "replace": { "–": "-" }, "append": "print(x)", "expect": "-298.0" }] }
+    },
+    {
+      "ref": "w021-hw/3/4", "stem": ["L17"], "code": ["L18"], "options": ["L19-L22"], "answer": "C",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Code viết ba phép gán trên một dòng cách nhau bằng dấu phẩy (a = 3, b = 4j, c = a – b), không phải cú pháp Python, và dùng dấu \"–\": chạy nguyên văn báo lỗi nên A (Lỗi chương trình) cũng có thể coi là đúng. Hiểu là ba phép gán riêng thì đáp án C (3 - 4j).",
+      "reason": "Ba phép gán liệt kê trên một dòng: a = 3, b = 4j là số phức hợp lệ, c = 3 - 4j. Khi chạy thử tách thành ba dòng và thay \"–\" bằng \"-\".",
+      "verify": { "kind": "run", "cases": [{ "replace": { ", b = ": "\nb = ", ", c = ": "\nc = ", "–": "-" }, "append": "print(c)", "expect": "(3-4j)" }] }
+    },
+    {
+      "ref": "w021-hw/3/5", "stem": ["R01"], "code": ["R02"], "options": ["R03-R06"], "answer": "A",
+      "reason": "b = 2 - j: j đứng một mình là tên biến chưa định nghĩa (đơn vị ảo phải viết 1j), nên chương trình báo lỗi NameError.",
+      "verify": { "kind": "run", "cases": [{ "replace": { ", b = ": "\nb = ", ", c = ": "\nc = " }, "append": "print(c)", "expect": "ERROR: NameError" }] }
+    },
+    { "ref": "w021-hw/3/6", "stem": ["R07"], "options": ["R08-R11"], "duplicateOf": "w021-hw/3/2" },
+    {
+      "ref": "w021-hw/3/7", "stem": ["R12"], "code": ["R13"], "options": ["R14-R17"], "answer": "B",
+      "reason": "0b1011110010 = 512 + 128 + 64 + 32 + 16 + 2 = 754.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(a)", "expect": "754" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/3/8", "stem": ["R18"], "code": ["R19"], "options": ["R20-R23"], "answer": "C",
+      "reason": "0O là tiền tố bát phân (O hoa cũng hợp lệ), các chữ số đều nhỏ hơn 8. 1011110010 hệ 8 = 136613896, có dấu trừ nên -136613896.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(a)", "expect": "-136613896" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/4/9", "stem": ["L01-L02"], "options": ["L03-L06"], "answer": "A",
+      "reason": "None == None là True. None khác False và khác []. NULL không tồn tại trong Python (báo lỗi NameError).",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = None; b = None", "want": "True" }] }
+    },
+    {
+      "ref": "w021-hw/4/10", "stem": ["L07"], "code": ["L08-L11"], "options": ["L12-L15"], "answer": "B",
+      "reason": "Python phân biệt chữ hoa, chữ thường: dòng 3 xoá biến S chưa được định nghĩa (biến là s) nên báo lỗi NameError, chương trình dừng ở dòng 3. Khi chạy thử bỏ số thứ tự dòng [1]…[4].",
+      "verify": { "kind": "run", "cases": [{ "replace": { "[1] ": "", "[2] ": "", "[3] ": "", "[4] ": "" }, "expect": "ERROR: NameError" }] }
+    },
+    {
+      "ref": "w021-hw/4/11", "stem": ["L16"], "code": ["L17-L20"], "options": ["L21-L24"], "answer": "D",
+      "reason": "Dòng 3 xoá biến s, nên dòng 4 in s báo lỗi NameError. Khi chạy thử bỏ số thứ tự dòng; bỏ riêng dòng 4 thì chương trình chạy bình thường.",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          { "replace": { "[1] ": "", "[2] ": "", "[3] ": "", "[4] ": "" }, "expect": "ERROR: NameError" },
+          { "replace": { "[1] ": "", "[2] ": "", "[3] ": "", "[4] print(s)": "" }, "expect": "Python programming" }
+        ]
+      }
+    },
+    {
+      "ref": "w021-hw/4/12", "stem": ["R01"], "code": ["R02"], "options": ["R03-R06"], "answer": "A",
+      "reason": "x**2 = 25; 1 // 5 = 0; 3 % 3 * 2 = 0: 25 - 0 + 0 = 25.",
+      "verify": { "kind": "run", "wrap": "print({code})", "cases": [{ "setup": "x = 5", "expect": "25" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/4/13", "stem": ["R07-R08"], "options": ["R09-R12"], "answer": "A",
+      "reason": "Docstring là chuỗi đặt ngay sau dòng def, thường viết trong ba dấu nháy (''' … ''' hoặc \"\"\" … \"\"\"). Slide dùng dấu nháy cong cho phương án A.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/glossary.html#term-docstring", "https://peps.python.org/pep-0257/"] }
+    },
+    {
+      "ref": "w021-hw/4/14", "stem": ["R13"], "options": ["R14-R17"], "answer": "A",
+      "reason": "Chú thích một dòng trong Python bắt đầu bằng #. Các cú pháp còn lại thuộc ngôn ngữ khác.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/reference/lexical_analysis.html#comments"] }
+    },
+    {
+      "ref": "w021-hw/4/15", "stem": ["R18"], "code": ["R19"], "options": ["R20-R23"], "answer": "A",
+      "reason": "3 >= 4 là False nên vế and là False; 3**4 = 81 khác 5 % 2 = 1 nên vế or là True: kết quả True.",
+      "verify": { "kind": "run", "wrap": "print({code})", "cases": [{ "expect": "True" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/4/16", "stem": ["R24"], "code": ["R25"], "options": ["R26-R29"], "answer": "B",
+      "reason": "3**2 % 4 = 1; 13 > 1 <= 3 là so sánh chuỗi, bằng True; True * 3 = 3; 8 // 3 = 2.",
+      "verify": { "kind": "run", "cases": [{ "setup": "x = 8", "append": "print(x)", "expect": "2" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/5/17", "stem": ["L01"], "code": ["L02"], "options": ["L03-L06"], "answer": "B",
+      "reason": "~(5 > 8) = ~False = -1; -1 + 3 = 2; 4 & 2**3 = 4 & 8 = 0; 2 | 0 = 2; 2 << 3 = 16; x = 8 * 16 = 128.",
+      "verify": { "kind": "run", "cases": [{ "setup": "x = 8", "append": "print(x)", "expect": "128" }], "answerIsOutput": true }
+    },
+    { "ref": "w021-hw/5/18", "stem": ["L07"], "code": ["L08"], "options": ["L09-L12"], "duplicateOf": "w021-hw/4/16" },
+    {
+      "ref": "w021-hw/5/19", "stem": ["L13"], "code": ["L14"], "options": ["L15-L18"], "answer": "B",
+      "reason": "print in các đối số cách nhau một dấu cách; {0} chỉ được thay khi gọi .format(), nên in ra: Chào {0} An.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Chào {0} An" }] }
+    },
+    {
+      "ref": "w021-hw/5/20", "stem": ["L19"], "code": ["L20"], "options": ["L21-L24"], "answer": "A",
+      "reason": "'Chào {0}'.format('An') thay {0} bằng An: in ra Chào An.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Chào An" }] }
+    },
+    { "ref": "w021-hw/5/19-2", "stem": ["R01"], "code": ["R02"], "options": ["R03-R06"], "duplicateOf": "w021-hw/5/19" },
+    {
+      "ref": "w021-hw/5/20-2", "stem": ["R07"], "code": ["R08-R09"], "options": ["R10-R13"], "answer": "B",
+      "reason": "xj là một tên biến chưa định nghĩa (không phải x nhân j), nên báo lỗi NameError.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(y)", "expect": "ERROR: NameError" }] }
+    },
+    {
+      "ref": "w021-hw/5/21", "stem": ["R14"], "code": ["R15-R16"], "options": ["R17-R20"], "answer": "B",
+      "reason": "2.9999999999999999 vượt độ chính xác của số thực 64 bit nên được làm tròn thành 3.0; 3 == 3.0 là True.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(x == y)", "expect": "True" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/5/22", "stem": ["R21"], "options": ["R22-R25"], "answer": "B",
+      "reason": "Lỗi nghiệp vụ (lỗi logic) không làm chương trình báo lỗi: chương trình vẫn chạy nhưng cho kết quả sai, nên khó phát hiện nhất. Lỗi cú pháp và lỗi thực thi đều được Python báo rõ vị trí.",
+      "verify": { "kind": "reasoning", "source": "https://docs.python.org/3/tutorial/errors.html (Python chỉ báo lỗi cú pháp và ngoại lệ; lỗi logic không được báo)" }
+    },
+    {
+      "ref": "w021-hw/6/23", "stem": ["L01"], "code": ["L02"], "options": ["L03-L06"], "answer": "C",
+      "reason": "100**2 = 10000; 100 >= 10000 là False.",
+      "verify": { "kind": "run", "cases": [{ "expect": "False" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/6/24", "stem": ["L07"], "code": ["L08"], "options": ["L09-L12"], "answer": "A",
+      "reason": "10 // 3 = 3, 10 % 3 = 1, 10 / 3 = 3.3333333333333335, in cách nhau bằng \", \". Phương án A ghi cách nhau bằng \" , \" nhưng đúng thứ tự các giá trị.",
+      "verify": { "kind": "run", "cases": [{ "expect": "3, 1, 3.3333333333333335" }] }
+    },
+    {
+      "ref": "w021-hw/6/25", "stem": ["L13"], "code": ["L14"], "options": ["L15-L18"], "answer": "D",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong là nháy thẳng (nếu không, phương án A \"Lỗi\" cũng thành đúng). complex('2+8j') trả về số phức (2+8j).",
+      "verify": { "kind": "run", "cases": [{ "replace": { "‘": "'", "’": "'" }, "expect": "(2+8j)" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/6/26", "stem": ["L19"], "options": ["L20-L23"], "answer": "A",
+      "reason": "Tên biến chỉ gồm chữ, số, dấu gạch dưới; dấu - là phép trừ nên bien-X = 5 báo lỗi cú pháp.",
+      "verify": { "kind": "runOptions", "cases": [{ "want": "ERROR: SyntaxError" }] }
+    },
+    {
+      "ref": "w021-hw/6/27", "stem": ["R01"], "options": ["R02-R05"], "answer": "B",
+      "reason": "Tên biến được chứa dấu gạch dưới; không được bắt đầu bằng chữ số, không chứa ký hiệu đặc biệt, không trùng từ khoá.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/reference/lexical_analysis.html#identifiers", "https://docs.python.org/3/reference/lexical_analysis.html#keywords"] }
+    },
+    {
+      "ref": "w021-hw/6/28", "stem": ["R06"], "options": ["R07-R10"], "answer": "C",
+      "reason": "56 = 7 × 8, hệ bát phân là 70; oct() trả chuỗi có tiền tố 0o: 0o70.",
+      "verify": { "kind": "run", "cases": [{ "setup": "print(oct(56))", "expect": "0o70" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/6/29", "stem": ["R11"], "options": ["R12-R15"], "answer": "C",
+      "reason": "2218 = 8 × 256 + 10 × 16 + 10, hệ thập lục phân là 8aa; hex() thêm tiền tố 0x: 0x8aa.",
+      "verify": { "kind": "run", "cases": [{ "setup": "print(hex(2218))", "expect": "0x8aa" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w021-hw/6/30", "stem": ["R16"], "options": ["R17-R20"], "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề thiếu câu lệnh cần tính (\"Cho biết kết quả của câu lệnh sau:\" nhưng không có code) nên không xác định được đáp án (P6).",
+      "reason": "Không có code để chạy."
+    }
+  ]
+}

@@ -1,0 +1,255 @@
+{
+  "$comment": "Bản đồ vị trí Bài 3 (D-035): w02.2 LT không có trang trắc nghiệm; w02.2 HW trang 3–6. Mã dòng theo extract_python_pages.py. ownerAnswer: dòng [..] là bài làm của chủ dự án, không dùng làm đáp án (D-020).",
+  "chapter": 3,
+  "questions": [
+    {
+      "ref": "w022-hw/3/1",
+      "stem": ["L01"],
+      "options": ["L02-L09"],
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "A (if expression:) và B (if (expression):) đều là cú pháp hợp lệ: cặp ngoặc chỉ là một phần của biểu thức. Câu một đáp án nhưng có hai phương án đúng (P3).",
+      "reason": "Theo https://docs.python.org/3/reference/compound_stmts.html#the-if-statement, if nhận một biểu thức bất kỳ; (expression) cũng là biểu thức. Cả A và B đều đúng."
+    },
+    {
+      "ref": "w022-hw/3/2",
+      "stem": ["L10-L11"],
+      "code": ["L12-L14"],
+      "ownerAnswer": ["L15"],
+      "fill": [["if", "<", ":"], ["if", ">", ":"], ["elif", ">", ":"], ["if", "=", ":"]],
+      "answer": "B",
+      "reason": "Cần if a > b: để chỉ in khi a lớn hơn b. [if] [<] [:] in khi a nhỏ hơn b; elif không thể đứng đầu; = là phép gán, sai cú pháp trong điều kiện.",
+      "verify": {
+        "kind": "fill",
+        "cases": [
+          { "want": "Python programming" },
+          { "replace": { "a = 50; b = 10": "a = 10; b = 50" }, "want": "" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/3/3",
+      "stem": ["L16-L17"],
+      "code": ["L18-L20"],
+      "ownerAnswer": ["L21"],
+      "fill": [["if", "==", ":"], ["if", "<>", ":"], ["if", "!=", ":"], ["if", "=!", ":"]],
+      "answer": "C",
+      "reason": "Toán tử khác nhau trong Python 3 là !=. <> chỉ có trong Python 2 (báo lỗi cú pháp ở Python 3); =! không phải toán tử; == là bằng nhau.",
+      "verify": {
+        "kind": "fill",
+        "cases": [
+          { "want": "Python programming" },
+          { "replace": { "a = 50; b = 10": "a = 10; b = 10" }, "want": "" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/3/4",
+      "stem": ["R01-R02"],
+      "code": ["R03-R07"],
+      "ownerAnswer": ["R08"],
+      "fill": [["if", "!=", ":", "else:"], ["if", "==", ":", "elif:"], ["if", "=", ":", "else:"], ["if", "==", ":", "else:"]],
+      "answer": "D",
+      "reason": "if a == b: in Yes, else: in No. != đảo ngược yêu cầu; elif phải có điều kiện (elif: báo lỗi cú pháp); = là phép gán.",
+      "verify": {
+        "kind": "fill",
+        "cases": [
+          { "want": "No" },
+          { "replace": { "a = 50; b = 10": "a = 10; b = 10" }, "want": "Yes" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/3/5",
+      "stem": ["R09-R10"],
+      "code": ["R11-R17"],
+      "ownerAnswer": ["R18"],
+      "fill": [
+        ["if", "==", ":", "elif", ">", ":", "else:"],
+        ["if", "==", ":", "else", ">", ":", "elif:"],
+        ["if", ">", ":", "elif", "==", ":", "else:"],
+        ["if", "=", ":", "elif", ">", ":", "else:"]
+      ],
+      "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề yêu cầu in 1, 2, 3 nhưng code in \"Yes\", \"No\", \"No\" (hai nhánh sau in giống nhau), đề và code mâu thuẫn. Phương án A (if == / elif > / else) là cách điền theo đề, đề xuất làm đáp án nếu sửa lại lệnh in.",
+      "reason": "Theo đề: a bằng b → nhánh if a == b; a lớn hơn b → elif a > b; còn lại → else."
+    },
+    {
+      "ref": "w022-hw/4/6",
+      "stem": ["L01-L02"],
+      "code": ["L03-L04"],
+      "ownerAnswer": ["L05"],
+      "fill": [["or"], ["&&"], ["and"], [","]],
+      "answer": "C",
+      "reason": "Cần cả hai điều kiện cùng đúng nên dùng and. or chỉ cần một điều kiện; && không có trong Python; dấu phẩy sai cú pháp.",
+      "verify": {
+        "kind": "fill",
+        "cases": [
+          { "setup": "a, b, c, d = 1, 1, 2, 2", "want": "Hello" },
+          { "setup": "a, b, c, d = 1, 1, 2, 3", "want": "" },
+          { "setup": "a, b, c, d = 1, 2, 2, 2", "want": "" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/4/7",
+      "stem": ["L06-L07"],
+      "code": ["L08-L09"],
+      "ownerAnswer": ["L10"],
+      "fill": [["if a != b else"], ["if a == b else"], ["if a = b else"], ["else a == b if"]],
+      "answer": "B",
+      "reason": "Biểu thức điều kiện một dòng: <A> if <điều kiện> else <B>. Điều kiện đúng là a == b; != đảo ngược yêu cầu; = là phép gán; đảo thứ tự else/if sai cú pháp.",
+      "verify": {
+        "kind": "fill",
+        "cases": [
+          { "want": "NO" },
+          { "replace": { "a = 2; b = 5": "a = 5; b = 5" }, "want": "YES" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/4/8",
+      "stem": ["L11-L12"],
+      "code": ["L13-L15"],
+      "ownerAnswer": ["L16"],
+      "fill": [["if a == c and b == c:"], ["if a == c or b == c"], ["if a == c or b == c:"], ["if a = c or b = c:"]],
+      "answer": "C",
+      "reason": "\"Tồn tại a hoặc b bằng c\" là a == c or b == c, và dòng if phải kết thúc bằng dấu hai chấm. and đòi cả hai cùng bằng c; thiếu dấu hai chấm hoặc dùng = đều sai cú pháp.",
+      "verify": {
+        "kind": "fill",
+        "cases": [
+          { "want": "YES" },
+          { "replace": { "a = 2; b = 50; c = 2": "a = 1; b = 2; c = 2" }, "want": "YES" },
+          { "replace": { "a = 2; b = 50; c = 2": "a = 1; b = 3; c = 2" }, "want": "" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/4/9",
+      "stem": ["R01"],
+      "code": ["R02-R11"],
+      "options": ["R12-R15"],
+      "answer": "A",
+      "reason": "a = 5 > 0 nên vào nhánh ngoài; b = 5 không < 0, a = 5 không > 5, nên vào else bên trong: x = 0 + 3 = 3.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(x)", "expect": "3" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w022-hw/4/10",
+      "stem": ["R16"],
+      "code": ["R17-R19"],
+      "options": ["R20-R23"],
+      "answer": "A",
+      "reason": "b // a = 5 // 12 = 0, là giá trị sai (falsy), nên chạy nhánh else: in False.",
+      "verify": { "kind": "run", "cases": [{ "expect": "False" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w022-hw/5/11",
+      "stem": ["L01"],
+      "code": ["L02"],
+      "options": ["L03-L06"],
+      "answer": "A",
+      "reason": "-3 khác 0 nên là giá trị đúng (truthy): chạy print('False').",
+      "verify": { "kind": "run", "cases": [{ "expect": "False" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w022-hw/5/12",
+      "stem": ["L07"],
+      "code": ["L08"],
+      "options": ["L09-L12"],
+      "answer": "C",
+      "reason": "None là giá trị sai (falsy): chạy print('True').",
+      "verify": { "kind": "run", "cases": [{ "expect": "True" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w022-hw/5/13",
+      "stem": ["L13-L14"],
+      "options": ["L15-L18"],
+      "answer": "A",
+      "reason": "Số lẻ khi n % 2 != 0. B và D dùng // (chia lấy nguyên) nên sai với n = 4; C đảo ngược điều kiện; D còn có dấu nháy cong (’) trong tài liệu nên báo lỗi cú pháp.",
+      "verify": {
+        "kind": "runOptions",
+        "cases": [
+          { "setup": "n = 3", "want": "Lẻ" },
+          { "setup": "n = 4", "want": "Chẵn" },
+          { "setup": "n = 10", "want": "Chẵn" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/5/14",
+      "stem": ["L19"],
+      "options": ["L20-L23"],
+      "answer": "B",
+      "reason": "Khối finally luôn được thực hiện, dù có ngoại lệ hay không. Lưu ý: Python viết try/except, đề viết try/catch nhưng ý hỏi vẫn rõ.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/reference/compound_stmts.html#finally-clause"] }
+    },
+    {
+      "ref": "w022-hw/5/15",
+      "stem": ["R01-R02"],
+      "options": ["R03-R10"],
+      "answer": "C",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): trên slide lệnh print('TRUE') nằm thẳng dưới nhãn phương án; thụt vào thì chỉ C đúng. z thuộc [-5; -1] là -5 <= z <= -1 (and), thuộc [1; 5] là 1 <= z <= 5 (and); hai đoạn nối bằng or. Khi chạy thử, lệnh print được thụt vào cho đúng cú pháp (trên slide nó nằm thẳng dưới nhãn phương án). D còn có dấu nháy cong (’) trong tài liệu.",
+      "verify": {
+        "kind": "runOptions",
+        "cases": [
+          { "setup": "z = -3", "replace": { "\nprint(": "\n    print(" }, "want": "TRUE" },
+          { "setup": "z = 3", "replace": { "\nprint(": "\n    print(" }, "want": "TRUE" },
+          { "setup": "z = 0", "replace": { "\nprint(": "\n    print(" }, "want": "" },
+          { "setup": "z = -6", "replace": { "\nprint(": "\n    print(" }, "want": "" },
+          { "setup": "z = 6", "replace": { "\nprint(": "\n    print(" }, "want": "" }
+        ]
+      }
+    },
+    {
+      "ref": "w022-hw/5/16",
+      "stem": ["R11"],
+      "options": ["R12-R15"],
+      "answer": "A",
+      "reason": "try … except dùng để bắt và xử lý ngoại lệ, tránh chương trình dừng đột ngột. Đề viết try … catch (cách gọi của ngôn ngữ khác) nhưng ý hỏi vẫn rõ.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/errors.html#handling-exceptions"] }
+    },
+    {
+      "ref": "w022-hw/5/17",
+      "stem": ["R16-R17"],
+      "options": ["R18-R21"],
+      "answer": "A",
+      "reason": "raise dùng để chủ động phát sinh (báo) lỗi, thường đặt trong if khi điều kiện không thoả; print chỉ in ra, pass không làm gì.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/errors.html#raising-exceptions"] }
+    },
+    {
+      "ref": "w022-hw/6/18",
+      "stem": ["L01"],
+      "code": ["L02-L07"],
+      "options": ["L08-L11"],
+      "answer": "D",
+      "reason": "Khối try in \"throw\" và không có lỗi nên bỏ qua except; finally luôn chạy nên in tiếp \"finally\": throw rồi finally.",
+      "verify": { "kind": "run", "cases": [{ "expect": "throw\nfinally" }] }
+    },
+    {
+      "ref": "w022-hw/6/19",
+      "stem": ["L12"],
+      "code": ["L13-L18"],
+      "options": ["L19-L22"],
+      "answer": "B",
+      "reason": "10 / 5.0 = 2.0, không có lỗi nên chỉ in 2.0.",
+      "verify": { "kind": "run", "cases": [{ "expect": "2.0" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w022-hw/6/20",
+      "stem": ["R01"],
+      "code": ["R02-R06"],
+      "options": ["R07-R13"],
+      "answer": "C",
+      "reason": "except (TypeError, ZeroDivisionError) chỉ bắt hai loại ngoại lệ này: xảy ra một trong hai thì in \"Python Quiz\"; ngoại lệ khác (ví dụ ValueError) không bị bắt; không có ngoại lệ thì không in gì. Hai ngoại lệ không thể cùng xảy ra một lúc.",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          { "expect": "" },
+          { "replace": { "pass": "1 / 0" }, "expect": "Python Quiz" },
+          { "replace": { "pass": "None + 1" }, "expect": "Python Quiz" },
+          { "replace": { "pass": "int('x')" }, "expect": "ERROR: ValueError" }
+        ]
+      }
+    }
+  ]
+}

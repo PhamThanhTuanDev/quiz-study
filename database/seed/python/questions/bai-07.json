@@ -1,0 +1,316 @@
+{
+  "$comment": "Bản đồ vị trí Bài 7 (D-035): w05 LT trang 35; w05 HW trang 2–12. Câu \"lỗi ở dòng thứ mấy\" bỏ số dòng (1), (2)… khi chạy thử và dùng errorLine để lấy dòng gây lỗi.",
+  "chapter": 7,
+  "ignore": {
+    "w05-hw/12": { "L12": "Số \"50\" đứng lẻ cuối trang, không có đề và phương án (P9, D-034)." }
+  },
+  "questions": [
+    {
+      "ref": "w05-lt/35/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "A",
+      "reason": "return kết thúc hàm và trả giá trị về nơi gọi. exit thoát chương trình; break và continue chỉ dùng trong vòng lặp.",
+      "verify": { "kind": "runOptions", "wrap": "def f():\n    {option} 5\nprint(f())", "cases": [{ "want": "5" }] }
+    },
+    {
+      "ref": "w05-lt/35/2", "stem": ["L06"], "options": ["L07-L10"], "answer": "A",
+      "reason": "Chuỗi đặt trong ba dấu nháy ngay sau dòng def là docstring (chuỗi mô tả hàm, đọc được qua __doc__), không phải comment.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/glossary.html#term-docstring", "https://docs.python.org/3/tutorial/controlflow.html#documentation-strings"] }
+    },
+    {
+      "ref": "w05-lt/35/3", "stem": ["L11"], "options": ["L12-L15"], "answer": "B",
+      "reason": "Hai loại hàm: hàm có sẵn (built-in function, như print, len) và hàm do người dùng định nghĩa (user-defined function, viết bằng def).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/functions.html", "https://docs.python.org/3/reference/datamodel.html#user-defined-functions"] }
+    },
+    {
+      "ref": "w05-lt/35/4", "stem": ["L16"], "options": ["L17-L20"], "answer": "D",
+      "reason": "Hàm khai báo được ở mức module, bên trong class (thành phương thức) và bên trong một hàm khác (hàm lồng).",
+      "verify": { "kind": "run", "cases": [{ "setup": "def top():\n    return 'module'\nclass C:\n    def m(self):\n        return 'class'\ndef outer():\n    def inner():\n        return 'inner'\n    return inner()\nprint(top(), C().m(), outer())", "expect": "module class inner" }] }
+    },
+    {
+      "ref": "w05-lt/35/5", "stem": ["R01"], "options": ["R02-R05"], "answer": "A",
+      "reason": "sqrt nằm trong module math. random, zlib, datetime không có sqrt.",
+      "verify": { "kind": "runOptions", "wrap": "from {option} import sqrt\nprint(sqrt(16))", "cases": [{ "want": "4.0" }] }
+    },
+    {
+      "ref": "w05-lt/35/6", "stem": ["R06-R07"], "options": ["R08-R11"], "answer": "B",
+      "reason": "Giá trị (đối số) được chương trình truyền vào hàm qua lời gọi hàm, ví dụ f(3, 5).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/glossary.html#term-argument"] }
+    },
+    {
+      "ref": "w05-lt/35/7", "stem": ["R12"], "options": ["R13-R18"], "answer": "D",
+      "reason": "Hàm giúp dùng lại code thay vì lặp lại, chia bài toán lớn thành phần nhỏ, và làm code rõ ràng, dễ quản lý: cả ba ý đều đúng.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/controlflow.html#defining-functions"] }
+    },
+
+    {
+      "ref": "w05-hw/2/1", "stem": ["L01"], "code": ["L02-L03"], "ownerAnswer": ["L04"],
+      "fill": [["def my_function"], ["function my_function()"], ["def my_function()"], ["def my_function[]"]], "answer": "C",
+      "reason": "Định nghĩa hàm: def tên_hàm(): (có cặp ngoặc tròn). Thiếu ngoặc, dùng từ function hay ngoặc vuông đều sai cú pháp.",
+      "verify": { "kind": "fill", "cases": [{ "append": "my_function()", "want": "Hello World!" }] }
+    },
+    {
+      "ref": "w05-hw/2/2", "stem": ["L05"], "code": ["L06-L08"], "ownerAnswer": ["L09"],
+      "fill": [["my_function"], ["my_function()"], ["call my_function()"], ["def my_function()"]], "answer": "B",
+      "reason": "Gọi hàm bằng tên hàm kèm cặp ngoặc: my_function(). Chỉ viết tên hàm thì không gọi (không in gì); call và def không dùng để gọi hàm.",
+      "verify": { "kind": "fill", "cases": [{ "want": "Hello World!" }] }
+    },
+    {
+      "ref": "w05-hw/2/3", "stem": ["L10"], "code": ["L11-L12"], "ownerAnswer": ["L13"],
+      "fill": [["print", "x", "+", "5"], ["return", "x", "*", "5"], ["return", "x", "-", "5"], ["return", "x", "+", "5"]], "answer": "D",
+      "reason": "return x + 5 trả giá trị x + 5 về nơi gọi. print x + 5 sai cú pháp ở Python 3 (và print không trả về giá trị); x * 5, x - 5 cho kết quả khác.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(my_function(3))", "want": "8" }, { "append": "print(my_function(10))", "want": "15" }] }
+    },
+    {
+      "ref": "w05-hw/2/4", "stem": ["L14-L15"], "code": ["L16-L17"], "ownerAnswer": ["L18"],
+      "fill": [["**"], ["*"], ["&"], ["$"]], "answer": "B",
+      "reason": "*kids gom mọi đối số vị trí vào một tuple nên dùng được kids[2]. **kids chỉ nhận đối số có tên; & và $ sai cú pháp.",
+      "verify": { "kind": "fill", "cases": [{ "append": "my_function(\"Emil\", \"Tobias\", \"Linus\")", "want": "The youngest child is Linus" }] }
+    },
+    {
+      "ref": "w05-hw/2/5", "stem": ["R01-R02"], "code": ["R03-R04"], "ownerAnswer": ["R05"],
+      "fill": [["*"], ["**"], ["&"], ["$"]], "answer": "B",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Tham số tên kids nhưng thân hàm dùng kid[\"lname\"] (tên biến không khớp), nên chạy nguyên văn báo lỗi NameError với mọi phương án. Nếu sửa kid thành kids thì đáp án B (**).",
+      "reason": "**kids gom các đối số có tên (tên và giá trị) vào một dictionary, đọc bằng kids[\"lname\"]. *kids chỉ nhận đối số vị trí.",
+      "verify": { "kind": "fill", "cases": [{ "replace": { "kid[\"lname\"]": "kids[\"lname\"]" }, "append": "my_function(fname=\"Tobias\", lname=\"Refsnes\")", "want": "His last name is Refsnes" }] }
+    },
+    {
+      "ref": "w05-hw/2/6", "stem": ["R06-R07"], "code": ["R08"], "ownerAnswer": ["R09"],
+      "fill": [["lambda", "(a, b)", ":", "a ** 2 + b"], ["lambda", "a, b", ":", "a ** 2 + b"], ["def", "a, b", ":", "a ** 2 + b"], ["lambda", "a, b", ":", "a ^ 2 + b"]], "answer": "B",
+      "reason": "Cú pháp lambda tham_số: biểu_thức, ví dụ lambda a, b: a ** 2 + b. Python 3 không cho viết tham số lambda trong ngoặc; def không dùng trong biểu thức; ^ là phép XOR chứ không phải luỹ thừa.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(x(3, 1))", "want": "10" }, { "append": "print(x(2, 5))", "want": "9" }] }
+    },
+    {
+      "ref": "w05-hw/2/7", "stem": ["R10"], "options": ["R11-R15"], "answer": "B",
+      "reason": "Ở Python 3, input() luôn trả về chuỗi: nhập 1+2 thì nhận chuỗi '1+2', không tính biểu thức và không tự thành số. Các phát biểu về print(), type(), str() đều đúng.",
+      "verify": { "kind": "run", "cases": [{ "setup": "x = input()\nprint(type(x).__name__, x)", "stdin": "1+2\n", "expect": "str 1+2" }] }
+    },
+    {
+      "ref": "w05-hw/3/8", "stem": ["L01"], "options": ["L02-L08"], "answer": "C",
+      "reason": "bool() chuyển giá trị sang kiểu Boolean. float() trả về số thực chứ không phải số nguyên; Python có rất nhiều hàm có sẵn; input() luôn trả về chuỗi nên muốn có số nguyên phải chuyển kiểu.",
+      "verify": { "kind": "run", "cases": [{ "setup": "print(bool(0), bool('a'), float('3'), type(input()).__name__)", "stdin": "5\n", "expect": "False True 3.0 str" }] }
+    },
+    {
+      "ref": "w05-hw/3/9", "stem": ["L09"], "code": ["L10-L12"], "options": ["L13-L16"], "answer": "D",
+      "reason": "5 ** 2 = 25. Dấu ; cuối lệnh return không gây lỗi.",
+      "verify": { "kind": "run", "cases": [{ "expect": "25" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/3/10", "stem": ["L17"], "code": ["L18-L20"], "options": ["L21-L24"], "answer": "D",
+      "reason": "5.0 là số thực nên type trả về kiểu float (in ra <class 'float'>).",
+      "verify": { "kind": "run", "cases": [{ "expect": "<class 'float'>" }] }
+    },
+    {
+      "ref": "w05-hw/3/11", "stem": ["R01"], "code": ["R02-R03"], "options": ["R04-R07"], "answer": "D",
+      "reason": "Hàm tính a + b rồi in ra màn hình; không có return nên không trả về gì (trả về None). Vì vậy A, B sai và C chưa đủ.",
+      "verify": { "kind": "run", "cases": [{ "append": "r = sum(2, 3)\nprint(r)", "expect": "sum = 5\nNone" }] }
+    },
+    {
+      "ref": "w05-hw/3/12", "stem": ["R08"], "code": ["R09-R13"], "options": ["R14-R17"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Phương án B, C, D dùng ký hiệu toán ≤ (không phải toán tử Python) nên chạy nguyên văn báo lỗi, chỉ A chạy được. Nhưng nếu hiểu ≤ là <= thì cả 4 phương án đều tìm đúng số lớn nhất (bằng nhau thì gán lại cũng không sao), nên câu không có đáp án duy nhất. Đề xuất A.",
+      "reason": "max < b thì max = b; max < c thì max = c: cuối cùng max là số lớn nhất.",
+      "verify": { "kind": "runOptions", "intoBlanks": ", ", "cases": [{ "append": "print(find_max(3, 7, 5), find_max(9, 2, 4), find_max(1, 2, 8), find_max(5, 5, 5))", "want": "7 9 8 5" }] }
+    },
+    {
+      "ref": "w05-hw/3/13", "stem": ["R18-R19"], "options": ["R20-R23"], "answer": "A",
+      "reason": "Tham số được đặt tên trong phần khai báo hàm và dùng như biến trong thân hàm; đối số là giá trị truyền vào khi gọi.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/glossary.html#term-parameter"] }
+    },
+    {
+      "ref": "w05-hw/4/14", "stem": ["L01"], "code": ["L02-L08"], "options": ["L09-L12"], "answer": "D",
+      "reason": "1 + 2 + 3 + 4 + 5 = 15.",
+      "verify": { "kind": "run", "cases": [{ "expect": "15" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/4/15", "stem": ["L13"], "code": ["L14-L19"], "options": ["L20-L25"], "answer": "C",
+      "reason": "say(13) chạy return a + i, cộng chuỗi với số nên báo lỗi TypeError tại dòng (3).",
+      "verify": { "kind": "run", "errorLine": true, "cases": [{ "replace": { "(1) ": "", "(2) ": "", "(3)": "", "(4) ": "", "(5) ": "" }, "expect": "TypeError 3" }] }
+    },
+    {
+      "ref": "w05-hw/4/16", "stem": ["R01"], "code": ["R02-R08"], "options": ["R09-R14"], "answer": "F",
+      "reason": "Hàm add định nghĩa đúng và được gọi đúng số đối số; kết quả không được in nhưng chương trình không lỗi.",
+      "verify": { "kind": "run", "errorLine": true, "cases": [{ "replace": { "(1) ": "", "(2)": "", "(3)": "", "(4) ": "", "(5) ": "" }, "expect": "Không lỗi" }] }
+    },
+    {
+      "ref": "w05-hw/4/17", "stem": ["R15"], "code": ["R16-R22"], "options": ["R23-R28"], "answer": "A",
+      "reason": "Dòng (1) def add(a, b) thiếu dấu hai chấm cuối dòng nên báo lỗi cú pháp.",
+      "verify": { "kind": "run", "errorLine": true, "cases": [{ "replace": { "(1) ": "", "(2) ": "", "(3) ": "", "(4) ": "", "(5) ": "", "(6) ": "" }, "expect": "SyntaxError 1" }] }
+    },
+    {
+      "ref": "w05-hw/5/18", "stem": ["L01"], "code": ["L02-L06"], "options": ["L07-L10"], "answer": "B",
+      "reason": "3 * 3 = 9, 3 * 5 = 15, 3 * 9 = 27, mỗi số in trên một dòng.",
+      "verify": { "kind": "run", "cases": [{ "expect": "9\n15\n27" }] }
+    },
+    {
+      "ref": "w05-hw/5/19", "stem": ["L11"], "code": ["L12-L16"], "options": ["L17-L20"], "answer": "D",
+      "reason": "Hàm ham() khai báo không có tham số nhưng được gọi với một đối số nên báo lỗi TypeError (thân hàm còn dùng biến country chưa có).",
+      "verify": { "kind": "run", "cases": [{ "expect": "ERROR: TypeError" }] }
+    },
+    {
+      "ref": "w05-hw/5/20", "stem": ["R01"], "code": ["R02-R09"], "options": ["R10-R13"], "answer": "C",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề nói tính tổng nhưng code dùng answer *= v, tức là tính tích. Theo code thì đáp án C (int, 1). Nếu đúng là tính tổng thì phải sửa code thành answer += v và đáp án là B (int, 0).",
+      "reason": "n phải là số nguyên để dùng range(n): int. Tích bắt đầu từ 1 (bắt đầu từ 0 thì tích luôn bằng 0).",
+      "verify": { "kind": "runOptions", "intoBlanks": ", ", "cases": [{ "stdin": "3\n2\n3\n4\n", "want": "24" }] }
+    },
+    {
+      "ref": "w05-hw/5/21", "stem": ["R14"], "options": ["R15-R20"], "answer": "B",
+      "reason": "Với hàm khai báo thông thường (không có giá trị mặc định, *args), số đối số truyền vào phải bằng số tham số. A sai: đối số chưa có giá trị thì báo lỗi NameError. C sai: giá trị truyền vào khi gọi là đối số, không phải tham số.",
+      "verify": { "kind": "run", "cases": [{ "setup": "def f(a, b):\n    return a + b\nprint(f(1, 2))\nf(1)", "expect": "ERROR: TypeError" }] }
+    },
+    {
+      "ref": "w05-hw/6/22", "stem": ["L01"], "options": ["L02-L07"], "answer": "A",
+      "reason": "Hàm khai báo một tham số mà gọi với hai đối số thì báo lỗi TypeError. B, C, D đúng (Python truyền đối số bằng giá trị là tham chiếu tới đối tượng).",
+      "verify": { "kind": "run", "cases": [{ "setup": "def f(a):\n    return a\nf(1, 2)", "expect": "ERROR: TypeError" }] }
+    },
+    {
+      "ref": "w05-hw/6/23", "stem": ["L08-L09"], "options": ["L10-L13"], "answer": "B",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong ở C, D là nháy thẳng (nếu không, C, D cũng gây lỗi). f(10, c) báo lỗi NameError vì c chưa có giá trị. Số và chuỗi đều truyền vào được.",
+      "verify": { "kind": "runOptions", "wrap": "def f(a, b):\n    return a, b\nf({option})\nprint('ok')", "cases": [{ "replace": { "“": "\"", "”": "\"" }, "want": "ERROR: NameError" }] }
+    },
+    {
+      "ref": "w05-hw/6/24", "stem": ["L14-L15"], "options": ["L16-L19"], "answer": "C",
+      "reason": "Lời gọi f(1, 2, 3) truyền 3 đối số nên hàm khai báo thông thường phải có 3 tham số.",
+      "verify": { "kind": "run", "cases": [{ "setup": "def f(a, b, c):\n    return a + b + c\nprint(f(1, 2, 3))", "expect": "6" }] }
+    },
+    {
+      "ref": "w05-hw/6/25", "stem": ["L20-L21"], "options": ["L22-L24"], "answer": "A",
+      "reason": "'5.0' đặt trong dấu nháy là chuỗi nên tham số nhận kiểu str (lời đề hiển thị dấu nháy dạng nháy cong).",
+      "verify": { "kind": "run", "cases": [{ "setup": "def f(x):\n    return type(x).__name__\nprint(f('5.0'))", "expect": "str" }] }
+    },
+    {
+      "ref": "w05-hw/6/26", "stem": ["R01-R02"], "code": ["R03-R13"], "options": ["R14-R17"], "answer": "A",
+      "reason": "c đếm số ước của n nhỏ hơn n. Số nguyên tố chỉ có đúng một ước như vậy (số 1) nên c == 1 thì trả True, ngược lại False.",
+      "verify": { "kind": "runOptions", "intoBlanks": ", ", "cases": [{ "append": "print(prime(7), prime(8), prime(1), prime(2))", "want": "True False False True" }] }
+    },
+    {
+      "ref": "w05-hw/7/27", "stem": ["L01"], "code": ["L02-L05"], "options": ["L06-L09"], "answer": "B",
+      "reason": "s = 1 + m = 5 nên m = 4.",
+      "verify": { "kind": "runOptions", "wrap": "m = {option}\n{code}", "cases": [{ "want": "5" }] }
+    },
+    {
+      "ref": "w05-hw/7/28", "stem": ["L10"], "code": ["L11-L17"], "options": ["L18-L22"], "answer": "C",
+      "reason": "Dòng (4) dùng biến m chưa được gán giá trị nên báo lỗi NameError.",
+      "verify": { "kind": "run", "errorLine": true, "cases": [{ "replace": { "(1) ": "", "(2)": "", "(3)": "", "(4) ": "", "(5) ": "" }, "expect": "NameError 4" }] }
+    },
+    {
+      "ref": "w05-hw/7/29", "stem": ["L23-L25"], "options": ["L26-L29"], "answer": "B",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Biến khai báo trong hàm có tính cục bộ (local), không có hiệu lực ở bên ngoài hàm: B. Nhưng \"địa phương\" cũng là cách dịch của \"local\" mà một số tài liệu dùng, nên C (địa phương, ngoài) cũng có thể được coi là đúng. Đề xuất B (thuật ngữ thường dùng).",
+      "reason": "Biến gán giá trị bên trong hàm là biến cục bộ, chỉ dùng được trong hàm đó.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/faq/programming.html#what-are-the-rules-for-local-and-global-variables-in-python"] }
+    },
+    {
+      "ref": "w05-hw/7/30", "stem": ["R01"], "code": ["R02-R06"], "options": ["R07-R10"], "answer": "D",
+      "reason": "1 // 5 = 0 nên s = 2x = 8, suy ra x = 4.",
+      "verify": { "kind": "runOptions", "wrap": "x = {option}\n{code}", "cases": [{ "want": "8" }] }
+    },
+    {
+      "ref": "w05-hw/7/31", "stem": ["R11"], "code": ["R12-R18"], "options": ["R19-R22"], "answer": "B",
+      "reason": "Thuật toán Euclid: khi phần dư r bằng 0 thì b là ước chung lớn nhất.",
+      "verify": { "kind": "runOptions", "intoBlanks": true, "cases": [{ "append": "print(USCLN_2(12, 18), USCLN_2(21, 14), USCLN_2(7, 5))", "want": "6 7 1" }] }
+    },
+    {
+      "ref": "w05-hw/8/32", "stem": ["L01"], "code": ["L02-L08"], "options": ["L09-L12"], "answer": "D",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Dòng a = input(…) không đổi sang int nên a là chuỗi; chạy nguyên văn thì a % b báo lỗi TypeError với mọi phương án. Nếu sửa thành a = int(input(…)) thì chỉ D (b == 0) đúng.",
+      "reason": "UCLN(a, b) = UCLN(b, a % b); khi b == 0 thì a là ước chung lớn nhất.",
+      "verify": { "kind": "runOptions", "intoBlanks": true, "cases": [
+        { "replace": { "a = input('Nhap vao so nguyen duong a = ')": "a = int(input('Nhap vao so nguyen duong a = '))" }, "stdin": "12\n18\n", "want": "Nhap vao so nguyen duong a = Nhao vao so nguyen duong b = 6" },
+        { "replace": { "a = input('Nhap vao so nguyen duong a = ')": "a = int(input('Nhap vao so nguyen duong a = '))" }, "stdin": "21\n14\n", "want": "Nhap vao so nguyen duong a = Nhao vao so nguyen duong b = 7" }
+      ] }
+    },
+    {
+      "ref": "w05-hw/8/33", "stem": ["L13"], "code": ["L14-L20"], "options": ["L21-L28"], "answer": "D",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Trên slide dòng (5) thụt lề ngang với while (nằm ngoài vòng lặp) nên a không đổi và chương trình in 0 mãi (vòng lặp vô hạn), không báo lỗi. Nếu tính cả lỗi logic thì đáp án D (dòng 5, phải thụt vào trong while); nếu chỉ tính lỗi cú pháp hoặc lỗi khi chạy thì H (Không có lỗi).",
+      "reason": "Chạy thử: để nguyên thì vòng lặp không dừng; thụt dòng (5) vào trong while thì in đúng dãy Fibonacci nhỏ hơn 1000.",
+      "verify": { "kind": "run", "cases": [
+        { "setup": "import builtins\ncalls = []\ndef print(*args, **kwargs):\n    calls.append(args)\n    if len(calls) > 50:\n        raise SystemExit('VONG_LAP_VO_HAN')\n    builtins.print(*args, **kwargs)", "replace": { "(1) ": "", "(2) ": "", "(3) ": "", "(4) ": "", "(5) ": "", "(6) ": "", "(7) ": "" }, "expect": "ERROR: VONG_LAP_VO_HAN" },
+        { "replace": { "(5)  a, b": "(5)   a, b", "(1) ": "", "(2) ": "", "(3) ": "", "(4) ": "", "(5) ": "", "(6) ": "", "(7) ": "" }, "expect": "0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987" }
+      ] }
+    },
+    {
+      "ref": "w05-hw/8/34", "stem": ["R01"], "code": ["R02-R08"], "options": ["R09-R12"], "answer": "A",
+      "reason": "print nằm sau vòng lặp nên in một lần tích 2 * 4 * 6 * 8 = 384.",
+      "verify": { "kind": "run", "cases": [{ "expect": "384" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/8/35", "stem": ["R13-R16"], "options": ["R17-R20"], "answer": "B",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Phát biểu 1 và 2 gần như cùng nghĩa (\"đều có\" và \"chỉ có\" tính cục bộ). Theo bài học (câu 29, 36: tất cả các biến trong hàm đều có tính cục bộ) thì 1 và 3 đúng; 2 sai vì dùng global thì biến trong hàm có tác dụng ra ngoài. Nhưng cũng vì global mà 1 chưa chính xác, nên số phát biểu đúng có thể là 1, 2 hoặc 3. Đề xuất B (2).",
+      "reason": "Biến gán trong hàm là cục bộ trừ khi khai báo global; gọi biến cục bộ ở ngoài hàm báo lỗi NameError.",
+      "verify": { "kind": "run", "cases": [{ "setup": "def f():\n    local_value = 1\n    global shared\n    shared = 2\nf()\nprint(shared)\nprint(local_value)", "expect": "ERROR: NameError" }] }
+    },
+    {
+      "ref": "w05-hw/9/36", "stem": ["L01"], "options": ["L02-L08"], "answer": "A",
+      "reason": "Chương trình chính không dùng được biến cục bộ của hàm (báo lỗi NameError). Biến trong hàm được trùng tên biến bên ngoài và chỉ có hiệu lực trong hàm.",
+      "verify": { "kind": "run", "cases": [{ "setup": "def f():\n    x_local = 1\nf()\nprint(x_local)", "expect": "ERROR: NameError" }] }
+    },
+    {
+      "ref": "w05-hw/9/37", "stem": ["L09"], "code": ["L10-L14"], "options": ["L15-L18"], "answer": "D",
+      "reason": "x, y trong hàm là tham số (biến cục bộ), gán lại trong hàm không làm đổi x, y bên ngoài: vẫn là 3, 4. (4, 5 chỉ là giá trị của x, y bên trong hàm.)",
+      "verify": { "kind": "run", "cases": [{ "append": "f(1, 3)\nprint(x, y, sep=', ')", "expect": "3, 4" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/9/38", "stem": ["R01"], "code": ["R02-R06"], "options": ["R07-R10"], "answer": "D",
+      "reason": "a, b trong hàm là tham số (biến cục bộ), nên a, b bên ngoài vẫn là 0, 1. (10, 2 chỉ là giá trị bên trong hàm.)",
+      "verify": { "kind": "run", "cases": [{ "append": "f(2, 5)\nprint(a, b, sep=', ')", "expect": "0, 1" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/9/39", "stem": ["R11"], "code": ["R12-R15"], "options": ["R16-R19"], "answer": "D",
+      "reason": "Trong hàm có lệnh gán s = … nên s là biến cục bộ; vế phải đọc s trước khi có giá trị nên báo lỗi UnboundLocalError.",
+      "verify": { "kind": "run", "cases": [{ "expect": "ERROR: UnboundLocalError" }] }
+    },
+    {
+      "ref": "w05-hw/10/40", "stem": ["L01"], "code": ["L02-L07"], "options": ["L08-L11"], "answer": "A",
+      "reason": "Hàm kq không được gọi; print(s) in biến s bên ngoài: Hôm nay tôi đi học.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Hôm nay tôi đi học" }] }
+    },
+    {
+      "ref": "w05-hw/10/41", "stem": ["L12"], "code": ["L13-L17"], "options": ["L18-L21"], "answer": "C",
+      "reason": "s là biến cục bộ được gán trước khi dùng, nên hàm trả về \"Tôi tên là: \" + \"Xuân\".",
+      "verify": { "kind": "run", "cases": [{ "expect": "Tôi tên là: Xuân" }] }
+    },
+    {
+      "ref": "w05-hw/10/42", "stem": ["R01"], "code": ["R02-R05"], "options": ["R06-R09"], "answer": "C",
+      "reason": "N được gán trước khi gọi hàm nên hàm đọc được biến toàn cục N: f(3, 3) = 3 + 3 + 5 = 11. (Chương trình không có print nên chạy dạng script không in gì; giá trị của lời gọi là 11.)",
+      "verify": { "kind": "run", "cases": [{ "replace": { "\nf(3, 3)": "\nprint(f(3, 3))" }, "expect": "11" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/10/43", "stem": ["R10-R12"], "options": ["R13-R16"], "answer": "A",
+      "reason": "Khai báo global tên_biến trong hàm để dùng và gán lại biến bên ngoài.",
+      "verify": { "kind": "run", "cases": [{ "setup": "x = 1\ndef f():\n    global x\n    x = 2\nf()\nprint(x)", "expect": "2" }] }
+    },
+    {
+      "ref": "w05-hw/10/44", "stem": ["R17"], "code": ["R18-R22"], "options": ["R23-R26"], "answer": "B",
+      "reason": "Dòng 5 print a thiếu ngoặc, sai cú pháp ở Python 3. Hàm msg không được gọi nên return msg() không chạy.",
+      "verify": { "kind": "run", "errorLine": true, "cases": [{ "expect": "SyntaxError 5" }] }
+    },
+    {
+      "ref": "w05-hw/11/45", "stem": ["L01"], "code": ["L02-L05"], "options": ["L06-L09"], "answer": "C",
+      "reason": "add(15, 10) in 25, add(15, 15) in 30, add(15, 20) in 35.",
+      "verify": { "kind": "run", "cases": [{ "expect": "25\n30\n35" }] }
+    },
+    {
+      "ref": "w05-hw/11/46", "stem": ["L10"], "code": ["L11-L15"], "options": ["L16-L19"], "answer": "D",
+      "reason": "append thêm cả list [1, 2, 3, 4] thành một phần tử; hàm sửa trực tiếp list được truyền vào.",
+      "verify": { "kind": "run", "cases": [{ "expect": "[10, 20, 30, [1, 2, 3, 4]]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/11/47", "stem": ["R01"], "code": ["R02-R06"], "options": ["R07-R10"], "answer": "B",
+      "reason": "a = 2 + 3 = 5; n = 5 là biến toàn cục đã có khi gọi hàm, nên in 10.",
+      "verify": { "kind": "run", "cases": [{ "expect": "10" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w05-hw/11/48", "stem": ["R11"], "code": ["R12-R22"], "options": ["R23-R30"], "answer": "H",
+      "reason": "Mọi dòng đúng cú pháp; hàm msg không được gọi (nên return msg() không chạy), chương trình chỉ in 20.",
+      "verify": { "kind": "run", "errorLine": true, "cases": [{ "replace": { "(1) ": "", "(2) ": "", "(3)": "", "(4)": "", "(5)": "", "(6)": "", "(7) ": "" }, "expect": "20\nKhông lỗi" }] }
+    },
+    {
+      "ref": "w05-hw/12/49", "stem": ["L01"], "code": ["L02-L07"], "options": ["L08-L11"], "answer": "B",
+      "reason": "Khối try in Monday, khối finally luôn chạy sau đó in Tuesday.",
+      "verify": { "kind": "run", "cases": [{ "expect": "Monday\nTuesday" }] }
+    }
+  ]
+}

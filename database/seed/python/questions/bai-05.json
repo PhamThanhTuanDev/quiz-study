@@ -1,0 +1,221 @@
+{
+  "$comment": "Bản đồ vị trí Bài 5 (D-035): w03 LT không có trang trắc nghiệm; w03 HW trang 3–7 (không có câu 19, P7). \"Phần tử thứ n\" / \"#n\" hiểu là đếm từ 1 (câu 1: thứ #2 là fruits[1]).",
+  "chapter": 5,
+  "questions": [
+    {
+      "ref": "w03-hw/3/1", "stem": ["L01"], "code": ["L02-L03"], "ownerAnswer": ["L04"],
+      "fill": [["fruits[2]"], ["fruits[1]"], ["fruits(1)"], ["fruits{1}"]], "answer": "B",
+      "reason": "Chỉ mục bắt đầu từ 0 nên phần tử thứ 2 là fruits[1] (banana). fruits[2] là phần tử thứ 3; () gọi hàm và {} đều sai.",
+      "verify": { "kind": "fill", "cases": [{ "want": "banana" }] }
+    },
+    {
+      "ref": "w03-hw/3/2", "stem": ["L05"], "code": ["L06-L07"], "ownerAnswer": ["L08"],
+      "fill": [["fruits[1]", "\"kiwi\""], ["\"kiwi\"", "fruits[0]"], ["fruits[0]", "\"kiwi\""], ["fruits(0)", "\"kiwi\""]], "answer": "C",
+      "reason": "Gán giá trị mới cho phần tử chỉ mục 0: fruits[0] = \"kiwi\". fruits[1] thay banana; không gán được cho chuỗi hay lời gọi hàm.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(fruits)", "want": "['kiwi', 'banana', 'cherry']" }] }
+    },
+    {
+      "ref": "w03-hw/3/3", "stem": ["L09"], "code": ["L10-L11"], "ownerAnswer": ["L12"],
+      "fill": [["fruits.add(\"orange\")"], ["fruits.insert(\"orange\")"], ["append(fruits, \"orange\")"], ["fruits.append(\"orange\")"]], "answer": "D",
+      "reason": "append thêm phần tử vào cuối list: fruits.append(\"orange\"). list không có add; insert cần vị trí; append không phải hàm đứng riêng.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(fruits)", "want": "['apple', 'banana', 'cherry', 'orange']" }] }
+    },
+    {
+      "ref": "w03-hw/3/4", "stem": ["L13"], "code": ["L14-L15"], "ownerAnswer": ["L16"],
+      "fill": [["fruits.insert(1,"], ["fruits.insert(2,"], ["fruits.append(1,"], ["fruits.insert("]], "answer": "A",
+      "reason": "Vị trí thứ 2 là chỉ mục 1: fruits.insert(1, \"lemon\"). insert(2, …) đặt vào vị trí thứ 3; append chỉ nhận một đối số; insert thiếu vị trí báo lỗi.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(fruits)", "want": "['apple', 'lemon', 'banana', 'cherry']" }] }
+    },
+    {
+      "ref": "w03-hw/3/5", "stem": ["R01"], "code": ["R02-R03"], "ownerAnswer": ["R04"],
+      "fill": [["fruits.remove(1)"], ["fruits.remove(\"banana\")"], ["fruits.pop(\"banana\")"], ["fruits.delete(\"banana\")"]], "answer": "B",
+      "reason": "remove xoá phần tử theo giá trị: fruits.remove(\"banana\"). remove(1) tìm giá trị 1 (không có, báo lỗi); pop nhận chỉ mục; list không có delete.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(fruits)", "want": "['apple', 'cherry']" }] }
+    },
+    {
+      "ref": "w03-hw/3/6", "stem": ["R05"], "code": ["R06-R07"], "ownerAnswer": ["R08"],
+      "fill": [["fruits[-2]"], ["fruits[0]"], ["fruits[-1]"], ["fruits[-4]"]], "answer": "C",
+      "reason": "Chỉ mục âm đếm từ cuối: fruits[-1] là phần tử cuối (cherry). [-2] là banana; [0] là apple; [-4] vượt phạm vi.",
+      "verify": { "kind": "fill", "cases": [{ "want": "cherry" }] }
+    },
+    {
+      "ref": "w03-hw/3/7", "stem": ["R09"], "code": ["R10-R11"], "ownerAnswer": ["R12"],
+      "fill": [["1:5"], ["2:5"], ["0:5"], ["2:6"]], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Danh sách chỉ có 3 phần tử nhưng đề hỏi phần tử #2 → #5, và không rõ đánh số từ 0 hay từ 1 (câu 1 cùng trang dùng \"thứ #2\" là fruits[1]). Nếu đếm từ 1 thì đáp án A [1:5] (in ['banana', 'cherry']).",
+      "reason": "Lát cắt [1:5] lấy chỉ mục 1 đến 4; list ngắn hơn thì lấy tới hết.",
+      "verify": { "kind": "fill", "cases": [{ "want": "['banana', 'cherry']" }] }
+    },
+    {
+      "ref": "w03-hw/3/8", "stem": ["R13"], "code": ["R14-R15"], "ownerAnswer": ["R16"],
+      "fill": [["fruits.len()"], ["len(fruits)"], ["length(fruits)"], ["fruits.count()"]], "answer": "B",
+      "reason": "Số phần tử của list là len(fruits). list không có phương thức len; length không có trong Python; count cần đối số cần đếm.",
+      "verify": { "kind": "fill", "cases": [{ "want": "3" }] }
+    },
+    {
+      "ref": "w03-hw/4/9", "stem": ["L01"], "code": ["L02-L08"], "options": ["L09-L12"], "answer": "C",
+      "reason": "Giá trị lớn nhất là 6 ở chỉ mục 1; các phần tử sau không lớn hơn 6 nên index_max = 1.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(index_max)", "expect": "1" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w03-hw/4/10", "stem": ["L13-L14"], "options": ["L15-L18"], "answer": "A",
+      "reason": "List có thứ tự, thay đổi được, cho phép phần tử trùng. Tuple không thay đổi được; set không có thứ tự; khoá của dictionary không trùng.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/datastructures.html"] }
+    },
+    {
+      "ref": "w03-hw/4/11", "stem": ["L19-L20"], "options": ["L21-L24"], "answer": "B",
+      "reason": "Tuple có thứ tự, không thay đổi được, cho phép phần tử trùng.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/datastructures.html#tuples-and-sequences"] }
+    },
+    {
+      "ref": "w03-hw/4/12", "stem": ["L25-L26"], "options": ["L27-L30"], "status": "NEEDS_REVIEW",
+      "reviewNote": "Không kiểu nào trong 4 phương án vừa có thứ tự, vừa không thay đổi được, vừa không cho phần tử trùng: tuple cho phép trùng, set không có thứ tự, dictionary thay đổi được, list thay đổi được và cho phép trùng.",
+      "reason": "Đối chiếu tính chất các kiểu tập hợp trong tài liệu Python."
+    },
+    {
+      "ref": "w03-hw/4/13", "stem": ["R01-R03"], "options": ["R04-R07"], "answer": "C",
+      "reason": "Set không có thứ tự, không có chỉ mục, không cho phần tử trùng; không sửa được từng phần tử (chỉ thêm/xoá).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/datastructures.html#sets"] }
+    },
+    {
+      "ref": "w03-hw/4/14", "stem": ["R08"], "options": ["R09-R12"], "answer": "D",
+      "reason": "Cả ba cách đều tạo list: list rỗng, list liệt kê phần tử, và list 10 phần tử 0.5 bằng phép nhân list.",
+      "verify": { "kind": "run", "cases": [{ "setup": "lst = []\nlst2 = [2, 5, -1, 5, 8]\nlst3 = [0.5] * 10\nprint(type(lst).__name__, type(lst2).__name__, type(lst3).__name__, len(lst3))", "expect": "list list list 10" }] }
+    },
+    {
+      "ref": "w03-hw/4/15", "stem": ["R13"], "code": ["R14"], "options": ["R15-R16"], "answer": "D",
+      "reason": "Phần tử thứ 3 (giá trị 2) có chỉ mục 2, tức chỉ mục âm -7 trong list 9 phần tử. lst[3] là phần tử thứ 4.",
+      "verify": { "kind": "runOptions", "wrap": "{code}\nprint({option})", "cases": [{ "want": "2" }] }
+    },
+    {
+      "ref": "w03-hw/4/16", "stem": ["R17"], "code": ["R18-R19"], "options": ["R20-R23"], "answer": "D",
+      "reason": "lst[5::1] lấy từ chỉ mục 5 tới hết với bước 1: [3, 10, 17, 16]. lst[5:-1] bỏ phần tử cuối; lst[4:] lấy thừa 6; lst[-4:2] rỗng.",
+      "verify": { "kind": "runOptions", "wrap": "{code}\nprint({option})", "cases": [{ "want": "[3, 10, 17, 16]" }] }
+    },
+    {
+      "ref": "w03-hw/5/17", "stem": ["L01"], "options": ["L02-L05"], "answer": "C",
+      "reason": "List viết trong ngoặc vuông: a = [10,20,30]. Ngoặc tròn (hoặc không ngoặc) là tuple, ngoặc nhọn là set.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(type(a).__name__, a)", "cases": [{ "want": "list [10, 20, 30]" }] }
+    },
+    {
+      "ref": "w03-hw/5/18", "stem": ["L06"], "options": ["L07-L12"], "answer": "A",
+      "reason": "a = [] là list rỗng. () là tuple, {} là dictionary rỗng, [0] có một phần tử, 0 là số, a == [] là phép so sánh (a chưa có nên báo lỗi).",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(type(a).__name__, len(a))", "cases": [{ "want": "list 0" }] }
+    },
+    {
+      "ref": "w03-hw/5/20", "stem": ["L13"], "options": ["L14-L17"], "answer": "C",
+      "reason": "[1] * 20 lặp list [1] hai mươi lần. [1*20] là list một phần tử 20; 1..20 không phải cú pháp Python.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(len(a), a.count(1))", "cases": [{ "want": "20 20" }] }
+    },
+    {
+      "ref": "w03-hw/5/21", "stem": ["L18"], "options": ["L19-L22"], "answer": "B",
+      "reason": "a.pop() không đối số lấy ra (và xoá) phần tử cuối. pop không phải hàm đứng riêng.",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = [1, 2, 3]", "want": "3" }] }
+    },
+    {
+      "ref": "w03-hw/5/22", "stem": ["L23"], "options": ["L24-L27"], "answer": "B",
+      "reason": "Phần tử thứ 2 có chỉ mục 1: del(a[1]). del(a[2]) xoá phần tử thứ 3; remove là phương thức của list, không phải hàm đứng riêng.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [10, 20, 30]", "want": "[10, 30]" }] }
+    },
+    {
+      "ref": "w03-hw/5/23", "stem": ["L28"], "options": ["L29-L32"], "answer": "C",
+      "reason": "a.clear() xoá toàn bộ phần tử. append và remove cần đối số; del là từ khoá, không phải phương thức.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [1, 2]", "want": "[]" }] }
+    },
+    {
+      "ref": "w03-hw/5/24", "stem": ["R01"], "code": ["R02-R03"], "options": ["R04-R07"], "answer": "C",
+      "reason": "del(a[3]) xoá phần tử chỉ mục 3 (giá trị 1).",
+      "verify": { "kind": "run", "cases": [{ "append": "print(a)", "expect": "[7, 3, 8, 9]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w03-hw/5/25", "stem": ["R08"], "code": ["R09-R10"], "options": ["R11-R14"], "answer": "A",
+      "reason": "remove(3) xoá phần tử có giá trị 3 (không phải chỉ mục 3).",
+      "verify": { "kind": "run", "cases": [{ "append": "print(a)", "expect": "[7, 8, 1, 9]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w03-hw/5/26", "stem": ["R15"], "options": ["R16-R19"], "answer": "D",
+      "reason": "a[0:2] là chỉ mục 0 và 1, tức 2 phần tử đầu. a[1:1] rỗng; a[1:2] và a[0:1] chỉ có một phần tử.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [1, 2, 3, 4]", "want": "[3, 4]" }] }
+    },
+    {
+      "ref": "w03-hw/5/27", "stem": ["R20"], "options": ["R21-R24"], "answer": "A",
+      "reason": "a.append(5) thêm 5 vào cuối. pop lấy ra phần tử (pop(5) là chỉ mục 5); append và pop không phải hàm đứng riêng.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [1, 2]", "want": "[1, 2, 5]" }] }
+    },
+    {
+      "ref": "w03-hw/6/28", "stem": ["L01"], "options": ["L02-L05"], "answer": "B",
+      "reason": "Phần tử đầu tiên có chỉ mục 0. a0, a1 là tên biến khác, không phải truy cập phần tử.",
+      "verify": { "kind": "runOptions", "cases": [{ "setup": "a = [7, 8, 9]", "want": "7" }] }
+    },
+    {
+      "ref": "w03-hw/6/29", "stem": ["L06"], "options": ["L07-L10"], "answer": "C",
+      "reason": "Phần tử cuối có chỉ mục len(a) - 1. a[len(a)] vượt phạm vi; len(a) - 1 và len(a) chỉ in ra số, không phải phần tử.",
+      "verify": { "kind": "runOptions", "cases": [{ "setup": "a = [7, 8, 9]", "want": "9" }] }
+    },
+    {
+      "ref": "w03-hw/6/30", "stem": ["L11-L12"], "options": ["L13-L16"], "answer": "A",
+      "reason": "a.pop() vừa trả về phần tử cuối vừa xoá nó khỏi list. a[len(a)-1] chỉ lấy ra, không xoá; a[len(a)] vượt phạm vi; pop không phải hàm đứng riêng.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(x, a)", "cases": [{ "setup": "a = [7, 8, 9]", "want": "9 [7, 8]" }] }
+    },
+    {
+      "ref": "w03-hw/6/31", "stem": ["L17"], "code": ["L18-L19"], "options": ["L20-L22"], "answer": "B",
+      "reason": "insert(2, 9) chèn 9 vào chỉ mục 2, các phần tử từ đó lùi ra sau.",
+      "verify": { "kind": "run", "cases": [{ "append": "print(a)", "expect": "[5, 7, 9, 3, 4, 1]" }] }
+    },
+    {
+      "ref": "w03-hw/6/32", "stem": ["L23"], "options": ["L24-L27"], "answer": "C",
+      "reason": "a.sort() sắp xếp list tăng dần. reverse chỉ đảo ngược thứ tự; reverse và sort không phải hàm đứng riêng (hàm có sẵn là sorted).",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [3, 1, 2]", "want": "[1, 2, 3]" }] }
+    },
+    {
+      "ref": "w03-hw/6/33", "stem": ["R01-R02"], "options": ["R03-R06"], "answer": "A",
+      "reason": "append(6) thêm 6 vào cuối. insert cần vị trí; list không có add; extend cần một đối tượng lặp được.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "[1, 2, 3, 4, 5, 6]" }] }
+    },
+    {
+      "ref": "w03-hw/6/34", "stem": ["R07-R08"], "options": ["R09-R12"], "answer": "B",
+      "reason": "Với a = [1, 2, 3, 4, 5], remove(1) xoá giá trị 1, chính là phần tử đầu tiên. pop(1) xoá chỉ mục 1 (giá trị 2); list không có delete; clear không nhận đối số.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "[2, 3, 4, 5]" }] }
+    },
+    {
+      "ref": "w03-hw/6/35", "stem": ["R13-R14"], "options": ["R15-R18"], "answer": "A",
+      "reason": "len(a) trả về số phần tử; size, count (đứng riêng) và length không có trong Python.",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "5" }] }
+    },
+    {
+      "ref": "w03-hw/6/36", "stem": ["R19-R20"], "options": ["R21-R24"], "answer": "A",
+      "reason": "Phần tử đầu tiên là a[0].",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "1" }] }
+    },
+    {
+      "ref": "w03-hw/7/37", "stem": ["L01-L02"], "options": ["L03-L06"], "answer": "C",
+      "reason": "Phần tử cuối cùng là a[-1].",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "5" }] }
+    },
+    {
+      "ref": "w03-hw/7/38", "stem": ["L07-L08"], "options": ["L09-L12"], "answer": "C",
+      "reason": "remove(3) xoá phần tử có giá trị 3. del a[3] và pop(3) xoá chỉ mục 3 (giá trị 4); list không có delete.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "[1, 2, 4, 5]" }] }
+    },
+    {
+      "ref": "w03-hw/7/39", "stem": ["L13-L14"], "options": ["L15-L18"], "answer": "A",
+      "reason": "a.reverse() đảo ngược thứ tự. sort sắp xếp; list không có invert hay flip.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(a)", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "[5, 4, 3, 2, 1]" }] }
+    },
+    {
+      "ref": "w03-hw/7/40", "stem": ["L19-L21"], "options": ["L22-L25"], "answer": "A",
+      "reason": "a[:3] lấy chỉ mục 0, 1, 2: ba phần tử đầu.",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "[1, 2, 3]" }] }
+    },
+    {
+      "ref": "w03-hw/7/41", "stem": ["R01-R02"], "options": ["R03-R05"], "answer": "A",
+      "reason": "max(a) là hàm có sẵn; list không có phương thức max, maximum hay largest.",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "5" }] }
+    },
+    {
+      "ref": "w03-hw/7/42", "stem": ["R06-R07"], "options": ["R08-R11"], "answer": "A",
+      "reason": "min(a) là hàm có sẵn; list không có phương thức min, minimum hay smallest.",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "a = [1, 2, 3, 4, 5]", "want": "1" }] }
+    }
+  ]
+}

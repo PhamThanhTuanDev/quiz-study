@@ -1,0 +1,284 @@
+{
+  "$comment": "Bản đồ vị trí Bài 6 (D-035): w04.1 LT trang 11 (tuple), 20 (set), 28 (dictionary); w04.1 HW trang 1–2 (tuple), 3–4 (set), 5–6 (dictionary). Mỗi phần đánh số lại từ 1 nên ref có số trang.",
+  "chapter": 6,
+  "questions": [
+    {
+      "ref": "w041-lt/11/1", "stem": ["L01"], "code": ["L02-L03"], "ownerAnswer": ["L04"],
+      "fill": [["fruits[1]"], ["fruits.first()"], ["fruits[0]"], ["fruits(0)"]], "answer": "C",
+      "reason": "Phần tử đầu tiên có chỉ mục 0: fruits[0]. fruits[1] là phần tử thứ hai; tuple không có first(); () là gọi hàm.",
+      "verify": { "kind": "fill", "cases": [{ "want": "apple" }] }
+    },
+    {
+      "ref": "w041-lt/11/2", "stem": ["L05"], "code": ["L06-L07"], "ownerAnswer": ["L08"],
+      "fill": [["len(fruits)"], ["fruits.len()"], ["count(fruits)"], ["fruits.size"]], "answer": "A",
+      "reason": "len(fruits) trả về số phần tử. Tuple không có phương thức len hay thuộc tính size; count không phải hàm đứng riêng.",
+      "verify": { "kind": "fill", "cases": [{ "want": "3" }] }
+    },
+    {
+      "ref": "w041-lt/11/3", "stem": ["L09"], "code": ["L10-L11"], "ownerAnswer": ["L12"],
+      "fill": [["fruits[-2]"], ["fruits[0]"], ["fruits[-4]"], ["fruits[-1]"]], "answer": "D",
+      "reason": "Chỉ mục âm -1 là phần tử cuối (cherry). -2 là banana; 0 là apple; -4 vượt phạm vi.",
+      "verify": { "kind": "fill", "cases": [{ "want": "cherry" }] }
+    },
+    {
+      "ref": "w041-lt/11/4", "stem": ["L13"], "code": ["L14-L16"], "ownerAnswer": ["L17"],
+      "fill": [["3:5"], ["2:5"], ["2:4"], ["3:6"]], "answer": "B",
+      "reason": "Phần tử thứ 3 đến thứ 5 có chỉ mục 2, 3, 4: lát cắt [2:5] (không lấy chỉ mục 5).",
+      "verify": { "kind": "fill", "cases": [{ "want": "('cherry', 'orange', 'kiwi')" }] }
+    },
+    {
+      "ref": "w041-lt/11/5", "stem": ["R01"], "options": ["R02-R05"], "answer": "A",
+      "reason": "Tuple viết trong ngoặc tròn. Ngoặc nhọn là set (hoặc dictionary nếu có cặp khoá: giá trị), ngoặc vuông là list.",
+      "verify": { "kind": "runOptions", "wrap": "print(type({option}).__name__)", "cases": [{ "want": "tuple" }] }
+    },
+    {
+      "ref": "w041-lt/11/6", "stem": ["R06"], "options": ["R07-R10"], "answer": "C",
+      "reason": "Tuple không thay đổi được nên không thêm, xoá phần tử được; chỉ đọc và tìm kiếm (in, index(), count()).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/datastructures.html#tuples-and-sequences", "https://docs.python.org/3/library/stdtypes.html#common-sequence-operations"] }
+    },
+    {
+      "ref": "w041-lt/11/7", "stem": ["R11-R12"], "options": ["R13-R16"], "answer": "D",
+      "reason": "Tuple không thay đổi được nên không có phương thức nào cập nhật phần tử; update, replace, change đều không có trên tuple.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/datastructures.html#tuples-and-sequences"] }
+    },
+    {
+      "ref": "w041-lt/11/8", "stem": ["R17"], "options": ["R18-R21"], "answer": "B",
+      "reason": "Tuple một phần tử cần dấu phẩy: (<value>, ). (<value>) chỉ là giá trị trong ngoặc; tuple(<value>) cần đối tượng lặp được. Tài liệu có hai phương án cùng nhãn C (P8), giữ đúng thứ tự.",
+      "verify": { "kind": "runOptions", "wrap": "x = {option}\nprint(type(x).__name__, len(x))", "cases": [{ "replace": { "<value>": "5" }, "want": "tuple 1" }] }
+    },
+    {
+      "ref": "w041-lt/20/1", "stem": ["L01"], "code": ["L02-L04"], "ownerAnswer": ["L05"],
+      "fill": [["not in"], ["in"], ["=="], ["of"]], "answer": "B",
+      "reason": "Toán tử in kiểm tra phần tử có trong tập. not in đảo ngược; == so sánh chuỗi với cả tập; of không phải từ khoá Python.",
+      "verify": { "kind": "fill", "cases": [{ "want": "Yes, apple is a fruit!" }] }
+    },
+    {
+      "ref": "w041-lt/20/2", "stem": ["L06"], "code": ["L07-L08"], "ownerAnswer": ["L09"],
+      "fill": [["fruits.append(\"orange\")"], ["fruits.update(\"orange\")"], ["fruits.add(\"orange\")"], ["fruits.insert(\"orange\")"]], "answer": "C",
+      "reason": "add thêm một phần tử vào set. update(\"orange\") thêm từng ký tự của chuỗi; set không có append hay insert.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(sorted(fruits))", "want": "['apple', 'banana', 'cherry', 'orange']" }] }
+    },
+    {
+      "ref": "w041-lt/20/3", "stem": ["L10-L11"], "code": ["L12-L15"], "ownerAnswer": ["L16"],
+      "fill": [["fruits.update(more_fruits)"], ["fruits.add(more_fruits)"], ["fruits.append(more_fruits)"], ["fruits.extend(more_fruits)"]], "answer": "A",
+      "reason": "update thêm mọi phần tử của một đối tượng lặp được vào set. add(list) báo lỗi vì list không băm được; set không có append hay extend.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(sorted(fruits))", "want": "['apple', 'banana', 'cherry', 'grapes', 'mango', 'orange']" }] }
+    },
+    {
+      "ref": "w041-lt/20/4", "stem": ["R01"], "code": ["R02-R03"], "ownerAnswer": ["R04"],
+      "fill": [["fruits.pop(\"banana\")"], ["fruits.remove(1)"], ["fruits.delete(\"banana\")"], ["fruits.remove(\"banana\")"]], "answer": "D",
+      "reason": "remove(\"banana\") xoá phần tử banana. pop của set không nhận đối số; remove(1) báo lỗi vì không có 1; set không có delete.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(sorted(fruits))", "want": "['apple', 'cherry']" }] }
+    },
+    {
+      "ref": "w041-lt/20/5", "stem": ["R05"], "code": ["R06-R07"], "ownerAnswer": ["R08"],
+      "fill": [["fruits.discard(banana)"], ["fruits.discard(\"banana\")"], ["fruits.discard(\"Banana\")"], ["discard(fruits, \"banana\")"]], "answer": "B",
+      "reason": "discard(\"banana\") xoá banana. Thiếu dấu nháy thì banana là tên biến chưa có; \"Banana\" (chữ hoa) không có trong tập nên không xoá gì; discard là phương thức, không phải hàm đứng riêng.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(sorted(fruits))", "want": "['apple', 'cherry']" }] }
+    },
+    {
+      "ref": "w041-lt/28/1", "stem": ["L01"], "code": ["L02-L08"], "ownerAnswer": ["L09"],
+      "fill": [["car.get(model)"], ["car.get[\"model\"]"], ["car.model"], ["car.get(\"model\")"]], "answer": "D",
+      "reason": "get nhận khoá dạng chuỗi: car.get(\"model\"). Thiếu nháy thì model là tên biến chưa có; get là phương thức nên dùng ngoặc tròn; dictionary không truy cập khoá bằng dấu chấm.",
+      "verify": { "kind": "fill", "cases": [{ "want": "Mustang" }] }
+    },
+    {
+      "ref": "w041-lt/28/2", "stem": ["L10"], "code": ["L11-L17"], "ownerAnswer": ["L18"],
+      "fill": [["car[\"year\"]", "2020"], ["car.year", "2020"], ["car[\"key\"]", "2020"], ["car(\"year\")", "2020"]], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề nói đổi giá trị của khoá \"key\" nhưng trong car không có khoá \"key\"; 2020 là năm nên có lẽ ý đề là khoá \"year\" (P10). Nếu là \"year\" thì đáp án A car[\"year\"] = 2020; phương án C làm đúng theo chữ của đề nhưng chỉ thêm khoá mới.",
+      "reason": "Gán qua khoá: car[\"year\"] = 2020.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(car[\"year\"])", "want": "2020" }] }
+    },
+    {
+      "ref": "w041-lt/28/3", "stem": ["R01"], "code": ["R02-R08"], "ownerAnswer": ["R09"],
+      "fill": [["car.color", "=", "\"red\""], ["car[\"color\"]", "==", "\"red\""], ["car[\"color\"]", "=", "\"red\""], ["car[color]", "=", "\"red\""]], "answer": "C",
+      "reason": "Thêm cặp mới bằng phép gán qua khoá: car[\"color\"] = \"red\". == là so sánh (báo lỗi vì chưa có khoá); dấu chấm không dùng cho dictionary; thiếu nháy thì color là tên biến chưa có.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(car[\"color\"])", "want": "red" }] }
+    },
+    {
+      "ref": "w041-lt/28/4", "stem": ["R10"], "code": ["R11-R17"], "ownerAnswer": ["R18"],
+      "fill": [["car.pop()"], ["car.pop(\"model\")"], ["car.remove(\"model\")"], ["car.pop(\"Model\")"]], "answer": "B",
+      "reason": "pop(\"model\") xoá khoá model. pop của dictionary bắt buộc có khoá; dictionary không có remove; \"Model\" viết hoa không phải khoá có sẵn.",
+      "verify": { "kind": "fill", "cases": [{ "append": "print(car)", "want": "{'brand': 'Ford', 'year': 1964}" }] }
+    },
+
+    {
+      "ref": "w041-hw/1/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "B",
+      "reason": "Tuple không thay đổi được nên không thêm, xoá, sửa phần tử. Phần tử của tuple có thể khác kiểu; tuple rỗng tạo bằng ().",
+      "verify": { "kind": "run", "cases": [{ "setup": "t = (1, 'a', 2.5)\ne = ()\nprint(len(t), type(e).__name__, len(e))", "expect": "3 tuple 0" }] }
+    },
+    {
+      "ref": "w041-hw/1/2", "stem": ["L06"], "options": ["L07-L10"], "answer": "B",
+      "reason": "() là tuple rỗng. tuple(50) báo lỗi vì 50 không lặp được; (50) chỉ là số 50; tuple(50, ) giống tuple(50).",
+      "verify": { "kind": "runOptions", "wrap": "x = {option}\nprint(type(x).__name__)", "cases": [{ "want": "tuple" }] }
+    },
+    {
+      "ref": "w041-hw/1/3", "stem": ["L11"], "options": ["L12-L15"], "answer": "A",
+      "reason": "Tuple không có phương thức xoá; lệnh del xoá hẳn biến tuple. empty, clear, truncate không dùng được với tuple.",
+      "verify": { "kind": "runOptions", "wrap": "t = (1, 2)\n{option} t\nprint('ok')", "cases": [{ "want": "ok" }] }
+    },
+    {
+      "ref": "w041-hw/1/4", "stem": ["L16"], "options": ["L17-L19"], "answer": "A",
+      "reason": "Bản thân tuple không đổi được, nhưng vẫn có cách: chuyển sang list, sửa, rồi chuyển lại thành tuple (tạo ra tuple mới).",
+      "verify": { "kind": "run", "cases": [{ "setup": "t = (1, 2, 3)\nl = list(t)\nl[0] = 9\nt = tuple(l)\nprint(t)", "expect": "(9, 2, 3)" }] }
+    },
+    {
+      "ref": "w041-hw/1/5", "stem": ["L20-L21"], "options": ["L22-L25"], "answer": "C",
+      "reason": "Phần tử đầu tiên là tpl1[0]. Tuple không có pop hay top; tpl1(0) là gọi hàm.",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "tpl1 = (7, 8, 9)", "want": "7" }] }
+    },
+    {
+      "ref": "w041-hw/1/6", "stem": ["R01"], "options": ["R02-R05"], "answer": "D",
+      "reason": "Toán tử + nối hai tuple thành tuple mới. Tuple không có concat, add hay insert.",
+      "verify": { "kind": "run", "cases": [{ "setup": "a = (1, 2)\nb = (3,)\nprint(a + b)", "expect": "(1, 2, 3)" }] }
+    },
+    {
+      "ref": "w041-hw/1/7", "stem": ["R06"], "code": ["R07-R09"], "options": ["R10-R13"], "answer": "D",
+      "reason": "Một phép gán không được có hai biến có dấu * (báo lỗi cú pháp), nên chương trình lỗi.",
+      "verify": { "kind": "run", "cases": [{ "expect": "ERROR: SyntaxError" }] }
+    },
+    {
+      "ref": "w041-hw/1/8", "stem": ["R14"], "code": ["R15-R17"], "options": ["R18-R21"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề hỏi kết quả soam nhưng code in soduong, biến không tồn tại, nên chạy báo lỗi NameError (D). Nếu hỏi giá trị của soam thì đáp án A [-1, -2] (P10).",
+      "reason": "*soam nhận các phần tử còn lại trước hai biến cuối: soam = [-1, -2].",
+      "verify": { "kind": "run", "cases": [{ "replace": { "print(soduong)": "print(soam)" }, "expect": "[-1, -2]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/1/9", "stem": ["R22"], "code": ["R23-R25"], "options": ["R26-R28"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề hỏi kết quả soam nhưng code in soduong (in ra 4, không có trong các phương án). Nếu hỏi giá trị của soam thì đáp án A [-1, -2, 3] (P10).",
+      "reason": "*soam nhận mọi phần tử trừ phần tử cuối: soam = [-1, -2, 3].",
+      "verify": { "kind": "run", "cases": [{ "replace": { "print(soduong)": "print(soam)" }, "expect": "[-1, -2, 3]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/2/10", "stem": ["L01-L02"], "code": ["L03-L09"], "ownerAnswer": ["L10-L11"],
+      "choices": [
+        "T1 không đổi; T2 = (1, 2, 3, 4, 5, 6, 7, 8, 9)",
+        "T1 không đổi; T2 = (1, 9, 6, 3, 4, 5, 2, 7, 8)",
+        "T1 = T2 = (1, 9, 6, 3, 4, 5, 2, 7, 8)",
+        "Lỗi, vì tuple không thay đổi được"
+      ],
+      "answer": "B",
+      "reason": "Câu hỏi mở, tài liệu không có phương án; 4 phương án do Claude tạo theo D-026 (mở rộng cho câu hỏi mở, D-036). T2 += (x,) tạo tuple mới nên không lỗi; T2 giữ lần xuất hiện đầu tiên của mỗi giá trị theo đúng thứ tự trong T1; T1 không đổi.",
+      "verify": { "kind": "run", "cases": [{ "expect": "(1, 9, 1, 6, 3, 4, 5, 1, 1, 2, 5, 6, 7, 8, 9, 2)\n(1, 9, 6, 3, 4, 5, 2, 7, 8)" }] }
+    },
+    {
+      "ref": "w041-hw/2/11", "stem": ["L12"], "code": ["L13-L17"], "options": ["L18-L21"], "answer": "B",
+      "reason": "1 + 9 + 1 + 6 + 3 + 4 = 24.",
+      "verify": { "kind": "run", "cases": [{ "expect": "24" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/2/12", "stem": ["R01"], "code": ["R02-R07"], "options": ["R08-R11"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Mọi phương án đều ghi \"Tổng ngẫu nhiên…\" nhưng chương trình không tính tổng, chỉ tạo tuple 5 số ngẫu nhiên (có lẽ \"Tổng\" là gõ nhầm \"Tạo\"). Nếu vậy đáp án A: 5 phần tử trong đoạn [0, 100] (randint lấy cả hai đầu).",
+      "reason": "range(5) lặp 5 lần; random.randint(0, 100) trả về số nguyên N với 0 <= N <= 100.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/random.html#random.randint"] }
+    },
+    {
+      "ref": "w041-hw/3/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "B",
+      "reason": "Trong set, 1 và True bằng nhau (cùng giá trị băm) nên chỉ giữ một; 0 và False cũng vậy. Set khai báo bằng ngoặc nhọn hoặc set().",
+      "verify": { "kind": "run", "cases": [{ "setup": "print({1, True}, {0, False})", "expect": "{1} {0}" }] }
+    },
+    {
+      "ref": "w041-hw/3/2", "stem": ["L06"], "options": ["L07-L10"], "status": "NEEDS_REVIEW",
+      "reviewNote": "Không phương án nào khai báo đúng một set: set{…} sai cú pháp; B là chuỗi (lại dùng nháy cong); set(50, 40, …) báo lỗi vì set() chỉ nhận một đối tượng lặp được; D là tuple. Cách đúng: {50, 40, 20, 30, 10} hoặc set((50, 40, 20, 30, 10)).",
+      "reason": "Chạy thử từng phương án: không phương án nào tạo ra set."
+    },
+    {
+      "ref": "w041-hw/3/3", "stem": ["L11"], "options": ["L12-L15"], "answer": "A",
+      "reason": "Lệnh del xoá hẳn set. clear() chỉ làm rỗng set (vẫn còn biến); empty và truncate không có.",
+      "verify": { "kind": "runOptions", "wrap": "s = {1, 2}\n{option} s\nprint('ok')", "cases": [{ "want": "ok" }] }
+    },
+    {
+      "ref": "w041-hw/3/4", "stem": ["L16"], "options": ["L17-L20"], "answer": "A",
+      "reason": "set.add thêm một phần tử. Set không có insert, không dùng + để thêm.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#frozenset.add"] }
+    },
+    {
+      "ref": "w041-hw/3/5", "stem": ["L21-L22"], "options": ["L23-L26"], "answer": "D",
+      "reason": "Set không có thứ tự nên không có \"phần tử đầu tiên\": set1[0] báo lỗi, pop() lấy ra một phần tử bất kỳ, set không có top().",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/datastructures.html#sets", "https://docs.python.org/3/library/stdtypes.html#frozenset.pop"] }
+    },
+    {
+      "ref": "w041-hw/3/6", "stem": ["R01-R02"], "options": ["R03-R06"], "answer": "A",
+      "reason": "update thêm mọi phần tử của tuple, dictionary (các khoá) hoặc set khác vào set. add chỉ thêm đúng một phần tử (và báo lỗi với set, dictionary).",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#frozenset.update"] }
+    },
+    {
+      "ref": "w041-hw/3/7", "stem": ["R07-R08"], "options": ["R09-R11"], "answer": "A",
+      "reason": "discard không báo lỗi khi phần tử không có; remove thì báo lỗi KeyError; pop lấy ra phần tử bất kỳ.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#frozenset.discard"] }
+    },
+    {
+      "ref": "w041-hw/3/8", "stem": ["R12"], "code": ["R13-R18"], "options": ["R19-R22"], "answer": "A",
+      "reason": "& là phép giao: phần tử chung của hai set là 4 và 5.",
+      "verify": { "kind": "run", "cases": [{ "expect": "[4, 5]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/4/9", "stem": ["L01"], "code": ["L02-L04"], "options": ["L05-L08"], "answer": "A",
+      "reason": "{4, 5} là tập con của {1, 2, 3, 4, 5} nên issubset trả True: in A.",
+      "verify": { "kind": "run", "cases": [{ "expect": "A" }] }
+    },
+    {
+      "ref": "w041-hw/4/10", "stem": ["L09"], "code": ["L10-L13"], "options": ["L14-L17"], "answer": "A",
+      "reason": "set(T1) bỏ các giá trị trùng: {1, 2, 3, 4, 5, 6, 7, 8, 9}.",
+      "verify": { "kind": "run", "cases": [{ "expect": "{1, 2, 3, 4, 5, 6, 7, 8, 9}" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/5/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "B",
+      "reason": "Khoá của dictionary không trùng, nhưng giá trị có thể trùng và có thể khác kiểu.",
+      "verify": { "kind": "run", "cases": [{ "setup": "d = {'a': 1, 'b': 1, 'c': 'x'}\nprint(d)", "expect": "{'a': 1, 'b': 1, 'c': 'x'}" }] }
+    },
+    {
+      "ref": "w041-hw/5/2", "stem": ["L06"], "options": ["L07-L10"], "answer": "B",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong trong {“age”: “20”} là nháy thẳng. Dictionary viết {khoá: giá trị} với khoá chuỗi trong dấu nháy. {age: 20} báo lỗi vì age chưa có; dict(age: 20) và (…: …) sai cú pháp.",
+      "verify": { "kind": "runOptions", "wrap": "x = {option}\nprint(type(x).__name__)", "cases": [{ "replace": { "“": "\"", "”": "\"" }, "want": "dict" }] }
+    },
+    {
+      "ref": "w041-hw/5/3", "stem": ["L11"], "options": ["L12-L15"], "answer": "A",
+      "reason": "Lệnh del xoá hẳn đối tượng dictionary. clear() chỉ làm rỗng; empty và truncate không có.",
+      "verify": { "kind": "runOptions", "wrap": "d = {'a': 1}\n{option} d\nprint('ok')", "cases": [{ "want": "ok" }] }
+    },
+    {
+      "ref": "w041-hw/5/4", "stem": ["L16"], "options": ["L17-L19"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Có hai cách xoá phần tử theo key: pop(key) (A) và del d[key] (C viết del()). Câu một đáp án nhưng A và C đều có thể đúng. popitem xoá phần tử thêm vào sau cùng; dictionary không có remove.",
+      "reason": "d.pop(\"a\") và del d[\"a\"] đều xoá khoá \"a\".",
+      "verify": { "kind": "run", "cases": [{ "setup": "d = {'a': 1, 'b': 2}\nd.pop('a')\ne = {'a': 1, 'b': 2}\ndel(e['a'])\nprint(d, e)", "expect": "{'b': 2} {'b': 2}" }] }
+    },
+    {
+      "ref": "w041-hw/5/5", "stem": ["L20-L21"], "options": ["L22-L25"], "answer": "C",
+      "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong trong dic1[“key”] là nháy thẳng. Truy xuất giá trị theo khoá bằng dic1[\"key\"]. pop() cần khoá và xoá luôn phần tử; dictionary không có key() hay value().",
+      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "dic1 = {\"key\": 7}", "replace": { "“": "\"", "”": "\"" }, "want": "7" }] }
+    },
+    {
+      "ref": "w041-hw/5/6", "stem": ["R01"], "options": ["R02-R04"], "answer": "D",
+      "reason": "dict.update cập nhật (hoặc thêm) các cặp khoá: giá trị. Dictionary không có change, add hay replace.",
+      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#dict.update"] }
+    },
+    {
+      "ref": "w041-hw/5/7", "stem": ["R05"], "code": ["R06-R08"], "options": ["R09-R12"], "answer": "A",
+      "reason": "Xoá cả hai khoá thì còn dictionary rỗng {}.",
+      "verify": { "kind": "run", "cases": [{ "expect": "{}" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/5/8", "stem": ["R13"], "code": ["R14-R20"], "options": ["R21-R24"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề hỏi \"kết quả soam\" nhưng chương trình không có biến soam (có lẽ chép từ phần tuple, P10). Nếu hỏi kết quả in ra thì đáp án A {'two': 22, 'five': 55}.",
+      "reason": "Chép từng khoá trong keys từ d1 sang d2.",
+      "verify": { "kind": "run", "cases": [{ "expect": "{'two': 22, 'five': 55}" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/6/9", "stem": ["L01"], "code": ["L02-L05"], "options": ["L06-L09"], "answer": "B",
+      "reason": "items() trả các cặp (khoá, giá trị); list() đổi thành list các tuple.",
+      "verify": { "kind": "run", "cases": [{ "expect": "[('one', 11), ('two', 22), ('three', 33), ('four', 44), ('five', 55)]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w041-hw/6/10", "stem": ["R01"], "code": ["R02-R12"], "options": ["R13-R16"], "answer": "A",
+      "reason": "Các giá trị: \"eleven\", 2, 3, \"eleven\", 44, 2; chỉ 3 và 44 xuất hiện một lần, nên d2 = {'three': 3, 'four': 44}.",
+      "verify": { "kind": "run", "cases": [{ "expect": "dict with unique value: {'three': 3, 'four': 44}" }] }
+    }
+  ]
+}
