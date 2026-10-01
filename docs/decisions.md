@@ -196,8 +196,9 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 
 ### D-037 · Làm bài: khách, thang điểm, hiện đáp án · Đã chốt (Q-06, Q-08, Q-09, chủ dự án, 2026-10-01)
 - **Khách được làm bài** (chưa đăng nhập): `quiz_results.user_id` để NULL. Lịch sử cá nhân chỉ có khi đăng nhập (Phase 7).
-- **Thang điểm 10**: điểm = số câu đúng / tổng số câu × 10, làm tròn 2 chữ số (làm tròn nửa lên). Câu bỏ trống tính là sai.
-- **Luyện tập (`PRACTICE`)**: trả lời xong một câu thì hiện ngay đúng/sai và đáp án đúng của **câu đó**; câu đã kiểm tra thì không đổi được. **Thi thử (`EXAM`)**: chỉ hiện kết quả sau khi nộp bài; trước khi nộp được đổi lựa chọn.
+- **Thang điểm 10** (chỉ cho thi thử): điểm = số câu đúng / tổng số câu × 10, làm tròn 2 chữ số (làm tròn nửa lên). Câu bỏ trống tính là sai.
+- **Luyện tập (`PRACTICE`)**: người học chọn bài muốn học; trả lời xong một câu thì hiện ngay đúng/sai và đáp án đúng của **câu đó**; câu đã kiểm tra thì không đổi được. **Không chấm điểm, không nộp bài** (chủ dự án, 2026-10-01).
+- **Thi thử (`EXAM`)**: chỉ hiện kết quả sau khi nộp bài; trước khi nộp được đổi lựa chọn; chấm điểm thang 10.
 
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.

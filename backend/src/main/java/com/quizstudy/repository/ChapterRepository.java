@@ -3,7 +3,6 @@ package com.quizstudy.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -29,9 +28,4 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
             """)
     List<ChapterSummaryRow> findSummariesBySubjectId(@Param("subjectId") Long subjectId,
             @Param("questionStatus") QuestionStatus questionStatus);
-
-    /** Xoá mọi bài của một môn (dùng khi import thay toàn bộ môn; phải xoá câu hỏi trước). */
-    @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from Chapter c where c.subject.id = :subjectId")
-    int deleteAllBySubjectId(@Param("subjectId") Long subjectId);
 }

@@ -34,21 +34,36 @@ public final class SubjectImportMapper {
         return chapter;
     }
 
+    /** Ghi đè thông tin bài có sẵn (thứ tự giữ nguyên vì là khoá để khớp). */
+    public static void applyTo(Chapter chapter, ChapterData data) {
+        chapter.setCode(data.code());
+        chapter.setTitle(data.title());
+    }
+
     /** Phương án giữ đúng thứ tự trong file (1 = A, 2 = B…). */
     public static Question toQuestion(Chapter chapter, QuestionData data) {
         Question question = new Question(chapter, data.type(), data.content(), data.status());
+        applyTo(question, data);
+        addAnswers(question, data);
+        return question;
+    }
+
+    /** Ghi đè nội dung câu có sẵn bằng dữ liệu trong file. Phương án do SubjectContentUpdater xử lý riêng. */
+    public static void applyTo(Question question, QuestionData data) {
+        question.setContent(data.content());
         question.setCodeSnippet(data.codeSnippet());
         question.setExplanation(data.explanation());
         question.setShuffleAnswers(data.shuffleAnswers());
+        question.setStatus(data.status());
         question.setReviewNote(data.reviewNote());
-        if (data.source() != null) {
-            question.setSourceFile(data.source().file());
-            question.setSourcePage(data.source().page());
-            question.setSourceLabel(data.source().label());
-        }
+        question.setSourceFile(data.source().file());
+        question.setSourcePage(data.source().page());
+        question.setSourceLabel(data.source().label());
+    }
+
+    public static void addAnswers(Question question, QuestionData data) {
         for (AnswerData answer : data.answers()) {
             question.addAnswer(answer.content(), answer.correct());
         }
-        return question;
     }
 }

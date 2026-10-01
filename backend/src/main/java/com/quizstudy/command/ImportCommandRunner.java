@@ -19,7 +19,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Lệnh import một môn từ dòng lệnh. Chỉ chạy khi backend được khởi động với tham số {@code --import=<file>};
- * thêm {@code --replace} để thay toàn bộ nội dung của môn đã có. Cách chạy: scripts/import-subject.ps1.
+ * thêm {@code --replace} để cập nhật môn đã có (câu đã có người làm không bị xoá). Cách chạy: scripts/import-subject.ps1.
  *
  * <p>Lỗi được ném ra ngoài để Spring Boot dừng với mã lỗi khác 0, nhờ vậy script gọi lệnh biết là thất bại.
  */
@@ -52,13 +52,20 @@ public class ImportCommandRunner implements ApplicationRunner {
         try {
             SubjectImportResult result = importService.importSubject(content, replace);
             log.info("Đã import môn '{}': {} bài, {} câu ({} câu PUBLISHED){}", result.slug(), result.chapterCount(),
-                    result.questionCount(), result.publishedCount(),
-                    result.replacedExisting() ? ", đã thay nội dung cũ" : "");
+                    result.questionCount(), result.publishedCount(), updateSummary(result));
         } catch (ImportValidationException ex) {
             log.error("Import thất bại, không ghi gì vào database. {} lỗi:", ex.getProblems().size());
             ex.getProblems().forEach(problem -> log.error("  - {}", problem));
             throw ex;
         }
+    }
+
+    private static String updateSummary(SubjectImportResult result) {
+        if (!result.updatedExisting()) {
+            return "";
+        }
+        return ", đã cập nhật môn có sẵn (bỏ " + result.removedCount() + " câu không còn trong file, chuyển "
+                + result.archivedCount() + " câu đã có người làm sang ARCHIVED)";
     }
 
     private static Path importFile(List<String> values) {

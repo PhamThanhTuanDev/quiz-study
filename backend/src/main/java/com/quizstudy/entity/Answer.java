@@ -38,6 +38,15 @@ public class Answer extends BaseEntity {
         this.correct = correct;
     }
 
+    /**
+     * Sửa nội dung và đúng/sai tại chỗ (import lại): giữ nguyên id, nên lựa chọn đã lưu trong các lượt làm
+     * cũ (user_answers.selected_answer_id) vẫn trỏ đúng phương án.
+     */
+    public void update(String newContent, boolean newCorrect) {
+        this.content = newContent;
+        this.correct = newCorrect;
+    }
+
     public Question getQuestion() {
         return question;
     }

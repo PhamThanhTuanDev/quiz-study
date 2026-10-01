@@ -83,7 +83,7 @@ class ImportCommandRunnerTest {
 
         Question draft = questions.get(2);
         assertThat(draft.getStatus()).isEqualTo(QuestionStatus.DRAFT);
-        assertThat(draft.getSourceLabel()).isNull();
+        assertThat(draft.getSourceLabel()).isEqualTo("Bài 2 – Câu 1");
     }
 
     @Test

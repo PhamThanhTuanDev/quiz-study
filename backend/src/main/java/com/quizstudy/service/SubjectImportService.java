@@ -14,14 +14,11 @@ import com.quizstudy.dto.SubjectImportFile;
 import com.quizstudy.dto.SubjectImportFile.ChapterData;
 import com.quizstudy.dto.SubjectImportFile.QuestionData;
 import com.quizstudy.dto.SubjectImportResult;
-import com.quizstudy.entity.Chapter;
 import com.quizstudy.entity.QuestionStatus;
 import com.quizstudy.entity.QuestionType;
 import com.quizstudy.entity.Subject;
 import com.quizstudy.exception.ImportValidationException;
 import com.quizstudy.mapper.SubjectImportMapper;
-import com.quizstudy.repository.ChapterRepository;
-import com.quizstudy.repository.QuestionRepository;
 import com.quizstudy.repository.SubjectRepository;
 
 import jakarta.validation.ConstraintViolation;
@@ -30,27 +27,29 @@ import jakarta.validation.Validator;
 /**
  * Import một môn từ file JSON đã được chủ dự án duyệt.
  * Kiểm tra toàn bộ file trước, rồi ghi tất cả trong một transaction: hoặc thành công hết, hoặc không ghi gì.
+ * Môn đã có thì cập nhật theo nguồn câu hỏi, an toàn với các lượt làm bài đã có ({@link SubjectContentUpdater}).
  */
 @Service
 public class SubjectImportService {
 
     private final SubjectRepository subjectRepository;
-    private final ChapterRepository chapterRepository;
-    private final QuestionRepository questionRepository;
+    private final SubjectContentUpdater contentUpdater;
+    private final DefaultQuizService defaultQuizService;
     private final Validator validator;
 
-    public SubjectImportService(SubjectRepository subjectRepository, ChapterRepository chapterRepository,
-            QuestionRepository questionRepository, Validator validator) {
+    public SubjectImportService(SubjectRepository subjectRepository, SubjectContentUpdater contentUpdater,
+            DefaultQuizService defaultQuizService, Validator validator) {
         this.subjectRepository = subjectRepository;
-        this.chapterRepository = chapterRepository;
-        this.questionRepository = questionRepository;
+        this.contentUpdater = contentUpdater;
+        this.defaultQuizService = defaultQuizService;
         this.validator = validator;
     }
 
     /**
-     * @param replace true: nếu môn đã có thì xoá toàn bộ bài và câu hỏi cũ của môn đó rồi ghi lại.
-     *                An toàn vì chưa có bài làm tham chiếu tới câu hỏi (bảng làm bài có từ Phase 5).
-     * @throws ImportValidationException nếu file có lỗi, hoặc môn đã có mà không chọn replace
+     * @param replace true: nếu môn đã có thì cập nhật môn đó theo file (câu đã có người làm không bị xoá).
+     *                false: môn đã có thì dừng, tránh vô tình ghi đè.
+     * @throws ImportValidationException nếu file có lỗi, môn đã có mà không chọn replace,
+     *                                   hoặc có câu/bài không cập nhật được an toàn
      */
     @Transactional
     public SubjectImportResult importSubject(SubjectImportFile file, boolean replace) {
@@ -60,37 +59,21 @@ public class SubjectImportService {
         }
 
         Optional<Subject> existing = subjectRepository.findBySlug(file.subject().slug());
-        Subject subject = existing.isPresent()
-                ? replaceContent(existing.get(), file, replace)
-                : subjectRepository.save(SubjectImportMapper.toNewSubject(file.subject()));
-
-        int questionCount = 0;
-        int publishedCount = 0;
-        for (ChapterData chapterData : file.chapters()) {
-            Chapter chapter = chapterRepository.save(SubjectImportMapper.toChapter(subject, chapterData));
-            for (QuestionData questionData : chapterData.questions()) {
-                questionRepository.save(SubjectImportMapper.toQuestion(chapter, questionData));
-                questionCount++;
-                if (questionData.status() == QuestionStatus.PUBLISHED) {
-                    publishedCount++;
-                }
-            }
+        if (existing.isPresent() && !replace) {
+            throw new ImportValidationException(List.of("Môn '" + existing.get().getSlug() + "' đã có trong database. "
+                    + "Chạy lại với --replace để cập nhật môn này."));
         }
-        return new SubjectImportResult(subject.getSlug(), file.chapters().size(), questionCount, publishedCount,
-                existing.isPresent());
-    }
+        Subject subject = existing
+                .map(found -> SubjectImportMapper.applyTo(found, file.subject()))
+                .orElseGet(() -> subjectRepository.save(SubjectImportMapper.toNewSubject(file.subject())));
 
-    private Subject replaceContent(Subject existing, SubjectImportFile file, boolean replace) {
-        if (!replace) {
-            throw new ImportValidationException(List.of("Môn '" + existing.getSlug() + "' đã có trong database. "
-                    + "Chạy lại với --replace để thay toàn bộ nội dung môn này."));
-        }
-        Long subjectId = existing.getId();
-        questionRepository.deleteAllBySubjectId(subjectId);
-        chapterRepository.deleteAllBySubjectId(subjectId);
-        // Lệnh xoá hàng loạt đã làm trống persistence context, nên đọc lại môn trước khi sửa.
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow();
-        return SubjectImportMapper.applyTo(subject, file.subject());
+        SubjectContentUpdater.Result content = contentUpdater.update(subject, file.chapters());
+        defaultQuizService.syncDefaults(subject, content.chapters());
+
+        List<QuestionData> questions = file.chapters().stream().flatMap(chapter -> chapter.questions().stream()).toList();
+        long publishedCount = questions.stream().filter(question -> question.status() == QuestionStatus.PUBLISHED).count();
+        return new SubjectImportResult(subject.getSlug(), file.chapters().size(), questions.size(), (int) publishedCount,
+                existing.isPresent(), content.archivedCount(), content.removedCount());
     }
 
     /** Trả về mọi lỗi tìm được (Bean Validation + quy tắc toàn vẹn), sắp theo vị trí trong file. */
@@ -104,13 +87,20 @@ public class SubjectImportService {
         }
 
         Set<Integer> chapterOrders = new HashSet<>();
+        Set<List<String>> sources = new HashSet<>();
         for (int c = 0; c < file.chapters().size(); c++) {
             ChapterData chapter = file.chapters().get(c);
             if (!chapterOrders.add(chapter.displayOrder())) {
                 problems.add("chapters[" + c + "].displayOrder: trùng thứ tự " + chapter.displayOrder());
             }
             for (int q = 0; q < chapter.questions().size(); q++) {
-                checkQuestion(chapter.questions().get(q), "chapters[" + c + "].questions[" + q + "]", problems);
+                QuestionData question = chapter.questions().get(q);
+                String path = "chapters[" + c + "].questions[" + q + "]";
+                checkQuestion(question, path, problems);
+                // Nguồn là khoá để import lại khớp câu cũ với câu mới, nên không được trùng.
+                if (!sources.add(List.of(question.source().file(), question.source().label()))) {
+                    problems.add(path + labelOf(question) + ": trùng nguồn (file + nhãn) với một câu khác");
+                }
             }
         }
         return problems;
@@ -133,9 +123,7 @@ public class SubjectImportService {
     }
 
     private static String labelOf(QuestionData question) {
-        return question.source() != null && question.source().label() != null
-                ? " (" + question.source().label() + ")"
-                : "";
+        return " (" + question.source().label() + ")";
     }
 
     private static String describe(ConstraintViolation<SubjectImportFile> violation) {

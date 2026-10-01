@@ -47,7 +47,7 @@ Kết quả nằm trong `database/seed/gdqp/generated/` (không commit, D-030). 
 powershell -ExecutionPolicy Bypass -File scripts\import-subject.ps1 -Slug gdqp
 ```
 
-Môn đã có trong database thì thêm `-Replace` để thay toàn bộ bài và câu hỏi của môn đó. File có lỗi thì không ghi gì và liệt kê mọi lỗi.
+Môn đã có trong database thì thêm `-Replace` để **cập nhật** môn đó: câu khớp theo nguồn (file + nhãn) được sửa tại chỗ, câu mới được thêm, câu không còn trong file bị xoá nếu chưa ai làm, còn nếu đã có người làm thì chuyển `ARCHIVED` (không xoá). Mỗi lần import cũng tạo/cập nhật đề mặc định (mỗi bài một đề luyện tập, cả môn một đề thi thử; số câu và thời gian trong `backend/src/main/resources/application.yml`, mục `quiz.defaults`). File có lỗi, hoặc có thay đổi không làm an toàn được (ví dụ đổi số phương án của câu đã có người làm), thì không ghi gì và liệt kê mọi lỗi.
 
 Quyết định về dữ liệu (tên môn, tên bài, đáp án của câu tô đỏ không rõ) nằm trong `database/seed/<slug>/subject.json` (có commit). Sửa file này rồi chạy lại bước 2 và 3.
 

@@ -339,7 +339,12 @@ Quy tắc khi import (kiểm tra **toàn bộ** file trước, có lỗi thì kh
 - Mọi trường bắt buộc phải có; độ dài không vượt cột trong database. `shuffleAnswers` bắt buộc ghi rõ.
 - Mỗi câu có ít nhất 2 phương án; câu `SINGLE_CHOICE` có tối đa 1 phương án đúng; câu `PUBLISHED` có **đúng 1** phương án đúng.
 - Thứ tự phương án giữ đúng thứ tự trong file (1 = A, 2 = B…).
-- Slug đã có trong database: dừng, trừ khi chạy với `-Replace` (thay toàn bộ bài và câu hỏi của môn đó). An toàn vì chưa có bài làm tham chiếu tới câu hỏi; Phase 5 sẽ xem lại quy tắc này.
+- `source.file` và `source.label` bắt buộc và không trùng trong một môn: đây là khoá để import lại khớp câu cũ với câu mới.
+- Slug đã có trong database: dừng, trừ khi chạy với `-Replace` để **cập nhật** môn đó (Phase 5, an toàn với bài làm đã có):
+  - Bài khớp theo `displayOrder`; câu khớp theo nguồn. Câu khớp được thì sửa tại chỗ, giữ id câu và id phương án (số phương án đổi thì ghi lại phương án, trừ khi câu đã có người làm: báo lỗi).
+  - Câu không còn trong file: xoá nếu chưa ai làm; đã có người làm thì chuyển `ARCHIVED`.
+  - Bài không còn trong file: xoá cùng đề của bài; nếu bài còn câu hoặc đề đã có người làm thì báo lỗi.
+- Mỗi lần import tạo/cập nhật đề mặc định: mỗi bài một đề `PRACTICE`, cả môn một đề `EXAM` (số câu, thời gian: `quiz.defaults` trong `application.yml`).
 
 ## 8. Chưa làm ngay, để mở rộng sau
 

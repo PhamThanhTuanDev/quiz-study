@@ -79,6 +79,19 @@ public class Question extends BaseEntity {
         return answer;
     }
 
+    /**
+     * Xoá mọi phương án (khi import lại mà số phương án thay đổi). Phải flush trước khi thêm phương án mới:
+     * Hibernate ghi lệnh INSERT trước DELETE, sẽ trùng khoá UNIQUE (question_id, display_order).
+     */
+    public void clearAnswers() {
+        answers.clear();
+    }
+
+    /** Chuyển câu sang bài khác (import lại khi tài liệu xếp câu vào bài khác). */
+    public void moveTo(Chapter newChapter) {
+        this.chapter = newChapter;
+    }
+
     /** Danh sách chỉ đọc; thêm phương án qua {@link #addAnswer(String, boolean)}. */
     public List<Answer> getAnswers() {
         return Collections.unmodifiableList(answers);

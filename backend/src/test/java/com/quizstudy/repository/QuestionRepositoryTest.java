@@ -121,11 +121,42 @@ class QuestionRepositoryTest {
         assertThat(questions.getFirst().getAnswers()).hasSize(2);
     }
 
-    private void persistQuestion(Chapter targetChapter, String content, QuestionStatus status) {
+    @Test
+    void findIds_byChapterOrSubject_returnOnlyQuestionsWithRequestedStatus() {
+        Chapter otherChapter = entityManager.persist(new Chapter(chapter.getSubject(), "Hàm", 2));
+        Subject otherSubject = entityManager.persist(new Subject("gdqp", "Giáo dục quốc phòng và an ninh"));
+        Chapter otherSubjectChapter = entityManager.persist(new Chapter(otherSubject, "Bài 1", 1));
+        Question inChapter = persistQuestion(chapter, "Câu ở chương 1", PUBLISHED);
+        persistQuestion(chapter, "Câu chờ duyệt", NEEDS_REVIEW);
+        Question inOtherChapter = persistQuestion(otherChapter, "Câu ở chương 2", PUBLISHED);
+        persistQuestion(otherSubjectChapter, "Câu môn khác", PUBLISHED);
+        entityManager.flush();
+
+        assertThat(questionRepository.findIdsByChapterIdAndStatus(chapter.getId(), PUBLISHED))
+                .containsExactly(inChapter.getId());
+        assertThat(questionRepository.findIdsBySubjectIdAndStatus(chapter.getSubject().getId(), PUBLISHED))
+                .containsExactlyInAnyOrder(inChapter.getId(), inOtherChapter.getId());
+    }
+
+    @Test
+    void findWithAnswersByIdIn_loadsAnswersInTheSameQuery() {
+        Question first = persistQuestion(chapter, "Câu 1", PUBLISHED);
+        Question second = persistQuestion(chapter, "Câu 2", PUBLISHED);
+        persistQuestion(chapter, "Câu không được hỏi", PUBLISHED);
+        entityManager.flush();
+        entityManager.clear();
+
+        List<Question> questions = questionRepository.findWithAnswersByIdIn(List.of(first.getId(), second.getId()));
+
+        assertThat(questions).extracting(Question::getContent).containsExactlyInAnyOrder("Câu 1", "Câu 2");
+        assertThat(questions).allSatisfy(question -> assertThat(isLoaded(question, "answers")).isTrue());
+    }
+
+    private Question persistQuestion(Chapter targetChapter, String content, QuestionStatus status) {
         Question question = new Question(targetChapter, SINGLE_CHOICE, content, status);
         question.addAnswer("Đúng", true);
         question.addAnswer("Sai", false);
-        entityManager.persist(question);
+        return entityManager.persist(question);
     }
 
     private boolean isLoaded(Object entity, String attribute) {

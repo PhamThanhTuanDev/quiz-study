@@ -58,14 +58,15 @@ public record SubjectImportFile(
             @NotNull(message = "không được để trống") Boolean shuffleAnswers,
             @NotNull(message = "không được để trống") QuestionStatus status,
             @Size(max = 500, message = "tối đa 500 ký tự") String reviewNote,
-            @Valid SourceData source,
+            // Bắt buộc: file + nhãn nguồn là khoá để import lại khớp câu cũ với câu mới.
+            @NotNull(message = "không được để trống") @Valid SourceData source,
             @NotNull(message = "không được để trống") List<@NotNull @Valid AnswerData> answers) {
     }
 
     public record SourceData(
-            @Size(max = 255, message = "tối đa 255 ký tự") String file,
+            @NotBlank(message = "không được để trống") @Size(max = 255, message = "tối đa 255 ký tự") String file,
             Integer page,
-            @Size(max = 100, message = "tối đa 100 ký tự") String label) {
+            @NotBlank(message = "không được để trống") @Size(max = 100, message = "tối đa 100 ký tự") String label) {
     }
 
     public record AnswerData(

@@ -59,7 +59,7 @@
           "shuffleAnswers": true,
           "status": "DRAFT",
           "reviewNote": "Tài liệu không có đáp án",
-          "source": null,
+          "source": { "file": "tai-lieu-mau.pdf", "page": 5, "label": "Bài 2 – Câu 1" },
           "answers": [
             { "content": "A", "correct": false },
             { "content": "B", "correct": false }

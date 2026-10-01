@@ -31,3 +31,11 @@ spring:
 
 server:
   port: 8080
+
+quiz:
+  defaults:
+    # Đề tạo khi import một môn (chung cho mọi môn): mỗi bài một đề luyện tập, mỗi môn một đề thi thử.
+    # Bài có ít câu hơn số này thì mỗi lượt lấy hết câu của bài.
+    practice-question-count: 20
+    exam-question-count: 40
+    exam-time-limit-minutes: 45
