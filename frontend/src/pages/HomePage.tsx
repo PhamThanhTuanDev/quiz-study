@@ -1,12 +1,21 @@
+import { useState } from 'react'
 import { Link } from 'react-router'
 import AsyncContent from '../components/AsyncContent'
 import EmptyState from '../components/EmptyState'
+import RecentAttemptList from '../components/RecentAttemptList'
 import { useAsync } from '../hooks/useAsync'
+import { clearRecentAttempts, getRecentAttempts } from '../services/recentAttempts'
 import { getSubjects } from '../services/subjectService'
 import type { SubjectSummary } from '../types/subject'
 
 export default function HomePage() {
   const { state, reload } = useAsync(getSubjects)
+  const [recentAttempts, setRecentAttempts] = useState(getRecentAttempts)
+
+  const clearRecent = () => {
+    clearRecentAttempts()
+    setRecentAttempts([])
+  }
 
   return (
     <div className="space-y-6">
@@ -36,6 +45,8 @@ export default function HomePage() {
           )
         }
       </AsyncContent>
+
+      {recentAttempts.length > 0 && <RecentAttemptList attempts={recentAttempts} onClear={clearRecent} />}
     </div>
   )
 }

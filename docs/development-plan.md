@@ -274,7 +274,8 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
 **Tiến độ 6** (cập nhật sau mỗi bước; phiên sau làm tiếp từ bước chưa xong)
 - [x] Bước 1: `AnswerFeedbackResponse` (đổi tên từ `PracticeFeedbackResponse`) có ở mọi câu của thi thử đã kết thúc; `ExamResultResponse.unansweredCount`. Test mới: service và HTTP (trước khi nộp không có đáp án đúng, sau khi nộp có ở mọi câu kể cả câu bỏ trống). `mvnw verify` 108/108.
 - [x] Bước 2: `QuestionView` hiện đúng/sai mọi câu khi có `feedback` (luyện tập đã kiểm tra, thi thử đã nộp), câu bỏ trống "– Bạn bỏ trống câu này"; `QuestionNavigator` có trạng thái "bỏ trống"; `ExamOutcome`: "Đúng · Sai · Bỏ trống", nút "Xem câu sai tiếp theo". Test 64/64, lint, type-check đạt.
-- [ ] Bước 3 · [ ] Bước 4
+- [x] Bước 3: `services/recentAttempts.ts` (tối đa 10 lượt, bỏ dữ liệu hỏng, không lỗi khi trình duyệt chặn lưu trữ), ghi trong `useQuizAttempt` mỗi khi lượt làm đổi; `components/RecentAttemptList.tsx` ở trang chủ, có "Xoá danh sách". `setupTests` xoá localStorage sau mỗi test. Test 72/72 (chạy 3 lần), type-check, lint, build đạt.
+- [ ] Bước 4
 
 ## Phase 7: Authentication
 

@@ -1,5 +1,6 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { getRecentAttempts } from '../services/recentAttempts'
 import { mockApi, problem } from '../test/mockApi'
 import { renderRoute } from '../test/renderRoute'
 import type { Attempt, AttemptQuestion } from '../types/quiz'
@@ -65,6 +66,10 @@ describe('AttemptPage – luyện tập', () => {
     expect(screen.getByRole('region', { name: 'Đoạn code' }).textContent).toBe('def f(x):\n    return x * 2')
     expect(screen.queryByRole('timer')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Nộp bài' })).not.toBeInTheDocument()
+    // Mở bài là được ghi vào "Lượt làm gần đây" của trình duyệt.
+    await waitFor(() =>
+      expect(getRecentAttempts()).toMatchObject([{ id: 'luot-1', quizTitle: 'Luyện tập: Hàm', status: 'IN_PROGRESS' }]),
+    )
   })
 
   it('checks the picked answer, shows the correct one, and locks the question', async () => {

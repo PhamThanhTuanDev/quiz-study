@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ApiError } from '../services/apiClient'
 import { getAttempt, saveAnswer, submitAttempt } from '../services/quizService'
+import { rememberAttempt } from '../services/recentAttempts'
 import type { Attempt, AttemptQuestion } from '../types/quiz'
 import { toUserMessage } from './useAsync'
 
@@ -41,6 +42,8 @@ export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
   const latest = useRef(attempt)
   useEffect(() => {
     latest.current = attempt
+    // Ghi vào "Lượt làm gần đây" (trình duyệt này) mỗi khi mở / trả lời / nộp, để danh sách luôn đúng trạng thái.
+    rememberAttempt(attempt)
   }, [attempt])
 
   const { id: attemptId, mode } = attempt
