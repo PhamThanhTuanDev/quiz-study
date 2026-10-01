@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 5 (Quiz engine) đã xong, chờ chủ dự án xác nhận** (2026-10-01): luyện tập theo bài và thi thử cả môn chạy được với GDQP và Python. Chi tiết ở mục "Tiến độ 5". Phase 6 cần quyết trước: Q-13 (thứ tự Phase 6 ↔ 7).
+> **Phase 5 đã xong và được duyệt** (2026-10-01). **Đang làm: Phase 6 (Result / history)**: kế hoạch chi tiết ở mục Phase 6 bên dưới, **chờ chủ dự án duyệt** rồi mới code. Q-13 đã chốt (D-038: giữ thứ tự Phase 6 → 7).
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -115,8 +115,8 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 | 2 | Database + Backend foundation | ✅ Xong, đã duyệt |
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
 | 4 | Subject / Chapter / Question / Answer | ✅ Xong, đã duyệt (4A GDQP, 4B Python) |
-| 5 | Quiz engine | ✅ Xong, chờ xác nhận |
-| 6 | Result / history | |
+| 5 | Quiz engine | ✅ Xong, đã duyệt |
+| 6 | Result / history | 🔄 Kế hoạch chờ duyệt |
 | 7 | Authentication | |
 | 8 | Admin management | |
 | 9 | Ranking / statistics | |
@@ -180,7 +180,7 @@ Công việc:
 
 Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câu trong DB khớp báo cáo nguồn; không câu nào bị sửa nội dung.
 
-## Phase 5: Quiz engine (✅ xong, chờ xác nhận; kế hoạch đã duyệt 2026-10-01)
+## Phase 5: Quiz engine (✅ xong, đã duyệt 2026-10-01)
 
 **Mục tiêu:** luyện tập theo bài (biết ngay đúng/sai từng câu, không chấm điểm) và thi thử cả môn (nộp bài, chấm thang 10). Áp dụng D-037: khách được làm bài.
 
@@ -244,15 +244,32 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
   - Để lại (đã ghi vào Phase 7): khách tạo lượt làm không giới hạn (cần giới hạn tần suất). Import trùng lúc có người vừa bắt đầu lượt làm có thể lỗi 500 (hiếm, chỉ khi đang import).
   - Lượt làm thử tạo trong lúc kiểm tra vẫn nằm trong database dev (không ảnh hưởng gì).
 
-## Phase 6: Result / history
+## Phase 6: Result / history (kế hoạch chi tiết, ⏳ chờ duyệt)
 
-**Mục tiêu:** xem kết quả và làm lại.
+**Mục tiêu:** nộp bài thi thử xong thì xem lại được từng câu (đã chọn gì, đáp án đúng, câu bỏ trống); tìm lại được các lượt làm cũ trên máy đang dùng. Lịch sử theo tài khoản để sau Phase 7 (D-038).
 
-Công việc:
-- Trang kết quả: điểm, số câu đúng, xem lại từng câu (đã chọn gì, đáp án đúng).
-- API và trang lịch sử làm bài.
+**Đề xuất cần duyệt**
+1. **Xem lại ngay trên trang làm bài**, không thêm trang và API riêng: bài thi thử đã nộp / hết giờ thì `GET /api/v1/attempts/{id}` trả thêm đúng/sai và đáp án đúng cho **mọi** câu, kể cả câu bỏ trống. Bỏ endpoint dự kiến `/attempts/{id}/result`. Lý do: một nguồn dữ liệu, ít code; giao diện đã có sẵn cách hiện đúng/sai của chế độ luyện tập.
+2. **Thẻ kết quả rõ hơn**: điểm, "Đúng X · Sai Y · Bỏ trống Z", nút "Xem câu sai tiếp theo" (nhảy lần lượt qua các câu sai và bỏ trống). Lưới số câu tô ✓ / ✗ / bỏ trống.
+3. **"Lượt làm gần đây" trên máy này** (không cần đăng nhập): trang chủ liệt kê tối đa 10 lượt gần nhất (tên đề, môn, ngày, trạng thái: đang làm / điểm / luyện tập), bấm để mở lại, có nút xoá danh sách. Chỉ lưu mã lượt làm và vài thông tin hiển thị trong `localStorage` của trình duyệt (không gửi đi đâu). Giúp khách quay lại bài thi đang dở hoặc xem lại bài cũ. Sau Phase 7 có thêm lịch sử theo tài khoản.
+4. **Không thêm dependency.**
 
-Lưu ý: lịch sử theo từng người dùng cần đăng nhập (Phase 7). Có thể **đổi thứ tự Phase 6 ↔ 7**, hoặc ở Phase 6 chỉ làm trang kết quả và API, phần lịch sử cá nhân hoàn thiện sau Phase 7. Bạn quyết định.
+**Backend**
+- `AttemptMapper`: phần phản hồi (`feedback`) có cả ở thi thử đã kết thúc. Đổi tên `PracticeFeedbackResponse` → `AnswerFeedbackResponse` cho đúng nghĩa.
+- `ExamResultResponse` thêm `unansweredCount` (số câu sai = tổng − đúng − bỏ trống).
+- Test: thi thử đang làm không có đáp án đúng (đã có); đã nộp / hết giờ thì mọi câu có đáp án đúng, câu bỏ trống tính sai; JSON qua HTTP đúng như vậy.
+
+**Frontend**
+- `QuestionView`: thi thử đã kết thúc thì hiện kết quả từng câu như luyện tập; câu bỏ trống: "Bạn bỏ trống câu này. Đáp án đúng là C."
+- `QuestionNavigator`: thêm trạng thái "bỏ trống" sau khi nộp. `ExamOutcome`: số câu sai / bỏ trống, nút "Xem câu sai tiếp theo".
+- `services/recentAttempts.ts` (đọc/ghi `localStorage`, không lỗi khi trình duyệt chặn lưu trữ), ghi khi bắt đầu, mở lại, nộp bài; `HomePage`: mục "Lượt làm gần đây".
+- Test: xem lại sau khi nộp, nhảy qua câu sai, danh sách lượt làm gần đây (thêm, cập nhật điểm, giới hạn 10, xoá, lưu trữ bị chặn).
+
+**Thứ tự làm**
+1. Backend: dữ liệu xem lại + test.
+2. Frontend: xem lại bài thi + test.
+3. Lượt làm gần đây + test.
+4. Chạy thật, chụp màn hình 360 / 768 / 1280px, agent rà code, tài liệu (`architecture.md` bỏ endpoint `/result`), báo cáo, dừng chờ xác nhận.
 
 ## Phase 7: Authentication
 
