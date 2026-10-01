@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 6 (Result / history) đã xong, chờ chủ dự án xác nhận** (2026-10-01): xem lại bài thi thử sau khi nộp và "Lượt làm gần đây" trên trình duyệt. Chi tiết ở mục "Tiến độ 6". Phase 7 cần quyết trước: Q-07 (session cookie hay JWT).
+> **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch chi tiết ở mục Phase 10, **chờ chủ dự án duyệt** (có 2 dependency mới: `vite-plugin-pwa`, `@playwright/test`).
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -116,11 +116,11 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
 | 4 | Subject / Chapter / Question / Answer | ✅ Xong, đã duyệt (4A GDQP, 4B Python) |
 | 5 | Quiz engine | ✅ Xong, đã duyệt |
-| 6 | Result / history | ✅ Xong, chờ xác nhận |
-| 7 | Authentication | |
-| 8 | Admin management | |
-| 9 | Ranking / statistics | |
-| 10 | PWA / mobile experience | |
+| 6 | Result / history | ✅ Xong, đã duyệt (kèm phím tắt khi làm bài) |
+| 7 | Authentication | Làm sau Phase 10 (D-039) |
+| 8 | Admin management | Làm sau Phase 10 (D-039) |
+| 9 | Ranking / statistics | Làm sau Phase 10 (D-039) |
+| 10 | PWA / mobile experience | 🔄 Kế hoạch chờ duyệt |
 
 ---
 
@@ -244,7 +244,7 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
   - Để lại (đã ghi vào Phase 7): khách tạo lượt làm không giới hạn (cần giới hạn tần suất). Import trùng lúc có người vừa bắt đầu lượt làm có thể lỗi 500 (hiếm, chỉ khi đang import).
   - Lượt làm thử tạo trong lúc kiểm tra vẫn nằm trong database dev (không ảnh hưởng gì).
 
-## Phase 6: Result / history (✅ xong, chờ xác nhận; kế hoạch đã duyệt 2026-10-01)
+## Phase 6: Result / history (✅ xong, đã duyệt 2026-10-01)
 
 **Mục tiêu:** nộp bài thi thử xong thì xem lại được từng câu (đã chọn gì, đáp án đúng, câu bỏ trống); tìm lại được các lượt làm cũ trên máy đang dùng. Lịch sử theo tài khoản để sau Phase 7 (D-038).
 
@@ -311,15 +311,36 @@ Công việc:
 - Thống kê câu hỏi: câu hay sai (hỗ trợ admin rà soát nội dung).
 - Tính từ `quiz_results` / `user_answers`; kiểm tra index, hiệu năng truy vấn.
 
-## Phase 10: PWA / mobile experience
+## Phase 10: PWA / mobile experience (kế hoạch chi tiết, ⏳ chờ duyệt; làm trước Phase 7–9 theo D-039)
 
-**Mục tiêu:** dùng tốt trên điện thoại như một ứng dụng.
+**Mục tiêu:** dùng tốt trên điện thoại như một ứng dụng: cài lên màn hình chính, mở nhanh, thao tác chạm thuận tay; có E2E test cho luồng chính trên điện thoại.
 
-Công việc:
-- Web App Manifest, icon, cài lên màn hình chính.
-- Service worker (cache tài nguyên tĩnh; luyện tập offline nếu cần). Thường cần thêm plugin như `vite-plugin-pwa`, **phải được duyệt**.
-- Rà soát hiệu năng, accessibility và thao tác chạm trên mobile.
-- E2E test (Playwright) cho luồng chính trên viewport mobile.
+**Đề xuất cần duyệt**
+1. **PWA bằng `vite-plugin-pwa` 1.3** (devDependency, MIT, hỗ trợ Vite 8): tự tạo Web App Manifest và service worker (Workbox) lưu sẵn các file giao diện; có bản mới thì hiện "Có phiên bản mới · Tải lại". Phương án khác: tự viết service worker (không thêm thư viện nhưng phải tự đổi tên bộ nhớ đệm mỗi lần build, dễ sai, app có thể kẹt ở bản cũ).
+2. **Offline chỉ cho "vỏ" ứng dụng**: mất mạng vẫn mở được app và thấy thông báo "Bạn đang offline"; **không làm bài offline**, vì muốn làm offline phải tải đáp án về máy, trái nguyên tắc chấm ở server (D-037). Không lưu đệm kết quả API (tránh dữ liệu cũ).
+3. **Icon** tự tạo từ logo chữ "Q" đang dùng (SVG), xuất PNG 192 / 512 / maskable bằng Chrome headless đã có trên máy; không thêm công cụ.
+4. **Thao tác trên điện thoại**:
+   - Đồng hồ thi thử luôn hiện ở đầu màn hình khi cuộn (hiện cuộn xuống là mất đồng hồ).
+   - **Vuốt trái / phải để chuyển câu** (tương đương phím ← → trên máy tính).
+   - Rà vùng bấm (≥ 44px), cỡ chữ, khoảng an toàn tai thỏ / thanh điều hướng khi chạy như app (`safe-area-inset`).
+5. **E2E bằng `@playwright/test` 1.63** (devDependency, Apache-2.0), dùng **Chrome đã cài** trên máy (không tải thêm trình duyệt ~150 MB). Chạy trên khung điện thoại (Pixel 7) và máy tính: trang chủ → môn → luyện tập (chọn, kiểm tra) → thi thử (chọn, nộp, xem lại) → lượt làm gần đây. Chạy với backend + database dev (dữ liệu GDQP / Python thật; lượt làm tạo ra là dữ liệu thử). Lệnh riêng `npm run test:e2e`, không gộp vào `npm run test` vì cần backend và MySQL đang chạy.
+
+**File dự kiến**
+- `frontend/vite.config.ts` (thêm VitePWA), `frontend/index.html` (theme-color, apple-touch-icon), `frontend/public/icons/*` + `frontend/public/favicon.svg`, `src/main.tsx` (đăng ký service worker).
+- `src/components/` UpdatePrompt, OfflineBanner; `src/hooks/` useOnlineStatus, useSwipe; sửa `layouts/MainLayout.tsx`, `pages/AttemptPage.tsx`, `components/CountdownTimer.tsx`.
+- `frontend/playwright.config.ts`, `frontend/e2e/*.spec.ts`, `package.json` (script `test:e2e`); `scripts/` script tạo icon (nếu cần).
+- Tài liệu: `decisions.md` (D-040 PWA, D-041 Playwright), `architecture.md`, `README.md` (cách cài app, chạy E2E), CLAUDE.md (lệnh kiểm tra).
+
+**Kiểm tra**
+- Unit test: useOnlineStatus, useSwipe, OfflineBanner, UpdatePrompt, đồng hồ dính đầu màn hình.
+- Build có `manifest.webmanifest` + `sw.js`; Chrome nhận là app cài được (kiểm tra qua DevTools Protocol); tắt mạng vẫn mở được app.
+- E2E Playwright trên điện thoại và máy tính; `npm run build` / `test` / `lint`; agent rà code.
+
+**Thứ tự làm**
+1. Thao tác điện thoại (đồng hồ dính, vuốt, rà vùng bấm) + test.
+2. PWA (manifest, icon, service worker, thông báo offline / bản mới) + kiểm tra cài được.
+3. E2E Playwright.
+4. Rà code, tài liệu, báo cáo, dừng chờ xác nhận.
 
 ---
 

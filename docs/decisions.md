@@ -203,6 +203,10 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 ### D-038 · Giữ thứ tự Phase 6 → 7 · Đã chốt (Q-13, chủ dự án, 2026-10-01)
 - Phase 6 làm phần xem lại bài thi thử sau khi nộp (đã chọn gì, đáp án đúng). Lịch sử làm bài theo từng người dùng làm sau Phase 7 (cần đăng nhập).
 
+### D-039 · Làm Phase 10 trước Phase 7–9 · Đã chốt (chủ dự án, 2026-10-01)
+- Sau Phase 6 (kèm phím tắt khi làm bài: Enter kiểm tra, ← → chuyển câu), làm luôn Phase 10 (PWA / trải nghiệm điện thoại). Phase 7 (đăng nhập), 8 (quản trị), 9 (xếp hạng, thống kê) làm sau.
+- Hệ quả: ứng dụng vẫn chỉ có khách (D-037); Q-07 (session cookie hay JWT) quyết khi làm Phase 7. Việc giới hạn số lượt làm của khách vẫn nằm ở Phase 7, phải làm trước khi đưa ứng dụng lên mạng công khai.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.
