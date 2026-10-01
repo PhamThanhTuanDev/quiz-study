@@ -9,7 +9,7 @@ import com.quizstudy.dto.AttemptResponse;
 import com.quizstudy.dto.AttemptResponse.AnswerOptionResponse;
 import com.quizstudy.dto.AttemptResponse.AttemptQuestionResponse;
 import com.quizstudy.dto.AttemptResponse.ExamResultResponse;
-import com.quizstudy.dto.PracticeFeedbackResponse;
+import com.quizstudy.dto.AnswerFeedbackResponse;
 import com.quizstudy.entity.Answer;
 import com.quizstudy.entity.Question;
 import com.quizstudy.entity.Quiz;
@@ -19,8 +19,8 @@ import com.quizstudy.entity.UserAnswer;
 import com.quizstudy.service.AnswerShuffler;
 
 /**
- * Chuyển một lượt làm bài sang DTO. Quy tắc quan trọng nhất (D-037, .claude/rules/backend.md):
- * không đưa đáp án đúng ra ngoài, trừ phản hồi luyện tập của câu đã trả lời.
+ * Chuyển một lượt làm bài sang DTO. Quy tắc quan trọng nhất (D-037, D-038, .claude/rules/backend.md):
+ * chỉ đưa đáp án đúng ra ngoài khi được phép: luyện tập với câu đã trả lời, thi thử khi bài đã kết thúc.
  */
 public final class AttemptMapper {
 
@@ -40,21 +40,22 @@ public final class AttemptMapper {
                 .toList();
         return new AttemptResponse(attempt.getPublicId(), quiz.getId(), quiz.getTitle(), quiz.getMode(),
                 quiz.getSubject().getSlug(), quiz.getSubject().getName(), attempt.getStatus(), attempt.getStartedAt(),
-                attempt.getExpiresAt(), remainingSeconds(attempt, now), items, toResult(attempt));
+                attempt.getExpiresAt(), remainingSeconds(attempt, now), items, toResult(attempt, answers));
     }
 
     /**
-     * Phản hồi luyện tập của một câu đã trả lời: đúng/sai và id phương án đúng. Cả hai tính theo đáp án hiện tại
-     * (không dùng kết quả chấm đã lưu), để luôn khớp nhau kể cả khi đáp án được sửa qua import sau đó.
+     * Đúng/sai và id phương án đúng của một câu (bỏ trống là sai). Cả hai tính theo đáp án hiện tại (không dùng
+     * kết quả chấm đã lưu), để luôn khớp nhau kể cả khi đáp án được sửa qua import sau đó; điểm của bài thi
+     * thì giữ như lúc chấm.
      */
-    public static PracticeFeedbackResponse toFeedback(UserAnswer answer, Question question) {
+    public static AnswerFeedbackResponse toFeedback(UserAnswer answer, Question question) {
         Long correctAnswerId = question.getAnswers().stream()
                 .filter(Answer::isCorrect)
                 .map(Answer::getId)
                 .findFirst()
                 .orElse(null);
         boolean correct = answer.isAnswered() && answer.getSelectedAnswer().getId().equals(correctAnswerId);
-        return new PracticeFeedbackResponse(correct, correctAnswerId, question.getExplanation());
+        return new AnswerFeedbackResponse(correct, correctAnswerId, question.getExplanation());
     }
 
     private static AttemptQuestionResponse toQuestion(QuizResult attempt, UserAnswer answer, Question question) {
@@ -62,9 +63,14 @@ public final class AttemptMapper {
                 .map(option -> new AnswerOptionResponse(option.getId(), option.getContent()))
                 .toList();
         Long selectedAnswerId = answer.isAnswered() ? answer.getSelectedAnswer().getId() : null;
-        boolean showFeedback = attempt.getQuiz().getMode() == QuizMode.PRACTICE && answer.isAnswered();
         return new AttemptQuestionResponse(question.getId(), answer.getQuestionOrder(), question.getContent(),
-                question.getCodeSnippet(), options, selectedAnswerId, showFeedback ? toFeedback(answer, question) : null);
+                question.getCodeSnippet(), options, selectedAnswerId,
+                mayRevealAnswer(attempt, answer) ? toFeedback(answer, question) : null);
+    }
+
+    /** Luyện tập: câu đã trả lời (đã khoá). Thi thử: bài đã nộp hoặc hết giờ (xem lại mọi câu). */
+    private static boolean mayRevealAnswer(QuizResult attempt, UserAnswer answer) {
+        return attempt.getQuiz().getMode() == QuizMode.PRACTICE ? answer.isAnswered() : !attempt.isInProgress();
     }
 
     private static Long remainingSeconds(QuizResult attempt, Instant now) {
@@ -74,11 +80,12 @@ public final class AttemptMapper {
         return Math.max(0, Duration.between(now, attempt.getExpiresAt()).toSeconds());
     }
 
-    private static ExamResultResponse toResult(QuizResult attempt) {
+    private static ExamResultResponse toResult(QuizResult attempt, List<UserAnswer> answers) {
         if (attempt.getScore() == null) {
             return null;
         }
-        return new ExamResultResponse(attempt.getCorrectCount(), attempt.getTotalQuestions(), attempt.getScore(),
-                attempt.getSubmittedAt());
+        int unanswered = (int) answers.stream().filter(answer -> !answer.isAnswered()).count();
+        return new ExamResultResponse(attempt.getCorrectCount(), unanswered, attempt.getTotalQuestions(),
+                attempt.getScore(), attempt.getSubmittedAt());
     }
 }

@@ -46,6 +46,7 @@ class AttemptControllerTest {
 
     private Question question;
     private Long practiceQuizId;
+    private Long examQuizId;
 
     @BeforeEach
     void createQuiz() {
@@ -54,7 +55,26 @@ class AttemptControllerTest {
         Chapter chapter = fixture.chapter(subject, "Bài 1", 1);
         question = fixture.question(chapter, "Câu duy nhất", PUBLISHED, 2);
         practiceQuizId = fixture.quiz(subject, chapter, QuizMode.PRACTICE, 20, null).getId();
+        examQuizId = fixture.quiz(subject, null, QuizMode.EXAM, 40, 45).getId();
         entityManager.flush();
+    }
+
+    @Test
+    void exam_revealsCorrectAnswersOnlyAfterSubmitting() throws Exception {
+        String body = mockMvc.perform(post("/api/v1/quizzes/{id}/attempts", examQuizId))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+        String attemptId = JsonPath.read(body, "$.id");
+        mockMvc.perform(get("/api/v1/attempts/{id}", attemptId))
+                .andExpect(content().string(not(containsString("orrect"))));
+
+        mockMvc.perform(post("/api/v1/attempts/{id}/submit", attemptId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUBMITTED"))
+                .andExpect(jsonPath("$.result.unansweredCount").value(1))
+                .andExpect(jsonPath("$.questions[0].selectedAnswerId").doesNotExist())
+                .andExpect(jsonPath("$.questions[0].feedback.correct").value(false))
+                .andExpect(jsonPath("$.questions[0].feedback.correctAnswerId").value(correctAnswer(question).getId()));
     }
 
     @Test

@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 5 đã xong và được duyệt** (2026-10-01). **Đang làm: Phase 6 (Result / history)**: kế hoạch chi tiết ở mục Phase 6 bên dưới, **chờ chủ dự án duyệt** rồi mới code. Q-13 đã chốt (D-038: giữ thứ tự Phase 6 → 7).
+> **Phase 5 đã xong và được duyệt** (2026-10-01). **Đang làm: Phase 6 (Result / history)**: kế hoạch đã duyệt cả 4 đề xuất; đang làm theo "Thứ tự làm", tiến độ ở mục "Tiến độ 6". Q-13 đã chốt (D-038: giữ thứ tự Phase 6 → 7).
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -116,7 +116,7 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
 | 4 | Subject / Chapter / Question / Answer | ✅ Xong, đã duyệt (4A GDQP, 4B Python) |
 | 5 | Quiz engine | ✅ Xong, đã duyệt |
-| 6 | Result / history | 🔄 Kế hoạch chờ duyệt |
+| 6 | Result / history | 🔄 Đang làm |
 | 7 | Authentication | |
 | 8 | Admin management | |
 | 9 | Ranking / statistics | |
@@ -244,7 +244,7 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
   - Để lại (đã ghi vào Phase 7): khách tạo lượt làm không giới hạn (cần giới hạn tần suất). Import trùng lúc có người vừa bắt đầu lượt làm có thể lỗi 500 (hiếm, chỉ khi đang import).
   - Lượt làm thử tạo trong lúc kiểm tra vẫn nằm trong database dev (không ảnh hưởng gì).
 
-## Phase 6: Result / history (kế hoạch chi tiết, ⏳ chờ duyệt)
+## Phase 6: Result / history (kế hoạch chi tiết, ✅ đã duyệt 2026-10-01)
 
 **Mục tiêu:** nộp bài thi thử xong thì xem lại được từng câu (đã chọn gì, đáp án đúng, câu bỏ trống); tìm lại được các lượt làm cũ trên máy đang dùng. Lịch sử theo tài khoản để sau Phase 7 (D-038).
 
@@ -270,6 +270,10 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
 2. Frontend: xem lại bài thi + test.
 3. Lượt làm gần đây + test.
 4. Chạy thật, chụp màn hình 360 / 768 / 1280px, agent rà code, tài liệu (`architecture.md` bỏ endpoint `/result`), báo cáo, dừng chờ xác nhận.
+
+**Tiến độ 6** (cập nhật sau mỗi bước; phiên sau làm tiếp từ bước chưa xong)
+- [x] Bước 1: `AnswerFeedbackResponse` (đổi tên từ `PracticeFeedbackResponse`) có ở mọi câu của thi thử đã kết thúc; `ExamResultResponse.unansweredCount`. Test mới: service và HTTP (trước khi nộp không có đáp án đúng, sau khi nộp có ở mọi câu kể cả câu bỏ trống). `mvnw verify` 108/108.
+- [ ] Bước 2 · [ ] Bước 3 · [ ] Bước 4
 
 ## Phase 7: Authentication
 

@@ -221,6 +221,29 @@ class AttemptServiceTest {
     }
 
     @Test
+    void exam_afterSubmitting_revealsTheCorrectAnswerOfEveryQuestion_includingBlankOnes() {
+        AttemptResponse attempt = attemptService.start(examQuizId);
+        List<Question> questions = questionsOf(attempt);
+        answer(attempt, questions.get(0), true);
+        answer(attempt, questions.get(1), false);
+        assertThat(attemptService.get(attempt.id()).questions())
+                .as("chưa nộp: không câu nào có đáp án đúng")
+                .allSatisfy(question -> assertThat(question.feedback()).isNull());
+
+        AttemptResponse submitted = attemptService.submit(attempt.id());
+
+        assertThat(submitted.result().correctCount()).isEqualTo(1);
+        assertThat(submitted.result().unansweredCount()).isEqualTo(3);
+        List<AttemptQuestionResponse> review = attemptService.get(attempt.id()).questions();
+        for (int i = 0; i < review.size(); i++) {
+            assertThat(review.get(i).feedback().correctAnswerId()).isEqualTo(correctAnswer(questions.get(i)).getId());
+        }
+        assertThat(review).extracting(question -> question.feedback().correct())
+                .containsExactly(true, false, false, false, false);
+        assertThat(review.get(2).selectedAnswerId()).as("câu bỏ trống").isNull();
+    }
+
+    @Test
     void exam_afterSubmitting_answersAreRejected_andSubmittingAgainReturnsTheSameResult() {
         AttemptResponse attempt = attemptService.start(examQuizId);
         Question question = questionsOf(attempt).getFirst();

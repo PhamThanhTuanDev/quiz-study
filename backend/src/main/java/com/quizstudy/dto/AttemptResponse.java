@@ -23,16 +23,21 @@ public record AttemptResponse(String id, Long quizId, String quizTitle, QuizMode
     /**
      * Một câu trong lượt làm. Phương án đã được xáo theo lượt (cố định khi tải lại), không kèm đúng/sai.
      *
-     * @param feedback chỉ có ở luyện tập, sau khi câu đã được trả lời (D-037)
+     * @param feedback luyện tập: sau khi câu đã được trả lời (D-037); thi thử: sau khi nộp / hết giờ (D-038)
      */
     public record AttemptQuestionResponse(Long questionId, int order, String content, String codeSnippet,
-            List<AnswerOptionResponse> answers, Long selectedAnswerId, PracticeFeedbackResponse feedback) {
+            List<AnswerOptionResponse> answers, Long selectedAnswerId, AnswerFeedbackResponse feedback) {
     }
 
     public record AnswerOptionResponse(Long id, String content) {
     }
 
-    /** Kết quả thi thử, thang 10 (D-037). */
-    public record ExamResultResponse(int correctCount, int totalQuestions, BigDecimal score, Instant submittedAt) {
+    /**
+     * Kết quả thi thử, thang 10 (D-037). Số câu sai = tổng − đúng − bỏ trống.
+     *
+     * @param unansweredCount số câu bỏ trống (tính là sai khi chấm)
+     */
+    public record ExamResultResponse(int correctCount, int unansweredCount, int totalQuestions, BigDecimal score,
+            Instant submittedAt) {
     }
 }
