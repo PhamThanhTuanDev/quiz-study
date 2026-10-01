@@ -138,8 +138,12 @@ export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
   return { attempt, currentIndex, goTo, choose, checkingQuestionIds, submit, submitting, error }
 }
 
-/** Mở lại lượt làm thì nhảy tới câu đầu tiên chưa trả lời (làm tiếp chỗ đang dở). */
+/**
+ * Mở lại lượt đang làm thì nhảy tới câu đầu tiên chưa trả lời (làm tiếp chỗ đang dở);
+ * bài đã nộp thì xem lại từ câu 1.
+ */
 function firstUnansweredIndex(attempt: Attempt): number {
+  if (attempt.status !== 'IN_PROGRESS') return 0
   const index = attempt.questions.findIndex((question) => question.selectedAnswerId === null)
   return index === -1 ? 0 : index
 }

@@ -42,9 +42,11 @@ export default function RecentAttemptList({ attempts, onClear }: RecentAttemptLi
 }
 
 function statusText(attempt: RecentAttempt): string {
-  if (attempt.status === 'IN_PROGRESS') {
-    return attempt.mode === 'EXAM' ? 'Đang làm' : 'Luyện tập'
-  }
-  const score = attempt.score === null ? '' : `${SCORE_FORMAT.format(attempt.score)} điểm`
-  return attempt.status === 'EXPIRED' ? `Hết giờ · ${score}` : score
+  if (attempt.mode === 'PRACTICE') return 'Luyện tập'
+  if (attempt.status === 'IN_PROGRESS') return 'Đang làm'
+  const parts = [
+    attempt.status === 'EXPIRED' ? 'Hết giờ' : 'Đã nộp',
+    attempt.score === null ? null : `${SCORE_FORMAT.format(attempt.score)} điểm`,
+  ]
+  return parts.filter(Boolean).join(' · ')
 }

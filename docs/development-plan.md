@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 5 đã xong và được duyệt** (2026-10-01). **Đang làm: Phase 6 (Result / history)**: kế hoạch đã duyệt cả 4 đề xuất; đang làm theo "Thứ tự làm", tiến độ ở mục "Tiến độ 6". Q-13 đã chốt (D-038: giữ thứ tự Phase 6 → 7).
+> **Phase 6 (Result / history) đã xong, chờ chủ dự án xác nhận** (2026-10-01): xem lại bài thi thử sau khi nộp và "Lượt làm gần đây" trên trình duyệt. Chi tiết ở mục "Tiến độ 6". Phase 7 cần quyết trước: Q-07 (session cookie hay JWT).
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -116,7 +116,7 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
 | 4 | Subject / Chapter / Question / Answer | ✅ Xong, đã duyệt (4A GDQP, 4B Python) |
 | 5 | Quiz engine | ✅ Xong, đã duyệt |
-| 6 | Result / history | 🔄 Đang làm |
+| 6 | Result / history | ✅ Xong, chờ xác nhận |
 | 7 | Authentication | |
 | 8 | Admin management | |
 | 9 | Ranking / statistics | |
@@ -244,7 +244,7 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
   - Để lại (đã ghi vào Phase 7): khách tạo lượt làm không giới hạn (cần giới hạn tần suất). Import trùng lúc có người vừa bắt đầu lượt làm có thể lỗi 500 (hiếm, chỉ khi đang import).
   - Lượt làm thử tạo trong lúc kiểm tra vẫn nằm trong database dev (không ảnh hưởng gì).
 
-## Phase 6: Result / history (kế hoạch chi tiết, ✅ đã duyệt 2026-10-01)
+## Phase 6: Result / history (✅ xong, chờ xác nhận; kế hoạch đã duyệt 2026-10-01)
 
 **Mục tiêu:** nộp bài thi thử xong thì xem lại được từng câu (đã chọn gì, đáp án đúng, câu bỏ trống); tìm lại được các lượt làm cũ trên máy đang dùng. Lịch sử theo tài khoản để sau Phase 7 (D-038).
 
@@ -275,7 +275,7 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
 - [x] Bước 1: `AnswerFeedbackResponse` (đổi tên từ `PracticeFeedbackResponse`) có ở mọi câu của thi thử đã kết thúc; `ExamResultResponse.unansweredCount`. Test mới: service và HTTP (trước khi nộp không có đáp án đúng, sau khi nộp có ở mọi câu kể cả câu bỏ trống). `mvnw verify` 108/108.
 - [x] Bước 2: `QuestionView` hiện đúng/sai mọi câu khi có `feedback` (luyện tập đã kiểm tra, thi thử đã nộp), câu bỏ trống "– Bạn bỏ trống câu này"; `QuestionNavigator` có trạng thái "bỏ trống"; `ExamOutcome`: "Đúng · Sai · Bỏ trống", nút "Xem câu sai tiếp theo". Test 64/64, lint, type-check đạt.
 - [x] Bước 3: `services/recentAttempts.ts` (tối đa 10 lượt, bỏ dữ liệu hỏng, không lỗi khi trình duyệt chặn lưu trữ), ghi trong `useQuizAttempt` mỗi khi lượt làm đổi; `components/RecentAttemptList.tsx` ở trang chủ, có "Xoá danh sách". `setupTests` xoá localStorage sau mỗi test. Test 72/72 (chạy 3 lần), type-check, lint, build đạt.
-- [ ] Bước 4
+- [x] Bước 4: chạy thật (thi thử Python 40 câu: đúng 10, sai 15, bỏ trống 15, xem lại đủ 40 câu), chụp màn hình 360 / 1280px không tràn ngang. Agent `code-reviewer`: không rò rỉ đáp án, backend không có vấn đề; đã sửa 4 góp ý frontend (ngày hỏng trong localStorage làm trắng trang chủ, chữ trạng thái khi thiếu điểm, ẩn "Xem câu sai tiếp theo" khi không còn câu sai nào khác, tự bỏ lượt làm bị 404 khỏi danh sách) và mở lại bài đã nộp thì bắt đầu từ câu 1. Frontend 74/74 (chạy 3 lần), backend 108/108, lint, build đạt. `architecture.md` bỏ endpoint `/result`.
 
 ## Phase 7: Authentication
 
@@ -284,7 +284,7 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
 Công việc:
 - Thêm Spring Security; bảng `users`; đăng ký/đăng nhập/đăng xuất; BCrypt.
 - Vai trò `USER` / `ADMIN`; bảo vệ `/api/v1/admin/**`.
-- Gắn lượt làm bài với người dùng.
+- Gắn lượt làm bài với người dùng; trang lịch sử làm bài theo tài khoản (D-038).
 - Giới hạn tần suất tạo lượt làm của khách (`POST /api/v1/quizzes/{id}/attempts` đang mở, không giới hạn; góp ý khi rà code Phase 5).
 - Frontend: trang đăng nhập/đăng ký, route cần đăng nhập.
 - Security review (agent `security-reviewer`, `/security-review`).

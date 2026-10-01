@@ -1,6 +1,6 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getRecentAttempts } from '../services/recentAttempts'
+import { getRecentAttempts, rememberAttempt } from '../services/recentAttempts'
 import { mockApi, problem } from '../test/mockApi'
 import { renderRoute } from '../test/renderRoute'
 import type { Attempt, AttemptQuestion } from '../types/quiz'
@@ -192,6 +192,26 @@ describe('AttemptPage – thi thử', () => {
     expect(screen.getByRole('status')).toHaveTextContent('– Bạn bỏ trống câu này. Đáp án đúng là B.')
     expect(screen.getByRole('status')).toHaveTextContent('Vì lý do X.')
     expect(screen.getByText('✓ Đáp án đúng')).toBeInTheDocument()
+    // Câu đang xem là câu sai duy nhất: không còn câu sai nào khác để nhảy tới.
+    expect(screen.queryByRole('button', { name: 'Xem câu sai tiếp theo' })).not.toBeInTheDocument()
+  })
+
+  it('reopens a submitted exam at the first question', async () => {
+    const submitted = attempt({
+      ...EXAM,
+      status: 'SUBMITTED',
+      remainingSeconds: null,
+      questions: [
+        question(1, 1, { feedback: { correct: false, correctAnswerId: 11, explanation: null } }),
+        question(2, 2, { feedback: { correct: false, correctAnswerId: 21, explanation: null } }),
+      ],
+      result: { correctCount: 0, unansweredCount: 2, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:10:00Z' },
+    })
+    mockApi({ 'GET /api/v1/attempts/luot-1': submitted })
+
+    renderRoute('/attempts/luot-1')
+
+    expect(await screen.findByRole('heading', { name: 'Câu 1/2' })).toBeInTheDocument()
   })
 
   it('does not offer to review mistakes when every answer is correct', async () => {
@@ -284,12 +304,14 @@ describe('AttemptPage – thi thử', () => {
 })
 
 describe('AttemptPage – không tìm thấy', () => {
-  it('shows a not-found page for an unknown attempt', async () => {
+  it('shows a not-found page for an unknown attempt and drops it from the recent list', async () => {
+    rememberAttempt(attempt({ id: 'khong-co' }))
     mockApi({ 'GET /api/v1/attempts/khong-co': problem(404, 'Không tìm thấy lượt làm bài này.') })
 
     renderRoute('/attempts/khong-co')
 
     expect(await screen.findByRole('heading', { name: 'Không tìm thấy lượt làm bài' })).toBeInTheDocument()
     expect(screen.getByText('Không tìm thấy lượt làm bài này.')).toBeInTheDocument()
+    await waitFor(() => expect(getRecentAttempts()).toEqual([]))
   })
 })

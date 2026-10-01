@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { ExamOutcome, PracticeOutcome } from '../components/AttemptOutcome'
 import AsyncContent from '../components/AsyncContent'
@@ -14,6 +14,7 @@ import { useFocusOnChange } from '../hooks/useFocusOnChange'
 import { useQuizAttempt } from '../hooks/useQuizAttempt'
 import { useStartAttempt } from '../hooks/useStartAttempt'
 import { getAttempt } from '../services/quizService'
+import { forgetAttempt } from '../services/recentAttempts'
 import type { Attempt } from '../types/quiz'
 import NotFoundPage from './NotFoundPage'
 
@@ -23,8 +24,14 @@ export default function AttemptPage() {
   const { attemptId = '' } = useParams()
   const load = useCallback((signal: AbortSignal) => getAttempt(attemptId, signal), [attemptId])
   const { state, reload } = useAsync(load)
+  const notFound = state.kind === 'error' && state.status === 404
 
-  if (state.kind === 'error' && state.status === 404) {
+  // Lượt làm không còn trên server: bỏ khỏi "Lượt làm gần đây" để danh sách không trỏ tới trang lỗi.
+  useEffect(() => {
+    if (notFound) forgetAttempt(attemptId)
+  }, [notFound, attemptId])
+
+  if (notFound) {
     return <NotFoundPage title="Không tìm thấy lượt làm bài" message={state.message} />
   }
 
@@ -154,11 +161,11 @@ function AttemptContent({ initial }: { initial: Attempt }) {
 
 /**
  * Câu sai hoặc bỏ trống tiếp theo sau câu đang xem (quay vòng về đầu), để xem lại lần lượt;
- * null nếu không có câu nào sai.
+ * null nếu không còn câu sai nào khác câu đang xem (khi đó ẩn nút, vì bấm cũng không đi đâu).
  */
 function nextMistakeIndex(attempt: Attempt, currentIndex: number): number | null {
   const total = attempt.questions.length
-  for (let step = 1; step <= total; step++) {
+  for (let step = 1; step < total; step++) {
     const index = (currentIndex + step) % total
     const feedback = attempt.questions[index].feedback
     if (feedback !== null && !feedback.correct) return index

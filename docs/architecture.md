@@ -81,7 +81,8 @@ Các trang dự kiến (chốt dần theo phase):
 | `/` | Trang chủ, danh sách môn | 3–4 |
 | `/subjects/:slug` | ✔ Chi tiết môn: các bài, nút luyện tập từng bài, thẻ thi thử cả môn | 4–5 |
 | `/attempts/:attemptId` | ✔ Làm bài (luyện tập / thi thử); `attemptId` là UUID của lượt làm | 5 |
-| (trong trang làm bài) | Xem lại từng câu sau khi nộp (đã chọn gì, đáp án đúng) | 6 |
+| (trong trang làm bài) | ✔ Xem lại từng câu sau khi nộp (đã chọn gì, đáp án đúng, câu bỏ trống) | 6 |
+| `/` (mục "Lượt làm gần đây") | ✔ Tối đa 10 lượt làm gần nhất trên trình duyệt này (`localStorage`, không cần đăng nhập) | 6 |
 | `/history` | Lịch sử làm bài | 6–7 |
 | `/login`, `/register` | Đăng nhập / đăng ký | 7 |
 | `/admin/...` | Quản trị môn, chương, câu hỏi, duyệt câu | 8 |
@@ -146,10 +147,9 @@ API dự kiến (chốt chi tiết ở từng phase):
 | GET | `/api/v1/subjects/{slug}` | ✔ Chi tiết môn + các bài (số câu mỗi bài). Không có hoặc chưa publish → 404 | 4 |
 | GET | `/api/v1/subjects/{slug}/quizzes` | ✔ Các đề của môn: đề cả môn trước, rồi theo thứ tự bài; số câu thực tế mỗi lượt | 5 |
 | POST | `/api/v1/quizzes/{quizId}/attempts` | ✔ Bắt đầu lượt làm → 201 + `Location`; câu hỏi và phương án **không kèm đáp án đúng** | 5 |
-| GET | `/api/v1/attempts/{attemptId}` | ✔ Mở lại lượt làm (tải lại trang); thi thử quá hạn thì được chấm | 5 |
+| GET | `/api/v1/attempts/{attemptId}` | ✔ Mở lại lượt làm (tải lại trang); thi thử quá hạn thì được chấm. Thi thử đã kết thúc: kèm đáp án đúng của mọi câu để xem lại (D-038) | 5–6 |
 | PUT | `/api/v1/attempts/{attemptId}/answers/{questionId}` | ✔ Lưu lựa chọn. Luyện tập: trả đúng/sai + đáp án đúng **của câu đó**, khoá câu | 5 |
 | POST | `/api/v1/attempts/{attemptId}/submit` | ✔ Nộp bài thi thử; server chấm thang 10 (luyện tập → 409) | 5 |
-| GET | `/api/v1/attempts/{attemptId}/result` | Xem lại từng câu + đáp án đúng (chỉ sau khi nộp) | 6 |
 
 Lỗi nghiệp vụ của làm bài: `409` (`BusinessRuleException`, ví dụ bài đã nộp, hết giờ, đổi đáp án luyện tập), `400` (`InvalidRequestException`, phương án không thuộc câu hỏi), `404` (lượt làm / đề không có).
 | GET | `/api/v1/me/attempts` | Lịch sử của người dùng | 6–7 |

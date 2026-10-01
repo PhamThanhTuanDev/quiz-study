@@ -50,6 +50,13 @@ export function rememberAttempt(attempt: Attempt): void {
   writeStorage(JSON.stringify(list))
 }
 
+/** Bỏ một lượt làm khỏi danh sách, ví dụ lượt làm không còn trên server (mở ra bị 404). */
+export function forgetAttempt(attemptId: string): void {
+  const list = getRecentAttempts()
+  const remaining = list.filter((recent) => recent.id !== attemptId)
+  if (remaining.length !== list.length) writeStorage(JSON.stringify(remaining))
+}
+
 export function clearRecentAttempts(): void {
   try {
     window.localStorage.removeItem(STORAGE_KEY)
@@ -92,6 +99,8 @@ function isRecentAttempt(value: unknown): value is RecentAttempt {
     typeof item.status === 'string' &&
     STATUSES.includes(item.status) &&
     typeof item.startedAt === 'string' &&
+    // Ngày hỏng sẽ làm lỗi khi định dạng để hiển thị (RangeError), nên loại ngay ở đây.
+    !Number.isNaN(Date.parse(item.startedAt)) &&
     (item.score === null || typeof item.score === 'number')
   )
 }

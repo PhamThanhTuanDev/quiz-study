@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Attempt } from '../types/quiz'
-import { clearRecentAttempts, getRecentAttempts, MAX_RECENT_ATTEMPTS, rememberAttempt } from './recentAttempts'
+import { clearRecentAttempts, forgetAttempt, getRecentAttempts, MAX_RECENT_ATTEMPTS, rememberAttempt } from './recentAttempts'
 
 function attempt(id: string, startedAt: string, extra: Partial<Attempt> = {}): Attempt {
   return {
@@ -73,6 +73,20 @@ describe('recentAttempts', () => {
 
     window.localStorage.setItem('quiz-study.recent-attempts', JSON.stringify([{ id: 'x', mode: 'KHAC' }, 42]))
     expect(getRecentAttempts()).toEqual([])
+
+    // Ngày hỏng làm lỗi khi hiển thị, nên mục đó bị bỏ.
+    const badDate = { id: 'y', quizTitle: 'Đề', subjectName: 'Môn', mode: 'EXAM', status: 'IN_PROGRESS', startedAt: 'abc', score: null }
+    window.localStorage.setItem('quiz-study.recent-attempts', JSON.stringify([badDate]))
+    expect(getRecentAttempts()).toEqual([])
+  })
+
+  it('forgets a single attempt', () => {
+    rememberAttempt(attempt('a', '2026-10-01T01:00:00Z'))
+    rememberAttempt(attempt('b', '2026-10-01T02:00:00Z'))
+
+    forgetAttempt('a')
+
+    expect(getRecentAttempts().map((recent) => recent.id)).toEqual(['b'])
   })
 
   it('works without storage when the browser blocks it', () => {
