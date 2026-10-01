@@ -172,6 +172,28 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - **Chỉ tên bài.** Nội dung câu hỏi giữ nguyên cách viết của tài liệu ("Mác - Lênin").
 - Cách ghi: `database/seed/gdqp/subject.json` có `title` (tên hiển thị), `sourceTitle` (nguyên văn PDF) và `titleDecision`. Script vẫn đối chiếu với `sourceTitle`, và bắt buộc có `titleDecision` khi tên hiển thị khác PDF.
 
+### D-033 · Môn Python: tên và cách chia bài · Đã chốt (Q-12, P12, P13, 2026-10-01)
+- Slug `python`, tên "Nhập môn lập trình Python", mã học phần `IPPA233277` (theo tên file; chân slide ghi `IPPA23327`, có vẻ thiếu một số).
+- Chia **10 bài theo buổi học**: Giới thiệu · Các khái niệm cơ bản · Kiểu dữ liệu và cấu trúc rẽ nhánh · Cấu trúc lặp · List · Tuple, Set, Dictionary · Hàm · Xử lý chuỗi · Module và thư viện · Class. Câu của file lý thuyết và file bài tập cùng buổi vào cùng một bài.
+
+### D-034 · Xử lý các điểm chưa rõ của tài liệu Python · Đã chốt (P5–P11, P14, 2026-10-01)
+- **Câu trùng** (P5, và trùng giữa file lý thuyết và file bài tập): chỉ giữ một câu; câu bị bỏ ghi trong review.md.
+- **Câu lỗi đề** (P6 thiếu code, P10 tên biến không khớp, đề và code mâu thuẫn…): `NEEDS_REVIEW` + lý do, không vào bài làm; liệt kê để chủ dự án quyết từng câu.
+- **P7**: câu có 6 phương án giữ nguyên. **P8**: hai phương án cùng nhãn "C" giữ cả hai theo thứ tự (nhãn tính lại khi hiển thị). **P9**: số "50" đứng lẻ bỏ qua.
+- **P11**: câu "Tính đến tháng 6/2023…" giữ lại; đáp án theo bảng TIOBE tháng 6/2023, ghi nguồn.
+- **P14**: bài tập tự luận (lập trình) không đưa vào.
+- Kiểm chứng bằng **Python 3.14** trên máy; câu có kết quả phụ thuộc phiên bản Python → `NEEDS_REVIEW`.
+
+### D-035 · Trích xuất Python bằng "bản đồ vị trí" · Đã chốt (2026-10-01)
+- Script đánh số các dòng chữ trên trang trắc nghiệm. Claude xem ảnh trang và ghi **vị trí** của đề / code / phương án vào file quyết định (commit), **không gõ lại nội dung**; script dựng lại nội dung từ PDF theo vị trí. Nội dung luôn đúng nguyên văn và không nằm trong Git (giữ D-030).
+- File quyết định còn có: đáp án, lý do, cách kiểm chứng (code chạy thật, D-020), phương án A–D Claude tạo cho câu điền khuyết (D-026).
+
+### D-036 · Duyệt các câu Python cần xem lại · Đã chốt (chủ dự án, 2026-10-01)
+- **Lỗi in ấn** (8 câu: dấu "–" thay dấu trừ, nháy cong, lệnh không thụt lề trong code hoặc phương án): dùng đáp án Claude đề xuất (coi là ký tự đúng), chuyển sang `PUBLISHED`. Nội dung câu giữ nguyên văn.
+- **Câu hỏi mở** không có phương án trong tài liệu (1 câu, w04.1 HW tr.2 câu 10): áp dụng D-026, Claude tạo 4 phương án đã kiểm chứng, chuyển sang `PUBLISHED`.
+- **Còn lại giữ `NEEDS_REVIEW`** (không vào bài làm, không sửa nội dung): đề không khớp code (14 câu), không có phương án đúng (6 câu), có nhiều cách hiểu (13 câu). Đề xuất đáp án cho từng câu vẫn ghi trong `review.md` để quyết sau.
+- Kết quả: 295 câu, 262 `PUBLISHED`, 33 `NEEDS_REVIEW`.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

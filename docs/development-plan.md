@@ -5,8 +5,8 @@
 
 ## Tiến độ hiện tại
 
-> Cập nhật: 2026-09-30 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Đang làm: Phase 4B (Python)**, bước lập kế hoạch chi tiết để chủ dự án duyệt. Phase 4A (GDQP) đã xong và được duyệt.
+> Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
+> **Phase 4B (Python) đã xong, chờ chủ dự án xác nhận** để sang Phase 5. Môn Python: 295 câu, 262 `PUBLISHED`, 33 `NEEDS_REVIEW` (D-036). Phase 5 cần quyết trước Q-06, Q-08, Q-09 (bảng "Cần bạn quyết định" trong `decisions.md`).
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -40,8 +40,52 @@
 - **Frontend:** trang chủ = danh sách môn; `/subjects/:slug` = chi tiết môn + các bài; môn không có → trang "Không tìm thấy môn học".
 - **Kiểm tra:** backend 46/46, frontend 44/44 + lint + build; chụp màn hình 360 / 768 / 1280px; agent `code-reviewer` (không có lỗi nghiêm trọng, góp ý đã sửa).
 
-### Phase 4B (Python): lập kế hoạch
-Chưa bắt đầu. Kế hoạch riêng sẽ được trình chủ dự án duyệt (xác định đáp án bằng cách chạy code theo D-020, tạo phương án cho câu điền khuyết theo D-026, các điểm P5–P14).
+### Phase 4B (Python): kế hoạch chi tiết (✅ đã duyệt 2026-10-01)
+
+Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo cột dọc), code nhiều dòng, câu điền khuyết nhiều chỗ trống, có câu lỗi đề (ví dụ w02.2 HW câu 5: đề nói "in 1, 2, 3" nhưng code in "Yes"/"No"). Không trích xuất tự động hoàn toàn được; làm **bán tự động**.
+
+**Cách làm đề xuất: "bản đồ vị trí"**
+- Script đọc PDF và đánh số mọi dòng chữ của các trang "TRẮC NGHIỆM" (theo cột, giữ toạ độ để tính thụt lề code).
+- Claude xem ảnh từng trang và ghi vào file quyết định (commit) **vị trí** của đề / code / phương án (tham chiếu tới dòng), **không gõ lại nội dung**. Script dựng lại nội dung từ PDF theo vị trí đó, nên nội dung luôn đúng nguyên văn và không nằm trong Git (giữ D-030).
+- File quyết định cũng chứa: đáp án đúng, lý do, cách kiểm chứng, và phương án A–D do Claude tạo cho câu điền khuyết (D-026).
+
+**Xác định đáp án (D-020)**
+- Câu có code: `scripts/verify_python_answers.py` **chạy thật** code bằng Python 3 (tiến trình riêng, thư mục tạm, giới hạn thời gian), so kết quả với phương án đúng đã ghi. Câu điền khuyết: chạy code với từng phương án; phương án đúng cho kết quả đúng yêu cầu, 3 phương án sai phải cho kết quả khác hoặc lỗi. Chạy lại được bất cứ lúc nào.
+- Câu lý thuyết: đối chiếu tài liệu chính thức docs.python.org, ghi lý do và link.
+- Câu lỗi đề / mơ hồ / kết quả phụ thuộc phiên bản Python: `NEEDS_REVIEW` + lý do, không vào bài làm, liệt kê cho chủ dự án.
+
+**Các bước**
+1. `scripts/extract_python_pages.py`: tìm trang trắc nghiệm của 19 file, đánh số dòng, xuất ảnh + text từng trang (vào `generated/`).
+2. Làm lần lượt theo từng bài (10 bài): Claude lập bản đồ vị trí + đáp án + lý do → chạy kiểm chứng → cập nhật tiến độ ở đây (phiên sau làm tiếp được).
+3. `scripts/build_python_import.py`: dựng `import.json` + `review.md`; tự kiểm tra (nội dung có nguyên văn trong trang PDF, đủ phương án, câu `PUBLISHED` đúng 1 đáp án, mọi câu trắc nghiệm của trang đều được xử lý hoặc có lý do bỏ qua).
+4. Import (`scripts/import-subject.ps1 -Slug python`), so DB với JSON, xem trên web.
+5. Chủ dự án duyệt `review.md` (đặc biệt danh sách `NEEDS_REVIEW`). Agent rà code. Tài liệu. Báo cáo, dừng chờ xác nhận.
+
+**Tiến độ 4B** (cập nhật sau mỗi bài; phiên sau làm tiếp từ bài chưa xong)
+- [x] Bước 1: `scripts/python_source.py` (đánh số dòng, chung cho các script), `scripts/extract_python_pages.py`. 19 file: số dòng bắt đầu bằng số câu khớp khảo sát ở mọi file; w01 LT có 8 dòng vì trang 8 và 9 là cùng 4 câu. Tổng 302 dòng = 298 câu + 4 câu trùng.
+  - Chia cột ở 42% chiều rộng trang (không phải 50%): có slide cột phải bắt đầu ở x ≈ 468.
+- [x] Công cụ: `scripts/build_python_import.py` (dựng nội dung theo bản đồ, kiểm tra phủ hết mọi dòng của trang trắc nghiệm), `scripts/verify_python_answers.py` (chạy code thật; kiểu run / runOptions / fill / docs / reasoning). Đã thử cố ý đổi đáp án và thêm phương án cũng đúng: đều bị phát hiện.
+  - Tiến trình con chạy với `-I -X utf8`: `-I` bỏ qua `PYTHONIOENCODING`, nên phải bật UTF-8 bằng `-X utf8`.
+- [x] Bước 2: bản đồ vị trí từng bài (`database/seed/python/questions/bai-NN.json`). Cách làm mỗi bài: xem `generated/pages/<nguồn>/pNN.txt` + `.png` → viết bản đồ → `build_python_import.py --allow-incomplete` → `verify_python_answers.py` → xem `generated/review.md`.
+  - Lớp text PDF mất dấu cách sau chữ có dấu tiếng Việt ("thểđược"): `python_source.line_text` thêm lại khi khoảng trống > 0,15 cỡ chữ (đã kiểm tra 272 chỗ trên 19 file, đều đúng).
+  - [x] Bài 1 (4 câu PUBLISHED; trang 8 là 4 câu trùng)
+  - [x] Bài 2 (40 dòng câu: 3 câu trùng; 31 PUBLISHED, 6 NEEDS_REVIEW)
+  - [x] Bài 3 (20 câu: 17 PUBLISHED, 3 NEEDS_REVIEW)
+  - [x] Bài 4 (20 câu: 17 PUBLISHED, 3 NEEDS_REVIEW)
+  - [x] Bài 5 (41 câu: 39 PUBLISHED, 2 NEEDS_REVIEW)
+  - [x] Bài 6 (49 câu: 39 PUBLISHED, 10 NEEDS_REVIEW)
+  - [x] Bài 7 (56 câu: 48 PUBLISHED, 8 NEEDS_REVIEW; trang 12 bỏ số "50" đứng lẻ, P9)
+  - [x] Bài 8 (38 câu: 30 PUBLISHED, 8 NEEDS_REVIEW)
+  - [x] Bài 9 (14 câu: 13 PUBLISHED, 1 NEEDS_REVIEW)
+  - [x] Bài 10 (16 câu: 15 PUBLISHED, 1 NEEDS_REVIEW)
+  - Câu có **code của đề** không chạy được nguyên văn vì ký tự in ấn ("–" thay dấu trừ, nháy cong, lệnh không thụt lề) → `NEEDS_REVIEW` nhóm `reviewGroup: "typography"`, vẫn ghi đáp án đề xuất + kiểm chứng sau khi sửa ký tự, để chủ dự án duyệt cả nhóm một lần. Ký tự in ấn chỉ nằm trong phương án sai thì không ảnh hưởng.
+  - Nháy cong: nằm trong code chạy thử, hoặc trong phương án/mục mà đề hỏi "có hợp lệ / có gây lỗi không" → nhóm `typography`. Nháy cong chỉ để ghi giá trị trong lời đề (ví dụ `f( ‘5.0’)`, `Chuỗi “1234…”`) hoặc trong phương án là kết quả in ra → đọc theo nghĩa thông thường, không cần duyệt.
+  - "Vị trí / phần tử thứ n" hiểu là đếm từ 1. Câu điền khuyết loại này không đưa phương án của cách hiểu đếm từ 0 vào, để chỉ có một đáp án.
+- [x] Bước 3: `build_python_import.py` ghi `import.json`: **295 câu** (253 `PUBLISHED`, 42 `NEEDS_REVIEW`), 7 câu trùng bỏ qua. `verify_python_answers.py`: 289 câu đạt (252 câu chạy code thật, trong đó 206 câu chữ cái đáp án được đối chiếu tự động với kết quả chạy; 46 câu còn lại là câu phát biểu lý thuyết, code chỉ minh hoạ); 6 câu không kiểm chứng đều là `NEEDS_REVIEW` chưa xác định được đáp án.
+  - Agent `code-reviewer`: không thấy chỗ nào làm đổi chữ của câu hỏi. Đã sửa: đối chiếu chữ cái đáp án với kết quả chạy (trước đó kiểu `run` chỉ so với `expect`; đã thử cố ý ghi sai 5 câu, đều bị bắt), `errorLine` chạy với `__name__ = "__main__"` và lấy số dòng trong code của đề, lỗi cấu trúc của một mục verify chỉ báo ở câu đó, `softWrap` ở hàng cuối báo lỗi. Không sửa: nhãn phương án cho phép không có dấu cách sau dấu chấm vì tài liệu có "E.5".
+  - Công cụ bổ sung khi làm Bài 6–10: `errorLine` (câu "lỗi ở dòng thứ mấy": bỏ số dòng "(1)", "(2)" rồi lấy dòng gây lỗi), `intoBlanks` nhận chuỗi phân cách (phương án "int, 1" điền 2 chỗ trống), `spaceBefore` và `softWrap` trong bản đồ (chỉnh layout, chỉ đổi khoảng trắng), mục "1) … 2) …" trong đề giữ trên từng dòng, khung chữ cùng hàng trong code đặt theo cột tính từ toạ độ x.
+- [x] Bước 4: import vào database dev (10 bài, 295 câu, 1198 phương án); so từng câu, phương án, đáp án, nguồn trong database với `import.json`: khớp hoàn toàn. API và trang `/subjects/python` hiển thị 10 bài · 253 câu (chỉ đếm câu `PUBLISHED`), không tràn ngang ở 390 / 1280px.
+- [x] Bước 5: chủ dự án duyệt (D-036): 8 câu lỗi in ấn và 1 câu hỏi mở chuyển sang `PUBLISHED`; 33 câu còn lại giữ `NEEDS_REVIEW`. Build, kiểm chứng (289 câu đạt), import lại với `-Replace`, so database với JSON: khớp hoàn toàn. Trang chủ qua `localhost:5173` hiện GDQP 230 câu, Python 262 câu.
 
 ### Điểm kỹ thuật đã phát hiện
 - ID `4.1.1.RELEASE` trong metadata của Spring Initializr **không phải** phiên bản Maven. Trên Maven Central là `4.1.1`; `pom.xml` đã được sửa.
@@ -70,7 +114,7 @@ Chưa bắt đầu. Kế hoạch riêng sẽ được trình chủ dự án duy�
 | 1 | Project setup | ✅ Xong, đã duyệt |
 | 2 | Database + Backend foundation | ✅ Xong, đã duyệt |
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
-| 4 | Subject / Chapter / Question / Answer | 🔄 4A (GDQP) xong; 4B (Python) đang lập kế hoạch |
+| 4 | Subject / Chapter / Question / Answer | ✅ 4A (GDQP) đã duyệt; 4B (Python) xong, chờ xác nhận |
 | 5 | Quiz engine | |
 | 6 | Result / history | |
 | 7 | Authentication | |
@@ -145,6 +189,7 @@ Công việc:
 - API bắt đầu lượt làm (rút ngẫu nhiên N câu `PUBLISHED`), lưu lựa chọn, nộp bài; chấm ở server.
 - Tôn trọng `shuffle_answers = FALSE` cho câu "Tất cả đều đúng"…
 - Frontend: trang làm bài (một câu một màn hình trên mobile, có điều hướng câu), hiển thị code đúng thụt lề, đồng hồ (nếu đề có giới hạn thời gian).
+  - Nội dung đề và phương án có thể có xuống dòng (đề môn Python liệt kê "1) … 2) …" trên từng dòng; phương án có code nhiều dòng) → hiển thị giữ xuống dòng (ví dụ `whitespace-pre-line`).
 - Test: rút câu không trùng, không lộ `is_correct` trước khi nộp, chấm điểm đúng.
 
 Cần quyết định trước: chế độ luyện tập có hiện đáp án ngay sau mỗi câu không; khách (chưa đăng nhập) có được làm bài không; thang điểm.
