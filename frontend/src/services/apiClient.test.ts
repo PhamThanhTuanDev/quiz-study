@@ -1,8 +1,47 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, apiGet, NETWORK_ERROR_MESSAGE, SERVER_ERROR_MESSAGE } from './apiClient'
+import { ApiError, apiGet, apiPost, apiPut, NETWORK_ERROR_MESSAGE, SERVER_ERROR_MESSAGE } from './apiClient'
 
 afterEach(() => {
   vi.unstubAllGlobals()
+})
+
+describe('apiPost / apiPut', () => {
+  it('sends the body as JSON with the right method and content type', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(Response.json({ ok: true }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await apiPut('/attempts/abc/answers/7', { answerId: 3 })
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/v1/attempts/abc/answers/7', {
+      method: 'PUT',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: '{"answerId":3}',
+      signal: undefined,
+    })
+  })
+
+  it('sends a POST without body and without a content type when there is nothing to send', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(Response.json({ id: 'abc' }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    await expect(apiPost('/quizzes/5/attempts')).resolves.toEqual({ id: 'abc' })
+    expect(fetchMock).toHaveBeenCalledWith('/api/v1/quizzes/5/attempts', {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      body: undefined,
+      signal: undefined,
+    })
+  })
+
+  it('turns a 409 Problem Details into an ApiError with its Vietnamese message', async () => {
+    const problem = { status: 409, detail: 'Bài này đã nộp, không sửa được nữa.' }
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json(problem, { status: 409 })))
+
+    await expect(apiPost('/attempts/abc/submit')).rejects.toMatchObject({
+      status: 409,
+      message: 'Bài này đã nộp, không sửa được nữa.',
+    })
+  })
 })
 
 describe('apiGet', () => {

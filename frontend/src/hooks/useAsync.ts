@@ -30,7 +30,7 @@ export const UNKNOWN_ERROR_MESSAGE = 'Đã có lỗi không xác định. Hãy t
  * Chỉ `ApiError` mang thông điệp dành cho người dùng (tiếng Việt). Lỗi khác là lỗi lập trình:
  * ghi chi tiết ra console cho lập trình viên, người dùng chỉ thấy thông điệp chung.
  */
-function toUserMessage(error: unknown): string {
+export function toUserMessage(error: unknown): string {
   if (error instanceof ApiError) return error.message
   console.error(error)
   return UNKNOWN_ERROR_MESSAGE

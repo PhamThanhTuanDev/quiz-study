@@ -1,5 +1,6 @@
 import type { RouteObject } from 'react-router'
 import MainLayout from './layouts/MainLayout'
+import AttemptPage from './pages/AttemptPage'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import RouteErrorPage from './pages/RouteErrorPage'
@@ -9,6 +10,7 @@ import SubjectPage from './pages/SubjectPage'
 export const pageRoutes: RouteObject[] = [
   { index: true, element: <HomePage /> },
   { path: 'subjects/:slug', element: <SubjectPage /> },
+  { path: 'attempts/:attemptId', element: <AttemptPage /> },
   { path: '*', element: <NotFoundPage /> },
 ]
 

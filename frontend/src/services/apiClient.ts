@@ -21,11 +21,28 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> {
+export function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> {
+  return request<T>('GET', path, undefined, signal)
+}
+
+/** Gửi POST; `body` (nếu có) được chuyển thành JSON. */
+export function apiPost<T>(path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
+  return request<T>('POST', path, body, signal)
+}
+
+/** Gửi PUT; `body` được chuyển thành JSON. */
+export function apiPut<T>(path: string, body: unknown, signal?: AbortSignal): Promise<T> {
+  return request<T>('PUT', path, body, signal)
+}
+
+async function request<T>(method: 'GET' | 'POST' | 'PUT', path: string, body: unknown, signal?: AbortSignal): Promise<T> {
+  const hasBody = body !== undefined
   let response: Response
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: { Accept: 'application/json' },
+      method,
+      headers: hasBody ? { Accept: 'application/json', 'Content-Type': 'application/json' } : { Accept: 'application/json' },
+      body: hasBody ? JSON.stringify(body) : undefined,
       signal,
     })
   } catch (error) {
