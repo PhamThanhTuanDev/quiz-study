@@ -238,7 +238,8 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
 **Tiến độ 5** (cập nhật sau mỗi bước; phiên sau làm tiếp từ bước chưa xong)
 - [x] Bước 1: migration `V2__create_quiz_tables.sql` (kèm CHECK số câu > 0, thời gian > 0); entity `Quiz`, `QuizMode`, `QuizResult`, `QuizResultStatus`, `UserAnswer`; repository `QuizRepository`, `QuizResultRepository` (khoá dòng khi ghi), `UserAnswerRepository`, thêm truy vấn id câu theo chương/môn và nạp phương án theo lô ở `QuestionRepository`. Test repository: 21/21 đạt.
 - [x] Bước 2: import cập nhật theo nguồn (`SubjectContentUpdater`, nguồn câu bắt buộc và không trùng), đề mặc định (`DefaultQuizService`, `QuizDefaultsProperties`: 20 câu luyện tập; thi thử 40 câu, 45 phút). Test import 15/15. Import lại vào database dev: migration V2 chạy; GDQP và Python cập nhật tại chỗ (0 câu bị bỏ); 23 đề mặc định (GDQP 11 + 1, Python 10 + 1); Python vẫn khớp JSON.
-- [ ] Bước 3 · [ ] Bước 4 · [ ] Bước 5
+- [x] Bước 3: `QuizService`, `AttemptService` (khoá dòng khi ghi; thi thử quá hạn được chấm khi có yêu cầu tiếp theo, cho trễ 10 giây; lưu sau hạn vẫn giữ kết quả chấm nhờ `noRollbackFor`), `QuestionDrawer`, `AnswerShuffler` (xáo cố định theo lượt + câu, không lưu thứ tự), `ScoreCalculator`, `AttemptMapper`, `QuizController`, `AttemptController`, `BusinessRuleException` (409), `InvalidRequestException` (400), `ClockConfig`. Test: 40 test mới (gồm kiểm tra JSON không chứa đáp án đúng); `mvnw verify` 102/102. Gọi thử API trên database dev với môn Python: đạt (lượt làm thử tạo trong lúc kiểm tra vẫn nằm trong database dev).
+- [ ] Bước 4 · [ ] Bước 5
 
 ## Phase 6: Result / history
 
