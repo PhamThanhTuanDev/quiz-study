@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Icon "maskable" cho PWA (D-040): nền tràn viền (hệ điều hành tự cắt tròn / bo góc),
+       chữ "Q" nằm gọn trong vùng an toàn ở giữa (80% chiều rộng), cùng kiểu với favicon.svg. -->
+  <rect width="32" height="32" fill="#0f766e"/>
+  <text x="16" y="21" text-anchor="middle" font-family="system-ui, 'Segoe UI', Roboto, sans-serif"
+        font-size="15" font-weight="700" fill="#ffffff">Q</text>
+</svg>

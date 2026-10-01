@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from 'react-router'
 import LetterBadge from '../components/LetterBadge'
+import OfflineBanner from '../components/OfflineBanner'
 import { NAV_ITEMS } from './navigation'
 
 const MAIN_CONTENT_ID = 'main-content'
@@ -42,6 +43,8 @@ export default function MainLayout() {
           </nav>
         </div>
       </header>
+
+      <OfflineBanner />
 
       {/* tabIndex={-1}: cho phép link "Bỏ qua điều hướng" chuyển focus vào đây. */}
       <main

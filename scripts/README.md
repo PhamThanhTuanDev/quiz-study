@@ -14,6 +14,7 @@ Chạy mọi lệnh bên dưới từ thư mục gốc project, trong PowerShell
 | `build_python_import.py` | Dựng câu hỏi môn Python từ bản đồ vị trí `database/seed/python/questions/bai-NN.json` → `generated/import.json` + `review.md` |
 | `verify_python_answers.py` | Kiểm chứng đáp án môn Python bằng cách **chạy thật** code (D-020, D-026) |
 | `import-subject.ps1` | Import một môn vào database dev từ `database/seed/<slug>/generated/import.json` |
+| `generate-pwa-icons.ps1` | Tạo icon PNG cho PWA (`frontend/public/icons/`) từ `frontend/public/favicon.svg` và `scripts/pwa-icons/icon-maskable.svg`, bằng Chrome headless có sẵn (D-040). Chạy lại khi đổi logo |
 
 ## Tạo database (một lần mỗi máy)
 

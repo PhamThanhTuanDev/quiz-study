@@ -344,7 +344,8 @@ Công việc:
 
 **Tiến độ 10** (cập nhật sau mỗi bước; phiên sau làm tiếp từ bước chưa xong)
 - [x] Bước 1: thanh đồng hồ + số câu đã làm dính đầu màn hình khi thi thử; `useSwipe` (vuốt trái = câu sau, phải = câu trước; bỏ qua vuốt ngắn / dọc / trong ô code), dòng gợi ý vuốt chỉ hiện trên màn hình cảm ứng; `useHotkey` gắn listener bằng `useLayoutEffect` (trước đó test phím tắt thỉnh thoảng hỏng vì listener gắn trễ). Vùng bấm đã ≥ 44px; không đặt `viewport-fit=cover` nên nội dung tự nằm trong vùng an toàn (tai thỏ). Test 81/81 (chạy 3 lần + file làm bài 10 lần), lint, build đạt; chụp thử cuộn trang ở 390px: đồng hồ vẫn hiện.
-- [ ] Bước 2 · [ ] Bước 3 · [ ] Bước 4
+- [x] Bước 2: `vite-plugin-pwa` 1.3.0 (thêm 309 gói chỉ dùng lúc build, 0 lỗ hổng; npm cảnh báo `glob@11` cũ do `workbox-build` kéo theo). Manifest tiếng Việt, service worker lưu sẵn 15 file giao diện, không lưu đệm `/api`; icon 192 / 512 / maskable / apple-touch tạo bằng `scripts/generate-pwa-icons.ps1` (Chrome chụp ở 512px rồi thu nhỏ: Chrome có độ rộng cửa sổ tối thiểu nên chụp nhỏ bị cắt). `OfflineBanner` (+ `useOnlineStatus`), `UpdatePrompt` / `PwaUpdatePrompt` (hỏi trước khi tải bản mới). Kiểm tra bằng Chrome trên bản build (`vite preview`): manifest không lỗi, Chrome báo cài được, service worker điều khiển trang, tắt mạng vẫn mở được trang và hiện "Bạn đang offline". Test 84/84, lint, build đạt.
+- [ ] Bước 3 · [ ] Bước 4
 
 ---
 
