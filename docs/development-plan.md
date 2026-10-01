@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 4B (Python) đã xong, chờ chủ dự án xác nhận** để sang Phase 5. Môn Python: 295 câu, 262 `PUBLISHED`, 33 `NEEDS_REVIEW` (D-036). Phase 5 cần quyết trước Q-06, Q-08, Q-09 (bảng "Cần bạn quyết định" trong `decisions.md`).
+> **Phase 4 đã xong và được duyệt** (2026-10-01). **Đang làm: Phase 5 (Quiz engine)**: kế hoạch chi tiết ở mục Phase 5 bên dưới, **chờ chủ dự án duyệt** rồi mới code. Q-06, Q-08, Q-09 đã chốt (D-037).
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -114,8 +114,8 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 | 1 | Project setup | ✅ Xong, đã duyệt |
 | 2 | Database + Backend foundation | ✅ Xong, đã duyệt |
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
-| 4 | Subject / Chapter / Question / Answer | ✅ 4A (GDQP) đã duyệt; 4B (Python) xong, chờ xác nhận |
-| 5 | Quiz engine | |
+| 4 | Subject / Chapter / Question / Answer | ✅ Xong, đã duyệt (4A GDQP, 4B Python) |
+| 5 | Quiz engine | 🔄 Kế hoạch chờ duyệt |
 | 6 | Result / history | |
 | 7 | Authentication | |
 | 8 | Admin management | |
@@ -180,19 +180,59 @@ Công việc:
 
 Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câu trong DB khớp báo cáo nguồn; không câu nào bị sửa nội dung.
 
-## Phase 5: Quiz engine
+## Phase 5: Quiz engine (kế hoạch chi tiết, ⏳ chờ duyệt)
 
-**Mục tiêu:** làm bài được.
+**Mục tiêu:** chọn một đề, làm bài, nộp bài và thấy điểm. Áp dụng D-037: khách được làm bài; thang 10; luyện tập hiện đáp án từng câu, thi thử chỉ hiện sau khi nộp.
 
-Công việc:
-- Migration `quizzes`, `quiz_results`, `user_answers`; tạo đề luyện tập mặc định cho mỗi chương / môn.
-- API bắt đầu lượt làm (rút ngẫu nhiên N câu `PUBLISHED`), lưu lựa chọn, nộp bài; chấm ở server.
-- Tôn trọng `shuffle_answers = FALSE` cho câu "Tất cả đều đúng"…
-- Frontend: trang làm bài (một câu một màn hình trên mobile, có điều hướng câu), hiển thị code đúng thụt lề, đồng hồ (nếu đề có giới hạn thời gian).
-  - Nội dung đề và phương án có thể có xuống dòng (đề môn Python liệt kê "1) … 2) …" trên từng dòng; phương án có code nhiều dòng) → hiển thị giữ xuống dòng (ví dụ `whitespace-pre-line`).
-- Test: rút câu không trùng, không lộ `is_correct` trước khi nộp, chấm điểm đúng.
+**Đề xuất cần duyệt**
+1. **Đề mặc định** (tạo khi import, chung cho mọi môn, không có code riêng môn nào): mỗi bài một đề *Luyện tập* 20 câu, không giới hạn thời gian; mỗi môn một đề *Thi thử* 40 câu, 45 phút. Bài có ít câu hơn thì lấy hết. Các con số đặt trong `application.yml`, đổi được.
+2. **Import khi đã có bài làm** (thay cho `-Replace` xoá hết như hiện nay): khớp câu cũ với câu mới theo nguồn (file + nhãn, ví dụ "w05 HW tr.4 – Câu 15"); câu có trong file thì cập nhật tại chỗ, câu mới thì thêm, câu không còn trong file thì xoá nếu chưa ai làm, còn nếu đã có người làm thì chuyển `ARCHIVED` (đúng quy tắc trong `.claude/rules/database.md`). Nhờ vậy sau này duyệt 33 câu `NEEDS_REVIEW` rồi import lại vẫn an toàn.
+3. **Mã lượt làm là chuỗi ngẫu nhiên (UUID)**, không phải số 1, 2, 3: khách không có tài khoản, nên nếu dùng số thì đổi số trên URL là xem/sửa được bài của người khác.
+4. **Xem lại từng câu sau khi nộp** (đã chọn gì, đáp án đúng) để Phase 6 như kế hoạch. Phase 5 nộp xong hiện điểm, số câu đúng, nút "Làm lại".
+5. **Không thêm dependency.** Chưa cài Playwright; kiểm tra giao diện bằng test React Testing Library và chụp màn hình Chrome như các phase trước.
 
-Cần quyết định trước: chế độ luyện tập có hiện đáp án ngay sau mỗi câu không; khách (chưa đăng nhập) có được làm bài không; thang điểm.
+**Database** (migration `V2__create_quiz_tables.sql`, theo [database-design.md](database-design.md) §4.6–4.8)
+- `quizzes`, `quiz_results`, `user_answers` như thiết kế. Thêm vào `quiz_results`: `public_id` (UUID, UNIQUE, dùng trên URL) và `expires_at` (hạn nộp của đề có giới hạn thời gian, chụp lúc bắt đầu).
+- `quiz_results.user_id` chưa có khoá ngoại vì bảng `users` có ở Phase 7; Phase 7 thêm khoá ngoại bằng migration mới.
+
+**Quy tắc làm bài**
+- Bắt đầu: rút ngẫu nhiên tối đa N câu `PUBLISHED` khác nhau trong phạm vi đề (một bài hoặc cả môn); thứ tự câu chụp vào `user_answers` (`question_order`). Thứ tự phương án xáo theo từng lượt làm nhưng cố định khi tải lại trang; câu `shuffle_answers = FALSE` giữ nguyên thứ tự.
+- Không API nào trả đáp án đúng trước khi được phép: thi thử chỉ sau khi nộp; luyện tập chỉ cho câu vừa trả lời (câu đó bị khoá).
+- Thi thử có hạn giờ: server từ chối lưu sau hạn; lượt quá hạn được chấm với các câu đã lưu, trạng thái `EXPIRED`. Frontend tự nộp khi đồng hồ về 0.
+- Lượt đã nộp thì không sửa được (409 kèm thông báo tiếng Việt).
+
+**API** (thay bảng dự kiến ở [architecture.md](architecture.md) §5)
+
+| Method | Endpoint | Mục đích |
+|---|---|---|
+| GET | `/api/v1/subjects/{slug}/quizzes` | Các đề của môn (tên, chế độ, số câu thực tế, thời gian, bài) |
+| POST | `/api/v1/quizzes/{quizId}/attempts` | Bắt đầu lượt làm → 201 + câu hỏi và phương án, **không** kèm đáp án đúng |
+| GET | `/api/v1/attempts/{attemptId}` | Mở lại lượt làm (tải lại trang không mất bài) |
+| PUT | `/api/v1/attempts/{attemptId}/answers/{questionId}` | Lưu lựa chọn. Luyện tập: trả đúng/sai + đáp án đúng của câu đó |
+| POST | `/api/v1/attempts/{attemptId}/submit` | Nộp bài; server chấm → điểm, số câu đúng |
+
+**Frontend**
+- Trang môn (`/subjects/:slug`): nút "Luyện tập" ở từng bài, thẻ "Thi thử cả môn". Bấm → tạo lượt làm → chuyển tới `/attempts/:attemptId`.
+- Trang làm bài: mobile một câu một màn hình, nút Câu trước / Câu sau, lưới số câu (đã làm / chưa làm / đang xem; luyện tập có thêm đúng / sai); code giữ thụt lề, cuộn ngang khi dài; đề và phương án giữ xuống dòng; phương án là nút chọn to, dùng được bằng bàn phím; đúng/sai hiện bằng chữ và biểu tượng, không chỉ bằng màu. Thi thử có đồng hồ đếm ngược và hộp xác nhận nộp bài (báo số câu chưa làm).
+- Nộp xong: điểm /10, số câu đúng, "Làm lại" (lượt mới), "Về trang môn".
+
+**File dự kiến**
+- Backend: `db/migration/V2__create_quiz_tables.sql`; `entity/` Quiz, QuizMode, QuizResult, QuizResultStatus, UserAnswer; `repository/` QuizRepository, QuizResultRepository, UserAnswerRepository; `service/` QuizService, AttemptService, QuestionDrawer (rút câu), AnswerShuffler (xáo phương án cố định theo lượt), ScoreCalculator, DefaultQuizService (đề mặc định); `controller/` QuizController, AttemptController; `dto/` các record request/response; `exception/` AttemptStateException (→ 409); `config/QuizDefaultsProperties`. Sửa: `SubjectImportService` (import cập nhật theo nguồn), `QuestionRepository`, `messages.properties`, `application.yml`.
+- Frontend: `types/quiz.ts`; `services/quizService.ts`; `hooks/useQuizAttempt.ts`; `pages/AttemptPage.tsx`; `components/` QuestionView, CodeBlock, AnswerOption, QuestionNavigator, CountdownTimer, SubmitDialog, AttemptSummary; sửa `pages/SubjectPage.tsx`, `routes.tsx`.
+- Tài liệu: `database-design.md`, `architecture.md`, `decisions.md`, `scripts/README.md` (quy tắc import mới).
+
+**Kiểm tra**
+- Backend: rút câu đủ số, không trùng, chỉ câu `PUBLISHED`; xáo phương án cố định khi tải lại và giữ nguyên khi `shuffle_answers = FALSE`; JSON của bắt đầu / mở lại lượt làm **không có** trường đáp án đúng; luyện tập khoá câu đã kiểm tra; thi thử từ chối sau hạn, sau khi nộp; chấm điểm (đúng hết, sai hết, bỏ trống, làm tròn); import cập nhật giữ id phương án và chuyển `ARCHIVED` câu đã có người làm.
+- Frontend: test cho trang làm bài (chọn, chuyển câu, phản hồi luyện tập, nộp, hết giờ) với service giả; lint, build.
+- Chạy thật cả hai môn: làm một đề luyện tập và một đề thi thử; chụp màn hình 360 / 768 / 1280px.
+- Agent `java-reviewer` và `typescript-reviewer` rà trước khi báo hoàn thành.
+
+**Thứ tự làm** (mỗi bước build/test đạt mới sang bước sau; cập nhật tiến độ ở đây)
+1. Migration + entity + repository (+ test).
+2. Import cập nhật theo nguồn + đề mặc định; import lại GDQP và Python.
+3. Service + API làm bài (+ test).
+4. Frontend: trang môn có nút làm bài, trang làm bài, màn hình điểm (+ test).
+5. Chạy thật, chụp màn hình, agent rà code, tài liệu, báo cáo, dừng chờ xác nhận.
 
 ## Phase 6: Result / history
 

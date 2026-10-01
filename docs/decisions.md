@@ -194,6 +194,11 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - **Còn lại giữ `NEEDS_REVIEW`** (không vào bài làm, không sửa nội dung): đề không khớp code (14 câu), không có phương án đúng (6 câu), có nhiều cách hiểu (13 câu). Đề xuất đáp án cho từng câu vẫn ghi trong `review.md` để quyết sau.
 - Kết quả: 295 câu, 262 `PUBLISHED`, 33 `NEEDS_REVIEW`.
 
+### D-037 · Làm bài: khách, thang điểm, hiện đáp án · Đã chốt (Q-06, Q-08, Q-09, chủ dự án, 2026-10-01)
+- **Khách được làm bài** (chưa đăng nhập): `quiz_results.user_id` để NULL. Lịch sử cá nhân chỉ có khi đăng nhập (Phase 7).
+- **Thang điểm 10**: điểm = số câu đúng / tổng số câu × 10, làm tròn 2 chữ số (làm tròn nửa lên). Câu bỏ trống tính là sai.
+- **Luyện tập (`PRACTICE`)**: trả lời xong một câu thì hiện ngay đúng/sai và đáp án đúng của **câu đó**; câu đã kiểm tra thì không đổi được. **Thi thử (`EXAM`)**: chỉ hiện kết quả sau khi nộp bài; trước khi nộp được đổi lựa chọn.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.
@@ -205,15 +210,12 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 
 ## C. Cần bạn quyết định
 
-Đã quyết: Q-01 → D-018 · Q-02 → D-019 · Q-04 → D-022, D-026 · Q-05 → D-020 (Claude xác định đáp án) · Q-11 → D-008 · Q-15: commit đầu tiên ngày 2026-09-30 khi Phase 1 được duyệt (chưa có repo GitHub). Q-03: G1–G3, P1, P2, P4 đã quyết; các mục còn lại vẫn mở.
+Đã quyết: Q-01 → D-018 · Q-02 → D-019 · Q-04 → D-022, D-026 · Q-05 → D-020 (Claude xác định đáp án) · Q-06, Q-08, Q-09 → D-037 · Q-11 → D-008 · Q-15: commit đầu tiên ngày 2026-09-30 khi Phase 1 được duyệt (chưa có repo GitHub). Q-03: G1–G3, P1, P2, P4 đã quyết; các mục còn lại vẫn mở.
 
 | ID | Câu hỏi | Đề xuất của tôi | Cần trước |
 |---|---|---|---|
 | Q-03 | Các điểm còn mở trong tài liệu: G4, G5, P5–P14 | Xem [source-material-analysis.md](source-material-analysis.md) | Phase 4 |
-| Q-06 | Khách chưa đăng nhập có được làm bài không? | Có (`user_id` NULL); lịch sử cá nhân chỉ khi đăng nhập | Phase 5 |
 | Q-07 | Đăng nhập bằng session cookie hay JWT? | Session cookie HttpOnly + CSRF (có sẵn trong Spring Security, ít code tự viết, phù hợp SPA chạy cùng origin qua proxy). JWT khi có app mobile riêng | Phase 7 |
-| Q-08 | Thang điểm | Thang 10, làm tròn 2 chữ số | Phase 5 |
-| Q-09 | Chế độ luyện tập có hiện đáp án ngay sau mỗi câu? | Có ở `PRACTICE`; `EXAM` chỉ hiện sau khi nộp | Phase 5 |
 | Q-10 | Công cụ trích xuất PDF | Script **Python + PyMuPDF** trong `scripts/`, chạy offline, không phải một phần của web app. Đã chứng minh đọc đúng tiếng Việt, màu chữ và highlight khi khảo sát. Lưu ý: cần cài Python cho bước này; PyMuPDF dùng giấy phép AGPL, chấp nhận được vì chỉ là công cụ nội bộ, không đóng gói vào ứng dụng. Phương án thay thế: Java + Apache PDFBox trong backend | Phase 4 |
 | Q-12 | Slug/tên môn: `python` – "Nhập môn lập trình Python"; `gdqp` – "Giáo dục quốc phòng và an ninh"? | Như bên trái, chờ G4, G5, P12 | Phase 4 |
 | Q-13 | Đổi thứ tự Phase 6 ↔ 7? | Giữ thứ tự; Phase 6 làm trang kết quả trước, lịch sử cá nhân hoàn thiện sau Phase 7 | Phase 6 |
