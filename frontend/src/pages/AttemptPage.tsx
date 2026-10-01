@@ -8,9 +8,11 @@ import EmptyState from '../components/EmptyState'
 import ErrorState from '../components/ErrorState'
 import QuestionNavigator from '../components/QuestionNavigator'
 import QuestionView from '../components/QuestionView'
+import ShortcutHint from '../components/ShortcutHint'
 import SubmitConfirm from '../components/SubmitConfirm'
 import { useAsync } from '../hooks/useAsync'
 import { useFocusOnChange } from '../hooks/useFocusOnChange'
+import { useHotkey } from '../hooks/useHotkey'
 import { useQuizAttempt } from '../hooks/useQuizAttempt'
 import { useStartAttempt } from '../hooks/useStartAttempt'
 import { getAttempt } from '../services/quizService'
@@ -73,6 +75,11 @@ function AttemptContent({ initial }: { initial: Attempt }) {
     restarting: restart.pendingQuizId !== null,
   }
   const nextMistake = nextMistakeIndex(attempt, currentIndex)
+  const goPrevious = () => goTo(currentIndex - 1)
+  const goNext = () => goTo(currentIndex + 1)
+  // ← → chuyển câu, song song với bấm nút "Câu trước" / "Câu sau".
+  useHotkey('ArrowLeft', goPrevious)
+  useHotkey('ArrowRight', goNext)
 
   return (
     <div className="space-y-6">
@@ -127,12 +134,16 @@ function AttemptContent({ initial }: { initial: Attempt }) {
           </div>
 
           <div className="flex justify-between gap-3">
-            <Button variant="secondary" onClick={() => goTo(currentIndex - 1)} disabled={currentIndex === 0}>
-              ← Câu trước
-            </Button>
-            <Button variant="secondary" onClick={() => goTo(currentIndex + 1)} disabled={currentIndex === total - 1}>
-              Câu sau →
-            </Button>
+            <ShortcutHint keys="←">
+              <Button variant="secondary" onClick={goPrevious} disabled={currentIndex === 0} aria-keyshortcuts="ArrowLeft">
+                ← Câu trước
+              </Button>
+            </ShortcutHint>
+            <ShortcutHint keys="→">
+              <Button variant="secondary" onClick={goNext} disabled={currentIndex === total - 1} aria-keyshortcuts="ArrowRight">
+                Câu sau →
+              </Button>
+            </ShortcutHint>
           </div>
 
           {isExam && !finished && (

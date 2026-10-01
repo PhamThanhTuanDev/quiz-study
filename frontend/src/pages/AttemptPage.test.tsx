@@ -303,6 +303,80 @@ describe('AttemptPage – thi thử', () => {
   })
 })
 
+describe('AttemptPage – phím tắt', () => {
+  const checked = {
+    questionId: 1,
+    selectedAnswerId: 11,
+    feedback: { correct: true, correctAnswerId: 11, explanation: null },
+  }
+
+  function putCalls(fetchMock: ReturnType<typeof mockApi>) {
+    return fetchMock.mock.calls.filter(([, init]) => init?.method === 'PUT')
+  }
+
+  it('checks the picked answer with Enter, like clicking "Kiểm tra"', async () => {
+    const fetchMock = mockApi({ 'GET /api/v1/attempts/luot-1': attempt({}), 'PUT /api/v1/attempts/luot-1/answers/1': checked })
+    renderRoute('/attempts/luot-1')
+
+    const radio = await screen.findByRole('radio', { name: /Phương án 1 của câu 1/ })
+    fireEvent.click(radio)
+    fireEvent.keyDown(radio, { key: 'Enter' })
+
+    expect(await screen.findByRole('status')).toHaveTextContent('✓ Chính xác!')
+    expect(putCalls(fetchMock)).toHaveLength(1)
+    expect(screen.getByRole('button', { name: 'Câu sau →' })).toHaveAttribute('aria-keyshortcuts', 'ArrowRight')
+  })
+
+  it('does nothing on Enter before an answer is picked, or when a button has the focus', async () => {
+    const fetchMock = mockApi({ 'GET /api/v1/attempts/luot-1': attempt({}), 'PUT /api/v1/attempts/luot-1/answers/1': checked })
+    renderRoute('/attempts/luot-1')
+    const radio = await screen.findByRole('radio', { name: /Phương án 1 của câu 1/ })
+
+    fireEvent.keyDown(document.body, { key: 'Enter' })
+    fireEvent.click(radio)
+    // Enter trên nút: trình duyệt tự bấm nút đó, phím tắt không được chạy thêm.
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Câu sau →' }), { key: 'Enter' })
+
+    expect(putCalls(fetchMock)).toHaveLength(0)
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
+  it('moves between questions with the left and right arrows', async () => {
+    mockApi({ 'GET /api/v1/attempts/luot-1': EXAM })
+    renderRoute('/attempts/luot-1')
+    await screen.findByRole('heading', { name: 'Câu 1/2' })
+
+    fireEvent.keyDown(document.body, { key: 'ArrowRight' })
+    expect(screen.getByRole('heading', { name: 'Câu 2/2' })).toHaveFocus()
+
+    fireEvent.keyDown(document.body, { key: 'ArrowLeft' })
+    expect(screen.getByRole('heading', { name: 'Câu 1/2' })).toBeInTheDocument()
+  })
+
+  it('leaves the arrows to the browser with a modifier key or inside the code', async () => {
+    mockApi({ 'GET /api/v1/attempts/luot-1': attempt({}) })
+    renderRoute('/attempts/luot-1')
+    await screen.findByRole('heading', { name: 'Câu 1/2' })
+
+    fireEvent.keyDown(document.body, { key: 'ArrowRight', altKey: true })
+    fireEvent.keyDown(screen.getByRole('region', { name: 'Đoạn code' }), { key: 'ArrowRight' })
+
+    expect(screen.getByRole('heading', { name: 'Câu 1/2' })).toBeInTheDocument()
+  })
+
+  it('moves to the next question instead of changing the saved answer when an option has the focus', async () => {
+    const fetchMock = mockApi({ 'GET /api/v1/attempts/luot-1': EXAM })
+    renderRoute('/attempts/luot-1')
+    const radio = await screen.findByRole('radio', { name: /Phương án 1 của câu 1/ })
+
+    const event = fireEvent.keyDown(radio, { key: 'ArrowRight' })
+
+    expect(event).toBe(false) // phím đã bị chặn: trình duyệt không đổi lựa chọn
+    expect(screen.getByRole('heading', { name: 'Câu 2/2' })).toBeInTheDocument()
+    expect(putCalls(fetchMock)).toHaveLength(0)
+  })
+})
+
 describe('AttemptPage – không tìm thấy', () => {
   it('shows a not-found page for an unknown attempt and drops it from the recent list', async () => {
     rememberAttempt(attempt({ id: 'khong-co' }))

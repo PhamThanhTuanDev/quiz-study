@@ -1,8 +1,10 @@
 import { useId, useState, type Ref } from 'react'
 import { useFocusOnChange } from '../hooks/useFocusOnChange'
+import { useHotkey } from '../hooks/useHotkey'
 import type { AnswerOption, AttemptQuestion, AnswerFeedback, QuizMode } from '../types/quiz'
 import Button from './Button'
 import CodeBlock from './CodeBlock'
+import ShortcutHint from './ShortcutHint'
 
 interface QuestionViewProps {
   question: AttemptQuestion
@@ -35,6 +37,12 @@ export default function QuestionView({ question, total, mode, locked, checking, 
   // nghe được ngay đúng hay sai (không áp dụng khi mở lại câu đã kiểm tra từ trước). Thi thử vừa nộp thì trang
   // đưa focus tới thẻ kết quả, không phải tới từng câu.
   const feedbackRef = useFocusOnChange<HTMLDivElement>(practiceChecked)
+  const canCheck = isPractice && !revealed && !locked
+  const check = () => {
+    if (picked !== null) onChoose(picked)
+  }
+  // Enter = bấm "Kiểm tra" (song song với bấm chuột).
+  useHotkey('Enter', check, canCheck && !checking)
 
   const select = (answerId: number) => {
     if (isPractice) {
@@ -69,10 +77,12 @@ export default function QuestionView({ question, total, mode, locked, checking, 
         ))}
       </fieldset>
 
-      {isPractice && !revealed && !locked && (
-        <Button onClick={() => picked !== null && onChoose(picked)} disabled={picked === null || checking}>
-          {checking ? 'Đang kiểm tra…' : 'Kiểm tra'}
-        </Button>
+      {canCheck && (
+        <ShortcutHint keys="Enter">
+          <Button onClick={check} disabled={picked === null || checking} aria-keyshortcuts="Enter">
+            {checking ? 'Đang kiểm tra…' : 'Kiểm tra'}
+          </Button>
+        </ShortcutHint>
       )}
       {revealed && (
         <FeedbackMessage
