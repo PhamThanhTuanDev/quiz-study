@@ -43,15 +43,18 @@ public final class AttemptMapper {
                 attempt.getExpiresAt(), remainingSeconds(attempt, now), items, toResult(attempt));
     }
 
-    /** Phản hồi luyện tập của một câu đã trả lời: đúng/sai và id phương án đúng. */
+    /**
+     * Phản hồi luyện tập của một câu đã trả lời: đúng/sai và id phương án đúng. Cả hai tính theo đáp án hiện tại
+     * (không dùng kết quả chấm đã lưu), để luôn khớp nhau kể cả khi đáp án được sửa qua import sau đó.
+     */
     public static PracticeFeedbackResponse toFeedback(UserAnswer answer, Question question) {
         Long correctAnswerId = question.getAnswers().stream()
                 .filter(Answer::isCorrect)
                 .map(Answer::getId)
                 .findFirst()
                 .orElse(null);
-        return new PracticeFeedbackResponse(Boolean.TRUE.equals(answer.getCorrect()), correctAnswerId,
-                question.getExplanation());
+        boolean correct = answer.isAnswered() && answer.getSelectedAnswer().getId().equals(correctAnswerId);
+        return new PracticeFeedbackResponse(correct, correctAnswerId, question.getExplanation());
     }
 
     private static AttemptQuestionResponse toQuestion(QuizResult attempt, UserAnswer answer, Question question) {

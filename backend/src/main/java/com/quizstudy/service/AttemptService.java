@@ -40,6 +40,7 @@ import com.quizstudy.repository.UserAnswerRepository;
  * </ul>
  * Thi thử quá hạn được chấm "lười": yêu cầu đầu tiên tới sau hạn (mở lại, lưu, nộp) sẽ chấm với các câu đã lưu
  * và chuyển sang EXPIRED. Mọi thao tác ghi khoá dòng của lượt làm, nên hai yêu cầu cùng lúc không chen nhau.
+ * Lượt đã bắt đầu vẫn làm tiếp được kể cả khi môn/đề bị ẩn sau đó; chỉ việc bắt đầu lượt mới kiểm tra publish.
  */
 @Service
 @Transactional
@@ -97,8 +98,15 @@ public class AttemptService {
 
     /** Mở lại lượt làm (tải lại trang). Thi thử đã quá hạn thì được chấm và trả về kết quả. */
     public AttemptResponse get(String attemptId) {
-        QuizResult attempt = lockAttempt(attemptId);
+        QuizResult attempt = quizResultRepository.findByPublicId(attemptId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy lượt làm bài này."));
         Instant now = now();
+        if (isOverdue(attempt, now)) {
+            // Chỉ khoá dòng khi phải chấm bài quá hạn; mở lại bình thường (kể cả luyện tập) không khoá.
+            // Yêu cầu khác có thể vừa chấm xong: chấm lại vẫn ra đúng kết quả đó, vì sau hạn không lưu thêm
+            // được câu nào và thời điểm kết thúc là hạn nộp.
+            attempt = lockAttempt(attemptId);
+        }
         List<UserAnswer> answers = userAnswerRepository.findWithQuestionByQuizResultId(attempt.getId());
         expireIfOverdue(attempt, answers, now);
         return AttemptMapper.toResponse(attempt, answers, loadQuestionsOf(answers), now);
@@ -147,8 +155,9 @@ public class AttemptService {
 
     /**
      * Nộp bài thi thử và chấm điểm. Nộp sau hạn (quá thời gian cho phép trễ) thì vẫn chấm, trạng thái EXPIRED.
+     * Bài đã kết thúc thì trả lại kết quả đã có (nộp lại khi mất phản hồi của lần trước không bị báo lỗi).
      *
-     * @throws BusinessRuleException nếu là lượt luyện tập, hoặc bài đã nộp / đã kết thúc
+     * @throws BusinessRuleException nếu là lượt luyện tập
      */
     public AttemptResponse submit(String attemptId) {
         QuizResult attempt = lockAttempt(attemptId);
@@ -157,8 +166,7 @@ public class AttemptService {
         }
         Instant now = now();
         List<UserAnswer> answers = userAnswerRepository.findWithQuestionByQuizResultId(attempt.getId());
-        if (!expireIfOverdue(attempt, answers, now)) {
-            requireInProgress(attempt);
+        if (attempt.isInProgress() && !expireIfOverdue(attempt, answers, now)) {
             grade(attempt, answers, QuizResultStatus.SUBMITTED, now);
         }
         return AttemptMapper.toResponse(attempt, answers, loadQuestionsOf(answers), now);
@@ -175,19 +183,28 @@ public class AttemptService {
         }
     }
 
-    /** Thi thử đang làm mà đã quá hạn (kể cả thời gian cho phép trễ) thì chấm và chuyển EXPIRED. */
+    /** Thi thử đang làm mà đã quá hạn, kể cả thời gian cho phép trễ. */
+    private static boolean isOverdue(QuizResult attempt, Instant now) {
+        return attempt.isInProgress() && attempt.isPastDeadline(now.minus(DEADLINE_GRACE));
+    }
+
+    /**
+     * Chấm bài quá hạn và chuyển EXPIRED. Thời điểm kết thúc ghi là hạn nộp (bài hết giờ lúc đó),
+     * không phải lúc có người mở lại bài.
+     */
     private static boolean expireIfOverdue(QuizResult attempt, List<UserAnswer> answers, Instant now) {
-        if (!attempt.isInProgress() || !attempt.isPastDeadline(now.minus(DEADLINE_GRACE))) {
+        if (!isOverdue(attempt, now)) {
             return false;
         }
-        grade(attempt, answers, QuizResultStatus.EXPIRED, now);
+        grade(attempt, answers, QuizResultStatus.EXPIRED, attempt.getExpiresAt());
         return true;
     }
 
-    private static void grade(QuizResult attempt, List<UserAnswer> answers, QuizResultStatus status, Instant now) {
+    private static void grade(QuizResult attempt, List<UserAnswer> answers, QuizResultStatus status,
+            Instant finishedAt) {
         answers.forEach(UserAnswer::grade);
         int correct = (int) answers.stream().filter(answer -> Boolean.TRUE.equals(answer.getCorrect())).count();
-        attempt.finish(status, correct, ScoreCalculator.score(correct, answers.size()), now);
+        attempt.finish(status, correct, ScoreCalculator.score(correct, answers.size()), finishedAt);
     }
 
     private Map<Long, Question> loadQuestionsOf(List<UserAnswer> answers) {

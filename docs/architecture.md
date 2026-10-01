@@ -61,12 +61,12 @@ Cấu trúc thư mục (✔ = đã có từ Phase 3):
 ```
 frontend/src/
 ├── components/   # UI tái sử dụng. ✔ Button, ButtonLink, Card, AsyncContent, LoadingState, ErrorState, EmptyState, LetterBadge
-│                 #   Sau này: QuestionCard, AnswerOption...
-├── pages/        # Mỗi route một trang. ✔ HomePage, NotFoundPage, RouteErrorPage. Sau này: SubjectPage, QuizPage...
+│                 #   ✔ Làm bài (Phase 5): QuestionView, CodeBlock, QuestionNavigator, CountdownTimer, SubmitConfirm, AttemptOutcome
+├── pages/        # Mỗi route một trang. ✔ HomePage, SubjectPage, AttemptPage, NotFoundPage, RouteErrorPage
 ├── layouts/      # ✔ MainLayout (header, điều hướng, footer) + navigation.ts (danh sách mục điều hướng)
-├── services/     # Chỗ duy nhất gọi fetch. ✔ apiClient.ts, healthService.ts
-├── hooks/        # ✔ useAsync. Sau này: useQuizAttempt...
-├── types/        # Kiểu khớp DTO backend. ✔ api.ts (ProblemDetail, InvalidField), health.ts
+├── services/     # Chỗ duy nhất gọi fetch. ✔ apiClient.ts (apiGet, apiPost, apiPut), subjectService.ts, quizService.ts
+├── hooks/        # ✔ useAsync, useQuizAttempt (trạng thái làm bài), useStartAttempt, useFocusOnChange
+├── types/        # Kiểu khớp DTO backend. ✔ api.ts (ProblemDetail, InvalidField), subject.ts, quiz.ts
 ├── routes.tsx    # ✔ pageRoutes (danh sách trang) + createAppRoutes() (layout + trang lỗi), dùng chung cho App và test
 ├── App.tsx       # Tạo router từ routes.tsx
 └── main.tsx      # Điểm vào
@@ -79,9 +79,9 @@ Các trang dự kiến (chốt dần theo phase):
 | Route | Trang | Phase |
 |---|---|---|
 | `/` | Trang chủ, danh sách môn | 3–4 |
-| `/subjects/:slug` | Chi tiết môn: danh sách chương, đề | 4 |
-| `/quiz/:quizId` | Làm bài | 5 |
-| `/results/:resultId` | Kết quả và xem lại đáp án | 6 |
+| `/subjects/:slug` | ✔ Chi tiết môn: các bài, nút luyện tập từng bài, thẻ thi thử cả môn | 4–5 |
+| `/attempts/:attemptId` | ✔ Làm bài (luyện tập / thi thử); `attemptId` là UUID của lượt làm | 5 |
+| (trong trang làm bài) | Xem lại từng câu sau khi nộp (đã chọn gì, đáp án đúng) | 6 |
 | `/history` | Lịch sử làm bài | 6–7 |
 | `/login`, `/register` | Đăng nhập / đăng ký | 7 |
 | `/admin/...` | Quản trị môn, chương, câu hỏi, duyệt câu | 8 |
@@ -144,11 +144,14 @@ API dự kiến (chốt chi tiết ở từng phase):
 | GET | `/api/v1/health` | Kiểm tra backend chạy | 1 |
 | GET | `/api/v1/subjects` | ✔ Danh sách môn đã publish, kèm số bài và số câu `PUBLISHED` | 4 |
 | GET | `/api/v1/subjects/{slug}` | ✔ Chi tiết môn + các bài (số câu mỗi bài). Không có hoặc chưa publish → 404 | 4 |
-| GET | `/api/v1/subjects/{slug}/quizzes` | Các đề của môn | 5 |
-| POST | `/api/v1/quizzes/{quizId}/attempts` | Bắt đầu lượt làm; trả câu hỏi **không kèm đáp án đúng** | 5 |
-| PUT | `/api/v1/attempts/{attemptId}/answers/{questionId}` | Lưu lựa chọn cho một câu | 5 |
-| POST | `/api/v1/attempts/{attemptId}/submit` | Nộp bài; server chấm | 5 |
-| GET | `/api/v1/attempts/{attemptId}/result` | Kết quả + đáp án đúng (chỉ sau khi nộp) | 6 |
+| GET | `/api/v1/subjects/{slug}/quizzes` | ✔ Các đề của môn: đề cả môn trước, rồi theo thứ tự bài; số câu thực tế mỗi lượt | 5 |
+| POST | `/api/v1/quizzes/{quizId}/attempts` | ✔ Bắt đầu lượt làm → 201 + `Location`; câu hỏi và phương án **không kèm đáp án đúng** | 5 |
+| GET | `/api/v1/attempts/{attemptId}` | ✔ Mở lại lượt làm (tải lại trang); thi thử quá hạn thì được chấm | 5 |
+| PUT | `/api/v1/attempts/{attemptId}/answers/{questionId}` | ✔ Lưu lựa chọn. Luyện tập: trả đúng/sai + đáp án đúng **của câu đó**, khoá câu | 5 |
+| POST | `/api/v1/attempts/{attemptId}/submit` | ✔ Nộp bài thi thử; server chấm thang 10 (luyện tập → 409) | 5 |
+| GET | `/api/v1/attempts/{attemptId}/result` | Xem lại từng câu + đáp án đúng (chỉ sau khi nộp) | 6 |
+
+Lỗi nghiệp vụ của làm bài: `409` (`BusinessRuleException`, ví dụ bài đã nộp, hết giờ, đổi đáp án luyện tập), `400` (`InvalidRequestException`, phương án không thuộc câu hỏi), `404` (lượt làm / đề không có).
 | GET | `/api/v1/me/attempts` | Lịch sử của người dùng | 6–7 |
 | POST | `/api/v1/auth/register`, `/login`, `/logout` | Xác thực | 7 |
 | … | `/api/v1/admin/...` | Quản trị nội dung | 8 |
@@ -161,22 +164,33 @@ sequenceDiagram
     participant FE as Frontend
     participant BE as Backend
     participant DB as MySQL
-    U->>FE: Chọn đề, bấm "Bắt đầu"
+    U->>FE: Chọn đề, bấm "Luyện tập" / "Bắt đầu thi thử"
     FE->>BE: POST /quizzes/{id}/attempts
     BE->>DB: Rút ngẫu nhiên N câu PUBLISHED
-    BE->>DB: Tạo quiz_results + user_answers (chụp bộ câu và thứ tự)
-    BE-->>FE: Câu hỏi + phương án (KHÔNG có is_correct)
-    loop Mỗi câu
-        U->>FE: Chọn phương án
-        FE->>BE: PUT /attempts/{id}/answers/{questionId}
+    BE->>DB: Tạo quiz_results (public_id UUID, hạn nộp) + user_answers (chụp bộ câu và thứ tự)
+    BE-->>FE: Câu hỏi + phương án đã xáo theo lượt (KHÔNG có is_correct)
+    alt Luyện tập (D-037)
+        loop Mỗi câu
+            U->>FE: Chọn phương án, bấm "Kiểm tra"
+            FE->>BE: PUT /attempts/{id}/answers/{questionId}
+            BE->>DB: Chấm câu này, khoá câu
+            BE-->>FE: Đúng/sai + đáp án đúng của câu này
+        end
+    else Thi thử
+        loop Mỗi lần chọn (đổi được tới khi nộp)
+            U->>FE: Chọn phương án
+            FE->>BE: PUT /attempts/{id}/answers/{questionId}
+        end
+        U->>FE: Nộp bài (hoặc đồng hồ về 0)
+        FE->>BE: POST /attempts/{id}/submit
+        BE->>DB: So sánh với answers.is_correct, tính điểm thang 10
+        BE-->>FE: Điểm, số câu đúng
     end
-    U->>FE: Nộp bài
-    FE->>BE: POST /attempts/{id}/submit
-    BE->>DB: So sánh với answers.is_correct, tính điểm
-    BE-->>FE: Điểm, số câu đúng
-    FE->>BE: GET /attempts/{id}/result
-    BE-->>FE: Chi tiết đúng/sai + đáp án đúng
 ```
+
+- Mọi thao tác ghi khoá dòng `quiz_results` của lượt làm (`SELECT … FOR UPDATE`), nên lưu và nộp cùng lúc không chen nhau.
+- Thi thử quá hạn (cộng 10 giây cho trễ mạng) được chấm ở yêu cầu đầu tiên tới sau hạn, trạng thái `EXPIRED`.
+- Thứ tự phương án xáo theo (lượt làm, câu) nên tải lại trang vẫn giữ nguyên, không phải lưu thứ tự; câu `shuffle_answers = FALSE` giữ thứ tự gốc.
 
 ## 7. Bảo mật (Phase 7, tóm tắt)
 

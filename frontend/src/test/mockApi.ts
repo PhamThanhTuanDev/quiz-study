@@ -1,7 +1,10 @@
 import { vi } from 'vitest'
 
-/** Trả về dữ liệu (thành JSON 200) hoặc một Response tự dựng; nhận body JSON của request (nếu có). */
-type Handler = (body: unknown) => Response | object
+/**
+ * Trả về dữ liệu (thành JSON 200) hoặc một Response tự dựng; nhận body JSON của request (nếu có).
+ * Trả về Promise để giữ request ở trạng thái chờ (thử các tình huống xảy ra cùng lúc).
+ */
+type Handler = (body: unknown) => Response | object | Promise<Response | object>
 
 /**
  * Giả lập backend cho test: mỗi khoá dạng "METHOD /api/v1/đường-dẫn" trả về dữ liệu JSON (200),
@@ -15,7 +18,7 @@ export function mockApi(routes: Record<string, object | Handler>) {
     if (route === undefined) {
       return Response.json({ status: 501, detail: `Chưa giả lập API: ${key}` }, { status: 501 })
     }
-    const reply = typeof route === 'function' ? route(parseBody(init)) : route
+    const reply = typeof route === 'function' ? await route(parseBody(init)) : route
     // Response chỉ đọc được body một lần: trả bản sao để gọi nhiều lần vẫn được.
     return reply instanceof Response ? reply.clone() : Response.json(reply)
   })

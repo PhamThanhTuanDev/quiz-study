@@ -221,16 +221,20 @@ class AttemptServiceTest {
     }
 
     @Test
-    void exam_afterSubmitting_answersAndASecondSubmitAreRejected() {
+    void exam_afterSubmitting_answersAreRejected_andSubmittingAgainReturnsTheSameResult() {
         AttemptResponse attempt = attemptService.start(examQuizId);
         Question question = questionsOf(attempt).getFirst();
-        attemptService.submit(attempt.id());
+        answer(attempt, question, true);
+        AttemptResponse first = attemptService.submit(attempt.id());
+        clock.advance(Duration.ofMinutes(1));
 
         assertThatThrownBy(() -> attemptService.saveAnswer(attempt.id(), question.getId(),
-                correctAnswer(question).getId()))
+                wrongAnswer(question).getId()))
                 .isInstanceOf(BusinessRuleException.class)
                 .hasMessage("Bài này đã nộp, không sửa được nữa.");
-        assertThatThrownBy(() -> attemptService.submit(attempt.id())).isInstanceOf(BusinessRuleException.class);
+        AttemptResponse again = attemptService.submit(attempt.id());
+        assertThat(again.status()).isEqualTo(QuizResultStatus.SUBMITTED);
+        assertThat(again.result()).isEqualTo(first.result());
     }
 
     @Test
@@ -257,7 +261,30 @@ class AttemptServiceTest {
         assertThat(expired.status()).isEqualTo(QuizResultStatus.EXPIRED);
         assertThat(expired.result().correctCount()).isEqualTo(1);
         assertThat(expired.result().score()).isEqualByComparingTo("2.00");
+        assertThat(expired.result().submittedAt()).as("bài hết giờ lúc tới hạn nộp").isEqualTo(START.plus(EXAM_TIME));
         assertThat(expired.remainingSeconds()).isNull();
+    }
+
+    @Test
+    void exam_reopenedLongAfterTheDeadline_isGradedAsOfTheDeadline() {
+        AttemptResponse attempt = attemptService.start(examQuizId);
+        clock.advance(Duration.ofDays(1));
+
+        AttemptResponse expired = attemptService.get(attempt.id());
+
+        assertThat(expired.status()).isEqualTo(QuizResultStatus.EXPIRED);
+        assertThat(expired.result().submittedAt()).isEqualTo(START.plus(EXAM_TIME));
+    }
+
+    @Test
+    void practice_get_doesNotChangeAnything() {
+        AttemptResponse attempt = attemptService.start(practiceQuizId);
+        clock.advance(Duration.ofDays(30));
+
+        AttemptResponse reopened = attemptService.get(attempt.id());
+
+        assertThat(reopened.status()).isEqualTo(QuizResultStatus.IN_PROGRESS);
+        assertThat(reopened.result()).isNull();
     }
 
     @Test

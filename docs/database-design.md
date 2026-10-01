@@ -1,6 +1,6 @@
 # Thiết kế cơ sở dữ liệu
 
-> Trạng thái: đã duyệt. **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. Các bảng làm bài (`quizzes`, `quiz_results`, `user_answers`) tạo ở Phase 5, `users` ở Phase 7.
+> Trạng thái: đã duyệt. **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. **Phase 5 đã tạo các bảng làm bài** (`quizzes`, `quiz_results`, `user_answers`) bằng `V2__create_quiz_tables.sql`; `users` ở Phase 7 (khi đó thêm khoá ngoại `quizzes.created_by`, `quiz_results.user_id`).
 > DBMS: MySQL 8.0 (máy hiện có MySQL Server 8.0.46).
 
 ## 1. Mục tiêu thiết kế
@@ -221,7 +221,7 @@ Ràng buộc: UNIQUE `(question_id, display_order)`. Số phương án không c�
 | `chapter_id` | BIGINT | NULL, **FK → chapters.id** | NULL nghĩa là lấy câu từ cả môn |
 | `created_by` | BIGINT | NULL, **FK → users.id** | NULL nếu do hệ thống/seed tạo |
 | `title` | VARCHAR(255) | NOT NULL | |
-| `mode` | VARCHAR(20) | NOT NULL | `PRACTICE` (luyện tập) / `EXAM` (thi thử). Hành vi cụ thể chốt ở Phase 5 |
+| `mode` | VARCHAR(20) | NOT NULL | `PRACTICE` (luyện tập: biết ngay đúng/sai từng câu, không chấm điểm) / `EXAM` (thi thử: chấm khi nộp, thang 10). D-037 |
 | `question_count` | INT | NOT NULL | Số câu rút ngẫu nhiên mỗi lượt |
 | `time_limit_minutes` | INT | NULL | NULL nghĩa là không giới hạn thời gian |
 | `shuffle_questions` | BOOLEAN | NOT NULL, mặc định TRUE | |
@@ -237,12 +237,14 @@ Mỗi lần người học bấm "Bắt đầu" sinh ra một dòng. Khi nộp b
 |---|---|---|---|
 | `id` | BIGINT | **PK** | |
 | `quiz_id` | BIGINT | NOT NULL, **FK → quizzes.id** | |
-| `user_id` | BIGINT | NULL, **FK → users.id** | NULL nghĩa là khách (trước Phase 7, chờ quyết định) |
+| `public_id` | CHAR(36) | NOT NULL, **UNIQUE** | Mã ngẫu nhiên (UUID) dùng trên URL thay cho `id`: khách không có tài khoản, nên id tăng dần sẽ để lộ bài của người khác |
+| `user_id` | BIGINT | NULL, **FK → users.id** (thêm ở Phase 7) | NULL nghĩa là khách (D-037: khách được làm bài) |
 | `status` | VARCHAR(20) | NOT NULL | `IN_PROGRESS` · `SUBMITTED` · `EXPIRED` |
 | `total_questions` | INT | NOT NULL | |
 | `correct_count` | INT | NULL | Có giá trị khi đã nộp |
-| `score` | DECIMAL(5,2) | NULL | Thang điểm 10 (đề xuất) |
+| `score` | DECIMAL(5,2) | NULL | Thang 10, làm tròn 2 chữ số (D-037); chỉ thi thử có điểm |
 | `started_at` | DATETIME(6) | NOT NULL | |
+| `expires_at` | DATETIME(6) | NULL | Hạn nộp, chụp lúc bắt đầu (đổi thời gian của đề sau đó không ảnh hưởng lượt đang làm); NULL nếu không giới hạn |
 | `submitted_at` | DATETIME(6) | NULL | |
 
 Index: `(user_id, started_at)` cho trang lịch sử; `(quiz_id, score)` cho xếp hạng (Phase 9).

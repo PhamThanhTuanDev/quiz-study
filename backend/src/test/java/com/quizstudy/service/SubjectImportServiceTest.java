@@ -210,6 +210,35 @@ class SubjectImportServiceTest {
     }
 
     @Test
+    void reimport_rejectsChangingTheAnswerTexts_ofAQuestionSomeoneHasAnswered() {
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("A", true), answer("B", false))), false);
+        markAsUsed(onlyQuestion());
+
+        // Tài liệu đảo thứ tự phương án: lựa chọn đã lưu (theo vị trí) sẽ trỏ sang phương án khác.
+        SubjectImportFile swapped = fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("B", false), answer("A", true)));
+
+        assertThatThrownBy(() -> importService.importSubject(swapped, true))
+                .isInstanceOfSatisfying(ImportValidationException.class, ex -> assertThat(ex.getProblems())
+                        .containsExactly("Câu 1: nội dung phương án đổi nhưng câu đã có người làm, "
+                                + "chỉ được đổi đáp án đúng"));
+    }
+
+    @Test
+    void reimport_allowsFixingTheCorrectAnswer_ofAQuestionSomeoneHasAnswered() {
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("A", true), answer("B", false))), false);
+        markAsUsed(onlyQuestion());
+
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("A", false), answer("B", true))), true);
+        flushAndClear();
+
+        assertThat(onlyQuestion().getAnswers()).extracting(Answer::isCorrect).containsExactly(false, true);
+    }
+
+    @Test
     void reimport_archivesARemovedQuestionSomeoneHasAnswered_andDeletesAnUnusedOne() {
         importService.importSubject(fileWith("Môn",
                 question("Câu đã làm", PUBLISHED, answer("A", true), answer("B", false)),

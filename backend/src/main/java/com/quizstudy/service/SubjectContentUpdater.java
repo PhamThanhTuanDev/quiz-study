@@ -33,7 +33,8 @@ import com.quizstudy.repository.UserAnswerRepository;
  * <ul>
  * <li>Bài khớp theo thứ tự ({@code displayOrder}); câu khớp theo nguồn (file + nhãn).</li>
  * <li>Câu có trong file: thêm mới, hoặc cập nhật tại chỗ (giữ id của câu và của phương án, để lựa chọn đã lưu
- * trong các lượt làm cũ vẫn trỏ đúng).</li>
+ * trong các lượt làm cũ vẫn trỏ đúng). Câu đã có người làm thì nội dung và số phương án phải giữ nguyên
+ * (chỉ được đổi đáp án đúng), vì phương án khớp theo vị trí.</li>
  * <li>Câu không còn trong file: xoá nếu chưa ai làm; đã có người làm thì chuyển {@code ARCHIVED}
  * (.claude/rules/database.md: không xoá cứng câu đã dùng).</li>
  * <li>Bài không còn trong file: xoá cùng các đề của bài, trừ khi bài còn câu hoặc đề đã có người làm.</li>
@@ -149,6 +150,13 @@ public class SubjectContentUpdater {
         List<Answer> answers = question.getAnswers();
         List<AnswerData> newAnswers = data.answers();
         if (answers.size() == newAnswers.size()) {
+            if (used && contentChanged(answers, newAnswers)) {
+                // Phương án khớp theo vị trí: nội dung đổi (ví dụ tài liệu đảo B và D) thì lựa chọn đã lưu
+                // của người học sẽ trỏ sang phương án khác. Chỉ cho đổi đáp án đúng.
+                problems.add(data.source().label() + ": nội dung phương án đổi nhưng câu đã có người làm, "
+                        + "chỉ được đổi đáp án đúng");
+                return;
+            }
             for (int i = 0; i < answers.size(); i++) {
                 answers.get(i).update(newAnswers.get(i).content(), newAnswers.get(i).correct());
             }
@@ -160,6 +168,15 @@ public class SubjectContentUpdater {
             questionRepository.flush(); // xoá phương án cũ trước khi thêm mới (xem Question#clearAnswers)
             SubjectImportMapper.addAnswers(question, data);
         }
+    }
+
+    private static boolean contentChanged(List<Answer> answers, List<AnswerData> newAnswers) {
+        for (int i = 0; i < answers.size(); i++) {
+            if (!answers.get(i).getContent().equals(newAnswers.get(i).content())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void removeChapter(Chapter chapter, boolean hasArchivedQuestions, List<String> problems) {

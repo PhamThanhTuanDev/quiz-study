@@ -45,7 +45,8 @@ public class DefaultQuizService {
         List<Quiz> existing = quizRepository.findBySubjectId(subject.getId());
         Map<Long, Quiz> practiceByChapterId = existing.stream()
                 .filter(quiz -> quiz.getMode() == QuizMode.PRACTICE && quiz.getChapter() != null)
-                .collect(Collectors.toMap(quiz -> quiz.getChapter().getId(), Function.identity()));
+                // Một bài có nhiều đề luyện tập (sau này có đề người dùng tạo) thì cập nhật đề đầu tiên.
+                .collect(Collectors.toMap(quiz -> quiz.getChapter().getId(), Function.identity(), (first, second) -> first));
 
         for (Chapter chapter : chapters) {
             save(practiceByChapterId.get(chapter.getId()), subject, chapter, QuizMode.PRACTICE,

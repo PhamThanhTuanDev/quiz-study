@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-01 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 4 đã xong và được duyệt** (2026-10-01). **Đang làm: Phase 5 (Quiz engine)**: kế hoạch đã duyệt (mục Phase 5 bên dưới); đang làm theo "Thứ tự làm", tiến độ ghi ở mục "Tiến độ 5".
+> **Phase 5 (Quiz engine) đã xong, chờ chủ dự án xác nhận** (2026-10-01): luyện tập theo bài và thi thử cả môn chạy được với GDQP và Python. Chi tiết ở mục "Tiến độ 5". Phase 6 cần quyết trước: Q-13 (thứ tự Phase 6 ↔ 7).
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -115,7 +115,7 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 | 2 | Database + Backend foundation | ✅ Xong, đã duyệt |
 | 3 | Frontend foundation | ✅ Xong, đã duyệt |
 | 4 | Subject / Chapter / Question / Answer | ✅ Xong, đã duyệt (4A GDQP, 4B Python) |
-| 5 | Quiz engine | 🔄 Đang làm |
+| 5 | Quiz engine | ✅ Xong, chờ xác nhận |
 | 6 | Result / history | |
 | 7 | Authentication | |
 | 8 | Admin management | |
@@ -180,7 +180,7 @@ Công việc:
 
 Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câu trong DB khớp báo cáo nguồn; không câu nào bị sửa nội dung.
 
-## Phase 5: Quiz engine (kế hoạch chi tiết, ✅ đã duyệt 2026-10-01)
+## Phase 5: Quiz engine (✅ xong, chờ xác nhận; kế hoạch đã duyệt 2026-10-01)
 
 **Mục tiêu:** luyện tập theo bài (biết ngay đúng/sai từng câu, không chấm điểm) và thi thử cả môn (nộp bài, chấm thang 10). Áp dụng D-037: khách được làm bài.
 
@@ -240,7 +240,9 @@ Hoàn thành khi: xem được môn GDQP và danh sách bài trên web; số câ
 - [x] Bước 2: import cập nhật theo nguồn (`SubjectContentUpdater`, nguồn câu bắt buộc và không trùng), đề mặc định (`DefaultQuizService`, `QuizDefaultsProperties`: 20 câu luyện tập; thi thử 40 câu, 45 phút). Test import 15/15. Import lại vào database dev: migration V2 chạy; GDQP và Python cập nhật tại chỗ (0 câu bị bỏ); 23 đề mặc định (GDQP 11 + 1, Python 10 + 1); Python vẫn khớp JSON.
 - [x] Bước 3: `QuizService`, `AttemptService` (khoá dòng khi ghi; thi thử quá hạn được chấm khi có yêu cầu tiếp theo, cho trễ 10 giây; lưu sau hạn vẫn giữ kết quả chấm nhờ `noRollbackFor`), `QuestionDrawer`, `AnswerShuffler` (xáo cố định theo lượt + câu, không lưu thứ tự), `ScoreCalculator`, `AttemptMapper`, `QuizController`, `AttemptController`, `BusinessRuleException` (409), `InvalidRequestException` (400), `ClockConfig`. Test: 40 test mới (gồm kiểm tra JSON không chứa đáp án đúng); `mvnw verify` 102/102. Gọi thử API trên database dev với môn Python: đạt (lượt làm thử tạo trong lúc kiểm tra vẫn nằm trong database dev).
 - [x] Bước 4: `apiPost`/`apiPut`; `types/quiz.ts`; `services/quizService.ts`; hook `useStartAttempt`, `useQuizAttempt` (lưu lần lượt theo hàng đợi, lưu lỗi thì trả lại lựa chọn cũ rồi đọc lại từ server); component `CodeBlock`, `QuestionView` (luyện tập: chọn rồi bấm "Kiểm tra"), `QuestionNavigator`, `CountdownTimer` (đếm từ số giây server trả về), `SubmitConfirm`, `AttemptOutcome`; trang `AttemptPage` (`/attempts/:attemptId`); trang môn có thẻ thi thử và nút luyện tập từng bài. Test 62/62 (helper `test/mockApi.ts`), lint sạch, build đạt. Chạy thật với môn Python: trang môn, luyện tập, thi thử ở 390 / 768 / 1280px không tràn ngang.
-- [ ] Bước 5
+- [x] Bước 5: agent `java-reviewer` (không rò rỉ đáp án, không N+1) và `typescript-reviewer`; đã sửa: import không cho đổi nội dung phương án của câu đã có người làm (chỉ cho đổi đáp án đúng), mở lại lượt làm chỉ khoá dòng khi phải chấm bài quá hạn, nộp lại trả kết quả đã có, bài hết giờ ghi thời điểm kết thúc là hạn nộp, phản hồi luyện tập tính theo đáp án hiện tại; frontend chờ các lần lưu xong trước khi đọc lại, theo dõi nhiều câu đang kiểm tra, chặn nộp hai lần, chuyển focus tới kết quả. Backend 106/106, frontend 63/63 (chạy 3 lần, không chập chờn), lint, build đạt. Chạy thật cả hai môn, chụp màn hình 390 / 768 / 1280px.
+  - Để lại (đã ghi vào Phase 7): khách tạo lượt làm không giới hạn (cần giới hạn tần suất). Import trùng lúc có người vừa bắt đầu lượt làm có thể lỗi 500 (hiếm, chỉ khi đang import).
+  - Lượt làm thử tạo trong lúc kiểm tra vẫn nằm trong database dev (không ảnh hưởng gì).
 
 ## Phase 6: Result / history
 
@@ -260,6 +262,7 @@ Công việc:
 - Thêm Spring Security; bảng `users`; đăng ký/đăng nhập/đăng xuất; BCrypt.
 - Vai trò `USER` / `ADMIN`; bảo vệ `/api/v1/admin/**`.
 - Gắn lượt làm bài với người dùng.
+- Giới hạn tần suất tạo lượt làm của khách (`POST /api/v1/quizzes/{id}/attempts` đang mở, không giới hạn; góp ý khi rà code Phase 5).
 - Frontend: trang đăng nhập/đăng ký, route cần đăng nhập.
 - Security review (agent `security-reviewer`, `/security-review`).
 

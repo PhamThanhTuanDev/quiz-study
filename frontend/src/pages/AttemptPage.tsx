@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { ExamOutcome, PracticeOutcome } from '../components/AttemptOutcome'
 import AsyncContent from '../components/AsyncContent'
 import Button from '../components/Button'
 import CountdownTimer from '../components/CountdownTimer'
+import EmptyState from '../components/EmptyState'
 import ErrorState from '../components/ErrorState'
 import QuestionNavigator from '../components/QuestionNavigator'
 import QuestionView from '../components/QuestionView'
 import SubmitConfirm from '../components/SubmitConfirm'
 import { useAsync } from '../hooks/useAsync'
+import { useFocusOnChange } from '../hooks/useFocusOnChange'
 import { useQuizAttempt } from '../hooks/useQuizAttempt'
 import { useStartAttempt } from '../hooks/useStartAttempt'
 import { getAttempt } from '../services/quizService'
@@ -35,11 +37,18 @@ export default function AttemptPage() {
 }
 
 function AttemptView({ initial }: { initial: Attempt }) {
-  const { attempt, currentIndex, goTo, choose, checkingQuestionId, submit, submitting, error } =
+  if (initial.questions.length === 0) {
+    // Server không tạo lượt làm rỗng; phòng trường hợp dữ liệu lạ thay vì để trang bị lỗi.
+    return <EmptyState title="Lượt làm này không có câu hỏi nào" />
+  }
+  return <AttemptContent initial={initial} />
+}
+
+function AttemptContent({ initial }: { initial: Attempt }) {
+  const { attempt, currentIndex, goTo, choose, checkingQuestionIds, submit, submitting, error } =
     useQuizAttempt(initial)
   const restart = useStartAttempt()
   const [confirming, setConfirming] = useState(false)
-  const questionHeadingRef = useFocusOnChange<HTMLHeadingElement>(currentIndex)
 
   const isExam = attempt.mode === 'EXAM'
   const finished = attempt.status !== 'IN_PROGRESS'
@@ -47,6 +56,9 @@ function AttemptView({ initial }: { initial: Attempt }) {
   const answeredCount = attempt.questions.filter((question) => question.selectedAnswerId !== null).length
   const practiceDone = !isExam && answeredCount === total
   const question = attempt.questions[currentIndex]
+  const questionHeadingRef = useFocusOnChange<HTMLHeadingElement>(currentIndex)
+  // Vừa nộp bài / vừa làm hết lượt luyện tập: nút đang focus biến mất, nên đưa focus tới kết quả.
+  const outcomeRef = useFocusOnChange<HTMLDivElement>(finished || practiceDone)
 
   const restartProps = {
     subjectSlug: attempt.subjectSlug,
@@ -77,10 +89,12 @@ function AttemptView({ initial }: { initial: Attempt }) {
         )}
       </header>
 
-      {isExam && finished && attempt.result && (
-        <ExamOutcome result={attempt.result} status={attempt.status} {...restartProps} />
-      )}
-      {practiceDone && <PracticeOutcome questionCount={total} {...restartProps} />}
+      <div ref={outcomeRef} tabIndex={-1} className="focus:outline-none">
+        {isExam && finished && attempt.result && (
+          <ExamOutcome result={attempt.result} status={attempt.status} {...restartProps} />
+        )}
+        {practiceDone && <PracticeOutcome questionCount={total} {...restartProps} />}
+      </div>
       {error && <ErrorState title="Chưa thực hiện được" message={error} />}
       {restart.error && <ErrorState title="Không tạo được lượt làm mới" message={restart.error} />}
 
@@ -93,7 +107,7 @@ function AttemptView({ initial }: { initial: Attempt }) {
               total={total}
               mode={attempt.mode}
               locked={finished}
-              checking={checkingQuestionId === question.questionId}
+              checking={checkingQuestionIds.has(question.questionId)}
               onChoose={(answerId) => void choose(question.questionId, answerId)}
               headingRef={questionHeadingRef}
             />
@@ -130,20 +144,4 @@ function AttemptView({ initial }: { initial: Attempt }) {
       </div>
     </div>
   )
-}
-
-/**
- * Chuyển focus tới phần tử (tiêu đề câu) mỗi khi `value` đổi, trừ lần hiện đầu tiên: người dùng bàn phím
- * và trình đọc màn hình biết đã sang câu mới mà không phải dò lại từ đầu trang.
- */
-function useFocusOnChange<T extends HTMLElement>(value: unknown) {
-  const ref = useRef<T>(null)
-  const firstValue = useRef(value)
-  useEffect(() => {
-    if (value !== firstValue.current) {
-      ref.current?.focus()
-      firstValue.current = undefined // từ đây mọi lần đổi đều chuyển focus
-    }
-  }, [value])
-  return ref
 }

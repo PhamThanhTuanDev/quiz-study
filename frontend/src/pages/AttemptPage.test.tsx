@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mockApi, problem } from '../test/mockApi'
 import { renderRoute } from '../test/renderRoute'
@@ -84,6 +84,7 @@ describe('AttemptPage – luyện tập', () => {
     fireEvent.click(check)
 
     expect(await screen.findByRole('status')).toHaveTextContent('✗ Chưa đúng. Đáp án đúng là A.')
+    await waitFor(() => expect(screen.getByRole('status')).toHaveFocus())
     expect(screen.getByRole('radio', { name: /Phương án 1 của câu 1/ })).toBeDisabled()
     expect(screen.getByText('✓ Đáp án đúng')).toBeInTheDocument()
     expect(screen.getByText('✗ Bạn chọn')).toBeInTheDocument()
@@ -161,6 +162,7 @@ describe('AttemptPage – thi thử', () => {
     fireEvent.click(within(confirm).getByRole('button', { name: 'Nộp bài' }))
 
     const result = await screen.findByRole('region', { name: 'Kết quả' })
+    await waitFor(() => expect(result.parentElement).toHaveFocus())
     expect(result).toHaveTextContent('5,00 / 10 điểm')
     expect(result).toHaveTextContent('Đúng 1/2 câu.')
     expect(screen.queryByRole('timer')).not.toBeInTheDocument()
@@ -187,6 +189,33 @@ describe('AttemptPage – thi thử', () => {
 
     expect(await screen.findByRole('region', { name: 'Kết quả' })).toHaveTextContent('Đã hết giờ')
     expect(fetchMock).toHaveBeenCalledWith('/api/v1/attempts/luot-1/submit', expect.objectContaining({ method: 'POST' }))
+  })
+
+  it('sends only one submit when the countdown ends while the user is already submitting', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const submitted = attempt({
+      ...EXAM,
+      status: 'SUBMITTED',
+      remainingSeconds: null,
+      result: { correctCount: 0, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:45:00Z' },
+    })
+    let finishSubmit: (value: Attempt) => void = () => undefined
+    const fetchMock = mockApi({
+      'GET /api/v1/attempts/luot-1': { ...EXAM, remainingSeconds: 2 },
+      // Giữ yêu cầu nộp bài ở trạng thái chờ cho tới khi đồng hồ về 0.
+      'POST /api/v1/attempts/luot-1/submit': () => new Promise<Attempt>((resolve) => (finishSubmit = resolve)),
+    })
+    renderRoute('/attempts/luot-1')
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Nộp bài' }))
+    fireEvent.click(within(screen.getByRole('region', { name: 'Nộp bài?' })).getByRole('button', { name: 'Nộp bài' }))
+    await act(() => vi.advanceTimersByTimeAsync(3000))
+    await act(async () => finishSubmit(submitted))
+
+    expect(await screen.findByRole('region', { name: 'Kết quả' })).toBeInTheDocument()
+    const submitCalls = fetchMock.mock.calls.filter(([url]) => String(url) === '/api/v1/attempts/luot-1/submit')
+    expect(submitCalls).toHaveLength(1)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('explains the problem and shows the real state when the time ran out while saving', async () => {

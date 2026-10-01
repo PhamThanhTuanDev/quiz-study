@@ -1,4 +1,5 @@
 import { useId, useState, type Ref } from 'react'
+import { useFocusOnChange } from '../hooks/useFocusOnChange'
 import type { AnswerOption, AttemptQuestion, PracticeFeedback, QuizMode } from '../types/quiz'
 import Button from './Button'
 import CodeBlock from './CodeBlock'
@@ -27,6 +28,9 @@ export default function QuestionView({ question, total, mode, locked, checking, 
   const answered = isPractice && feedback !== null
   const disabled = locked || answered || checking
   const checkedId = isPractice && !answered ? picked : question.selectedAnswerId
+  // Nút "Kiểm tra" biến mất khi có kết quả: đưa focus tới kết quả để người dùng bàn phím / trình đọc màn hình
+  // nghe được ngay đúng hay sai (không áp dụng khi mở lại câu đã kiểm tra từ trước).
+  const feedbackRef = useFocusOnChange<HTMLDivElement>(answered)
 
   const select = (answerId: number) => {
     if (isPractice) {
@@ -66,7 +70,7 @@ export default function QuestionView({ question, total, mode, locked, checking, 
           {checking ? 'Đang kiểm tra…' : 'Kiểm tra'}
         </Button>
       )}
-      {answered && <FeedbackMessage feedback={feedback} answers={question.answers} />}
+      {answered && <FeedbackMessage feedback={feedback} answers={question.answers} containerRef={feedbackRef} />}
     </article>
   )
 }
@@ -108,22 +112,32 @@ function AnswerChoice({ name, answer, letter, checked, disabled, feedback, selec
         className="mt-1 size-4 shrink-0 accent-primary"
       />
       <span className="shrink-0 font-semibold">{letter}.</span>
-      <span className="min-w-0 flex-1 break-words whitespace-pre-wrap">{answer.content}</span>
+      <span className="min-w-0 flex-1 wrap-break-word whitespace-pre-wrap">{answer.content}</span>
       {isCorrectAnswer && <span className="shrink-0 text-sm font-semibold text-success">✓ Đáp án đúng</span>}
       {isWrongChoice && <span className="shrink-0 text-sm font-semibold text-danger">✗ Bạn chọn</span>}
     </label>
   )
 }
 
-function FeedbackMessage({ feedback, answers }: { feedback: PracticeFeedback; answers: AnswerOption[] }) {
+interface FeedbackMessageProps {
+  feedback: PracticeFeedback
+  answers: AnswerOption[]
+  containerRef: Ref<HTMLDivElement>
+}
+
+function FeedbackMessage({ feedback, answers, containerRef }: FeedbackMessageProps) {
   const headingId = useId()
   const correctIndex = answers.findIndex((answer) => answer.id === feedback.correctAnswerId)
 
   return (
     <div
+      ref={containerRef}
+      tabIndex={-1}
       role="status"
       aria-labelledby={headingId}
-      className={`rounded-lg border p-4 ${feedback.correct ? 'border-success bg-success-soft' : 'border-danger bg-danger-soft'}`}
+      className={`rounded-lg border p-4 focus:outline-none ${
+        feedback.correct ? 'border-success bg-success-soft' : 'border-danger bg-danger-soft'
+      }`}
     >
       <p id={headingId} className={`font-semibold ${feedback.correct ? 'text-success' : 'text-danger'}`}>
         {feedback.correct ? '✓ Chính xác!' : '✗ Chưa đúng.'}

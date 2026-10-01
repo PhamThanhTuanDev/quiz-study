@@ -14,9 +14,9 @@ export interface QuizAttemptControls {
    * Luyện tập: kiểm tra câu và nhận đúng/sai ngay; câu đã kiểm tra thì khoá (D-037).
    */
   choose: (questionId: number, answerId: number) => Promise<void>
-  /** Câu luyện tập đang chờ server kiểm tra; null nếu không có. */
-  checkingQuestionId: number | null
-  /** Nộp bài thi thử (cũng được gọi khi hết giờ). */
+  /** Các câu luyện tập đang chờ server kiểm tra (có thể nhiều câu nếu người dùng chuyển câu khi đang chờ). */
+  checkingQuestionIds: ReadonlySet<number>
+  /** Nộp bài thi thử (cũng được gọi khi hết giờ). Gọi khi đang nộp thì bỏ qua. */
   submit: () => Promise<void>
   submitting: boolean
   /** Thông điệp lỗi tiếng Việt của thao tác gần nhất; null nếu không có lỗi. */
@@ -27,12 +27,15 @@ export interface QuizAttemptControls {
 export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
   const [attempt, setAttempt] = useState(initial)
   const [currentIndex, setCurrentIndex] = useState(() => firstUnansweredIndex(initial))
-  const [checkingQuestionId, setCheckingQuestionId] = useState<number | null>(null)
+  const [checkingQuestionIds, setCheckingQuestionIds] = useState<ReadonlySet<number>>(() => new Set())
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   // Các lần lưu được gửi lần lượt: lựa chọn sau luôn tới server sau lựa chọn trước, nên server giữ đúng
-  // lựa chọn cuối cùng. Nộp bài cũng chờ các lần lưu đang chạy xong.
+  // lựa chọn cuối cùng. Nộp bài và đọc lại từ server cũng chờ các lần lưu đang chạy xong.
   const saveQueue = useRef<Promise<unknown>>(Promise.resolve())
+  // Chặn nộp hai lần (ví dụ đồng hồ về 0 đúng lúc người dùng bấm "Nộp bài"). Dùng ref vì hai lần gọi có thể
+  // xảy ra trước khi React kịp render lại với `submitting = true`.
+  const submittingRef = useRef(false)
   // Bản mới nhất của lượt làm, để đọc lựa chọn cũ khi cần trả lại (lưu thất bại) mà không phải đưa
   // `attempt` vào danh sách phụ thuộc của các hàm bên dưới.
   const latest = useRef(attempt)
@@ -57,6 +60,8 @@ export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
       setError(toUserMessage(failure))
       if (failure instanceof ApiError && failure.status === 0) return // mất mạng: đọc lại cũng sẽ lỗi
       try {
+        // Chờ các lựa chọn đang xếp hàng lưu xong, để dữ liệu đọc về không thiếu lựa chọn mới hơn.
+        await saveQueue.current
         setAttempt(await getAttempt(attemptId))
       } catch (resyncError) {
         setError(toUserMessage(resyncError))
@@ -65,18 +70,27 @@ export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
     [attemptId],
   )
 
+  const setChecking = useCallback((questionId: number, checking: boolean) => {
+    setCheckingQuestionIds((current) => {
+      const next = new Set(current)
+      if (checking) next.add(questionId)
+      else next.delete(questionId)
+      return next
+    })
+  }, [])
+
   const choose = useCallback(
     async (questionId: number, answerId: number) => {
       setError(null)
       if (mode === 'PRACTICE') {
-        setCheckingQuestionId(questionId)
+        setChecking(questionId, true)
         try {
           const result = await saveAnswer(attemptId, questionId, answerId)
           updateQuestion(questionId, { selectedAnswerId: result.selectedAnswerId, feedback: result.feedback })
         } catch (saveError) {
           await failAndResync(saveError)
         } finally {
-          setCheckingQuestionId(null)
+          setChecking(questionId, false)
         }
         return
       }
@@ -94,10 +108,12 @@ export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
         await failAndResync(saveError)
       }
     },
-    [attemptId, mode, updateQuestion, failAndResync],
+    [attemptId, mode, updateQuestion, failAndResync, setChecking],
   )
 
   const submit = useCallback(async () => {
+    if (submittingRef.current || latest.current.status !== 'IN_PROGRESS') return
+    submittingRef.current = true
     setSubmitting(true)
     setError(null)
     try {
@@ -106,6 +122,7 @@ export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
     } catch (submitError) {
       await failAndResync(submitError)
     } finally {
+      submittingRef.current = false
       setSubmitting(false)
     }
   }, [attemptId, failAndResync])
@@ -115,7 +132,7 @@ export function useQuizAttempt(initial: Attempt): QuizAttemptControls {
     [attempt.questions.length],
   )
 
-  return { attempt, currentIndex, goTo, choose, checkingQuestionId, submit, submitting, error }
+  return { attempt, currentIndex, goTo, choose, checkingQuestionIds, submit, submitting, error }
 }
 
 /** Mở lại lượt làm thì nhảy tới câu đầu tiên chưa trả lời (làm tiếp chỗ đang dở). */
