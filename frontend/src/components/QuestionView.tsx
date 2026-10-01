@@ -1,6 +1,6 @@
 import { useId, useState, type Ref } from 'react'
 import { useFocusOnChange } from '../hooks/useFocusOnChange'
-import type { AnswerOption, AttemptQuestion, PracticeFeedback, QuizMode } from '../types/quiz'
+import type { AnswerOption, AttemptQuestion, AnswerFeedback, QuizMode } from '../types/quiz'
 import Button from './Button'
 import CodeBlock from './CodeBlock'
 
@@ -18,19 +18,23 @@ interface QuestionViewProps {
 }
 
 /**
- * Một câu hỏi và các phương án. Thi thử: chọn là lưu ngay, đổi được. Luyện tập: chọn rồi bấm "Kiểm tra"
- * (để lỡ tay, hoặc dùng phím mũi tên đi qua các phương án, không bị khoá đáp án); sau đó hiện đúng/sai.
+ * Một câu hỏi và các phương án. Thi thử: chọn là lưu ngay, đổi được; nộp xong thì xem lại đúng/sai từng câu.
+ * Luyện tập: chọn rồi bấm "Kiểm tra" (để lỡ tay, hoặc dùng phím mũi tên đi qua các phương án, không bị khoá
+ * đáp án); sau đó hiện đúng/sai.
  */
 export default function QuestionView({ question, total, mode, locked, checking, onChoose, headingRef }: QuestionViewProps) {
   const [picked, setPicked] = useState<number | null>(question.selectedAnswerId)
   const feedback = question.feedback
   const isPractice = mode === 'PRACTICE'
-  const answered = isPractice && feedback !== null
-  const disabled = locked || answered || checking
-  const checkedId = isPractice && !answered ? picked : question.selectedAnswerId
+  // Có feedback nghĩa là server cho xem đáp án: câu luyện tập đã kiểm tra, hoặc bài thi đã kết thúc.
+  const revealed = feedback !== null
+  const practiceChecked = isPractice && revealed
+  const disabled = locked || revealed || checking
+  const checkedId = isPractice && !revealed ? picked : question.selectedAnswerId
   // Nút "Kiểm tra" biến mất khi có kết quả: đưa focus tới kết quả để người dùng bàn phím / trình đọc màn hình
-  // nghe được ngay đúng hay sai (không áp dụng khi mở lại câu đã kiểm tra từ trước).
-  const feedbackRef = useFocusOnChange<HTMLDivElement>(answered)
+  // nghe được ngay đúng hay sai (không áp dụng khi mở lại câu đã kiểm tra từ trước). Thi thử vừa nộp thì trang
+  // đưa focus tới thẻ kết quả, không phải tới từng câu.
+  const feedbackRef = useFocusOnChange<HTMLDivElement>(practiceChecked)
 
   const select = (answerId: number) => {
     if (isPractice) {
@@ -58,19 +62,26 @@ export default function QuestionView({ question, total, mode, locked, checking, 
             letter={letterOf(index)}
             checked={checkedId === answer.id}
             disabled={disabled}
-            feedback={answered ? feedback : null}
+            feedback={feedback}
             selectedAnswerId={question.selectedAnswerId}
             onSelect={select}
           />
         ))}
       </fieldset>
 
-      {isPractice && !answered && !locked && (
+      {isPractice && !revealed && !locked && (
         <Button onClick={() => picked !== null && onChoose(picked)} disabled={picked === null || checking}>
           {checking ? 'Đang kiểm tra…' : 'Kiểm tra'}
         </Button>
       )}
-      {answered && <FeedbackMessage feedback={feedback} answers={question.answers} containerRef={feedbackRef} />}
+      {revealed && (
+        <FeedbackMessage
+          feedback={feedback}
+          answers={question.answers}
+          skipped={question.selectedAnswerId === null}
+          containerRef={feedbackRef}
+        />
+      )}
     </article>
   )
 }
@@ -81,8 +92,8 @@ interface AnswerChoiceProps {
   letter: string
   checked: boolean
   disabled: boolean
-  /** Có khi câu luyện tập đã kiểm tra: tô đáp án đúng và lựa chọn sai. */
-  feedback: PracticeFeedback | null
+  /** Có khi được xem đáp án (luyện tập đã kiểm tra, thi thử đã nộp): tô đáp án đúng và lựa chọn sai. */
+  feedback: AnswerFeedback | null
   selectedAnswerId: number | null
   onSelect: (answerId: number) => void
 }
@@ -120,14 +131,23 @@ function AnswerChoice({ name, answer, letter, checked, disabled, feedback, selec
 }
 
 interface FeedbackMessageProps {
-  feedback: PracticeFeedback
+  feedback: AnswerFeedback
   answers: AnswerOption[]
+  /** Thi thử đã nộp mà câu này bỏ trống. */
+  skipped: boolean
   containerRef: Ref<HTMLDivElement>
 }
 
-function FeedbackMessage({ feedback, answers, containerRef }: FeedbackMessageProps) {
+const FEEDBACK_TONE = {
+  correct: { box: 'border-success bg-success-soft', text: 'text-success', title: '✓ Chính xác!' },
+  wrong: { box: 'border-danger bg-danger-soft', text: 'text-danger', title: '✗ Chưa đúng.' },
+  skipped: { box: 'border-warning bg-warning-soft', text: 'text-warning', title: '– Bạn bỏ trống câu này.' },
+} as const
+
+function FeedbackMessage({ feedback, answers, skipped, containerRef }: FeedbackMessageProps) {
   const headingId = useId()
   const correctIndex = answers.findIndex((answer) => answer.id === feedback.correctAnswerId)
+  const tone = FEEDBACK_TONE[feedback.correct ? 'correct' : skipped ? 'skipped' : 'wrong']
 
   return (
     <div
@@ -135,12 +155,10 @@ function FeedbackMessage({ feedback, answers, containerRef }: FeedbackMessagePro
       tabIndex={-1}
       role="status"
       aria-labelledby={headingId}
-      className={`rounded-lg border p-4 focus:outline-none ${
-        feedback.correct ? 'border-success bg-success-soft' : 'border-danger bg-danger-soft'
-      }`}
+      className={`rounded-lg border p-4 focus:outline-none ${tone.box}`}
     >
-      <p id={headingId} className={`font-semibold ${feedback.correct ? 'text-success' : 'text-danger'}`}>
-        {feedback.correct ? '✓ Chính xác!' : '✗ Chưa đúng.'}
+      <p id={headingId} className={`font-semibold ${tone.text}`}>
+        {tone.title}
         {!feedback.correct && correctIndex !== -1 && ` Đáp án đúng là ${letterOf(correctIndex)}.`}
       </p>
       {feedback.explanation && <p className="mt-2 text-sm whitespace-pre-line">{feedback.explanation}</p>}

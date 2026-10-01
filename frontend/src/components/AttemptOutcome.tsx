@@ -14,10 +14,13 @@ interface RestartProps {
 interface ExamOutcomeProps extends RestartProps {
   result: ExamResult
   status: AttemptStatus
+  /** Chuyển tới câu sai / bỏ trống tiếp theo để xem lại; null nếu bài không có câu nào sai. */
+  onReviewNextMistake: (() => void) | null
 }
 
-/** Kết quả thi thử sau khi nộp / hết giờ (D-037: thang 10). Xem lại từng câu để Phase 6. */
-export function ExamOutcome({ result, status, subjectSlug, onRestart, restarting }: ExamOutcomeProps) {
+/** Kết quả thi thử sau khi nộp / hết giờ (D-037: thang 10), kèm xem lại câu sai (D-038). */
+export function ExamOutcome({ result, status, onReviewNextMistake, ...restart }: ExamOutcomeProps) {
+  const wrongCount = result.totalQuestions - result.correctCount - result.unansweredCount
   return (
     <Card title="Kết quả">
       <p className="text-3xl font-bold text-primary sm:text-4xl">
@@ -25,18 +28,18 @@ export function ExamOutcome({ result, status, subjectSlug, onRestart, restarting
         <span className="text-lg font-semibold text-muted"> / 10 điểm</span>
       </p>
       <p className="mt-2">
-        Đúng {result.correctCount}/{result.totalQuestions} câu.
+        Đúng {result.correctCount}/{result.totalQuestions} câu · Sai {wrongCount} · Bỏ trống {result.unansweredCount}
       </p>
       {status === 'EXPIRED' && (
         <p className="mt-2 text-sm text-warning">Đã hết giờ: bài được chấm với các câu đã lưu trước khi hết giờ.</p>
       )}
-      <RestartActions
-        restartLabel="Làm lại"
-        backLabel="Về trang môn"
-        subjectSlug={subjectSlug}
-        onRestart={onRestart}
-        restarting={restarting}
-      />
+      <p className="mt-2 text-sm text-muted">Xem lại từng câu bên dưới: đáp án đúng được tô xanh, lựa chọn sai tô đỏ.</p>
+      {onReviewNextMistake && (
+        <Button variant="secondary" className="mt-3" onClick={onReviewNextMistake}>
+          Xem câu sai tiếp theo
+        </Button>
+      )}
+      <RestartActions restartLabel="Làm lại" backLabel="Về trang môn" {...restart} />
     </Card>
   )
 }

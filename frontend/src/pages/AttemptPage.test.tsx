@@ -146,28 +146,66 @@ describe('AttemptPage – thi thử', () => {
     expect(screen.getByRole('heading', { name: 'Câu 1/2' })).toHaveFocus()
   })
 
-  it('asks for confirmation, then submits and shows the score out of 10', async () => {
+  it('asks for confirmation, submits, then lets the user review every question', async () => {
+    // Sau khi nộp, server trả đúng/sai và đáp án đúng của mọi câu (D-038): câu 1 đúng, câu 2 bỏ trống.
     const submitted = attempt({
       ...EXAM,
       status: 'SUBMITTED',
       remainingSeconds: null,
-      result: { correctCount: 1, totalQuestions: 2, score: 5, submittedAt: '2026-10-01T03:10:00Z' },
+      questions: [
+        question(1, 1, { selectedAnswerId: 11, feedback: { correct: true, correctAnswerId: 11, explanation: null } }),
+        question(2, 2, { feedback: { correct: false, correctAnswerId: 22, explanation: 'Vì lý do X.' } }),
+      ],
+      result: { correctCount: 1, unansweredCount: 1, totalQuestions: 2, score: 5, submittedAt: '2026-10-01T03:10:00Z' },
     })
-    const fetchMock = mockApi({ 'GET /api/v1/attempts/luot-1': EXAM, 'POST /api/v1/attempts/luot-1/submit': submitted })
+    const fetchMock = mockApi({
+      'GET /api/v1/attempts/luot-1': EXAM,
+      'PUT /api/v1/attempts/luot-1/answers/1': { questionId: 1, selectedAnswerId: 11, feedback: null },
+      'POST /api/v1/attempts/luot-1/submit': submitted,
+    })
     renderRoute('/attempts/luot-1')
+    fireEvent.click(await screen.findByRole('radio', { name: /Phương án 1 của câu 1/ }))
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Nộp bài' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Nộp bài' }))
     const confirm = screen.getByRole('region', { name: 'Nộp bài?' })
-    expect(confirm).toHaveTextContent('Bạn còn 2 câu chưa trả lời')
+    expect(confirm).toHaveTextContent('Bạn còn 1 câu chưa trả lời')
     fireEvent.click(within(confirm).getByRole('button', { name: 'Nộp bài' }))
 
     const result = await screen.findByRole('region', { name: 'Kết quả' })
     await waitFor(() => expect(result.parentElement).toHaveFocus())
     expect(result).toHaveTextContent('5,00 / 10 điểm')
-    expect(result).toHaveTextContent('Đúng 1/2 câu.')
+    expect(result).toHaveTextContent('Đúng 1/2 câu · Sai 0 · Bỏ trống 1')
     expect(screen.queryByRole('timer')).not.toBeInTheDocument()
     expect(screen.getByRole('radio', { name: /Phương án 1 của câu 1/ })).toBeDisabled()
+    expect(screen.getByRole('status')).toHaveTextContent('✓ Chính xác!')
+    expect(screen.getByRole('button', { name: 'Câu 2, bỏ trống' })).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledWith('/api/v1/attempts/luot-1/submit', expect.objectContaining({ method: 'POST' }))
+
+    fireEvent.click(within(result).getByRole('button', { name: 'Xem câu sai tiếp theo' }))
+
+    expect(screen.getByRole('heading', { name: 'Câu 2/2' })).toHaveFocus()
+    expect(screen.getByRole('status')).toHaveTextContent('– Bạn bỏ trống câu này. Đáp án đúng là B.')
+    expect(screen.getByRole('status')).toHaveTextContent('Vì lý do X.')
+    expect(screen.getByText('✓ Đáp án đúng')).toBeInTheDocument()
+  })
+
+  it('does not offer to review mistakes when every answer is correct', async () => {
+    const perfect = attempt({
+      ...EXAM,
+      status: 'SUBMITTED',
+      remainingSeconds: null,
+      questions: [
+        question(1, 1, { selectedAnswerId: 11, feedback: { correct: true, correctAnswerId: 11, explanation: null } }),
+        question(2, 2, { selectedAnswerId: 21, feedback: { correct: true, correctAnswerId: 21, explanation: null } }),
+      ],
+      result: { correctCount: 2, unansweredCount: 0, totalQuestions: 2, score: 10, submittedAt: '2026-10-01T03:10:00Z' },
+    })
+    mockApi({ 'GET /api/v1/attempts/luot-1': perfect })
+
+    renderRoute('/attempts/luot-1')
+
+    expect(await screen.findByRole('region', { name: 'Kết quả' })).toHaveTextContent('10,00 / 10 điểm')
+    expect(screen.queryByRole('button', { name: 'Xem câu sai tiếp theo' })).not.toBeInTheDocument()
   })
 
   it('submits by itself when the countdown reaches zero', async () => {
@@ -176,7 +214,7 @@ describe('AttemptPage – thi thử', () => {
       ...EXAM,
       status: 'EXPIRED',
       remainingSeconds: null,
-      result: { correctCount: 0, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:45:00Z' },
+      result: { correctCount: 0, unansweredCount: 2, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:45:00Z' },
     })
     const fetchMock = mockApi({
       'GET /api/v1/attempts/luot-1': { ...EXAM, remainingSeconds: 2 },
@@ -197,7 +235,7 @@ describe('AttemptPage – thi thử', () => {
       ...EXAM,
       status: 'SUBMITTED',
       remainingSeconds: null,
-      result: { correctCount: 0, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:45:00Z' },
+      result: { correctCount: 0, unansweredCount: 2, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:45:00Z' },
     })
     let finishSubmit: (value: Attempt) => void = () => undefined
     const fetchMock = mockApi({
@@ -223,7 +261,7 @@ describe('AttemptPage – thi thử', () => {
       ...EXAM,
       status: 'EXPIRED',
       remainingSeconds: null,
-      result: { correctCount: 0, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:45:10Z' },
+      result: { correctCount: 0, unansweredCount: 2, totalQuestions: 2, score: 0, submittedAt: '2026-10-01T03:45:10Z' },
     })
     let reads = 0
     mockApi({

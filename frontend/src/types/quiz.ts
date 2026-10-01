@@ -23,14 +23,17 @@ export interface AnswerOption {
   content: string
 }
 
-/** Phản hồi luyện tập cho câu đã trả lời (khớp PracticeFeedbackResponse). */
-export interface PracticeFeedback {
+/**
+ * Đúng/sai và đáp án đúng của một câu (khớp AnswerFeedbackResponse). Có ở luyện tập sau khi trả lời,
+ * và ở mọi câu của thi thử đã nộp / hết giờ (D-038). Câu bỏ trống: `correct = false`.
+ */
+export interface AnswerFeedback {
   correct: boolean
   correctAnswerId: number | null
   explanation: string | null
 }
 
-/** Một câu trong lượt làm. Phương án không có đúng/sai; luyện tập có `feedback` sau khi trả lời. */
+/** Một câu trong lượt làm. Phương án không có đúng/sai; `feedback` chỉ có khi được phép xem đáp án. */
 export interface AttemptQuestion {
   questionId: number
   order: number
@@ -38,12 +41,13 @@ export interface AttemptQuestion {
   codeSnippet: string | null
   answers: AnswerOption[]
   selectedAnswerId: number | null
-  feedback: PracticeFeedback | null
+  feedback: AnswerFeedback | null
 }
 
-/** Kết quả thi thử, thang 10. */
+/** Kết quả thi thử, thang 10. Số câu sai = tổng − đúng − bỏ trống. */
 export interface ExamResult {
   correctCount: number
+  unansweredCount: number
   totalQuestions: number
   score: number
   submittedAt: string
@@ -72,5 +76,5 @@ export interface Attempt {
 export interface SaveAnswerResult {
   questionId: number
   selectedAnswerId: number
-  feedback: PracticeFeedback | null
+  feedback: AnswerFeedback | null
 }

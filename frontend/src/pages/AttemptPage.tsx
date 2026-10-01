@@ -65,6 +65,7 @@ function AttemptContent({ initial }: { initial: Attempt }) {
     onRestart: () => void restart.start(attempt.quizId),
     restarting: restart.pendingQuizId !== null,
   }
+  const nextMistake = nextMistakeIndex(attempt, currentIndex)
 
   return (
     <div className="space-y-6">
@@ -91,7 +92,12 @@ function AttemptContent({ initial }: { initial: Attempt }) {
 
       <div ref={outcomeRef} tabIndex={-1} className="focus:outline-none">
         {isExam && finished && attempt.result && (
-          <ExamOutcome result={attempt.result} status={attempt.status} {...restartProps} />
+          <ExamOutcome
+            result={attempt.result}
+            status={attempt.status}
+            onReviewNextMistake={nextMistake === null ? null : () => goTo(nextMistake)}
+            {...restartProps}
+          />
         )}
         {practiceDone && <PracticeOutcome questionCount={total} {...restartProps} />}
       </div>
@@ -144,4 +150,18 @@ function AttemptContent({ initial }: { initial: Attempt }) {
       </div>
     </div>
   )
+}
+
+/**
+ * Câu sai hoặc bỏ trống tiếp theo sau câu đang xem (quay vòng về đầu), để xem lại lần lượt;
+ * null nếu không có câu nào sai.
+ */
+function nextMistakeIndex(attempt: Attempt, currentIndex: number): number | null {
+  const total = attempt.questions.length
+  for (let step = 1; step <= total; step++) {
+    const index = (currentIndex + step) % total
+    const feedback = attempt.questions[index].feedback
+    if (feedback !== null && !feedback.correct) return index
+  }
+  return null
 }
