@@ -18,7 +18,8 @@
     { "number": 7, "code": "Bài 7", "title": "Hàm" },
     { "number": 8, "code": "Bài 8", "title": "Xử lý chuỗi" },
     { "number": 9, "code": "Bài 9", "title": "Module và thư viện" },
-    { "number": 10, "code": "Bài 10", "title": "Class" }
+    { "number": 10, "code": "Bài 10", "title": "Class" },
+    { "number": 11, "code": "Bài 11", "title": "Phân tích dữ liệu và NumPy" }
   ],
   "sources": [
     { "key": "w01-lt", "label": "w01 LT", "chapter": 1, "expectedQuestions": 4, "file": "[IPPA233277] w01-c01_gioi-thieu (done).pdf" },
@@ -39,6 +40,8 @@
     { "key": "w07-lt", "label": "w07 LT", "chapter": 9, "expectedQuestions": 4, "file": "[IPPA233277] w07-c05_su-dung-modules-library-trong-python (done).pdf" },
     { "key": "w07-hw", "label": "w07 HW", "chapter": 9, "expectedQuestions": 10, "file": "[IPPA233277] w07-c05_su-dung-modules-library-trong-python_HW (done).pdf" },
     { "key": "w0809-lt", "label": "w08-09 LT", "chapter": 10, "expectedQuestions": 6, "file": "[IPPA233277] w08-w09-c06_class (done).pdf" },
-    { "key": "w0809-hw", "label": "w08-09 HW", "chapter": 10, "expectedQuestions": 10, "file": "[IPPA233277] w08-w09-c06_class_HW (done).pdf" }
+    { "key": "w0809-hw", "label": "w08-09 HW", "chapter": 10, "expectedQuestions": 10, "file": "[IPPA233277] w08-w09-c06_class_HW (done).pdf" },
+    { "key": "w1011-lt", "label": "w10-11 LT", "chapter": 11, "expectedQuestions": 22, "file": "[IPPA233277] w10-w11-c07_phan-tich-du-lieu-numpy (done).pdf" },
+    { "key": "w1011-hw", "label": "w10-11 HW", "chapter": 11, "expectedQuestions": 44, "file": "[IPPA233277] w10-w11-c07_phan-tich-du-lieu-numpy_HW (done).pdf" }
   ]
 }

@@ -1,0 +1,396 @@
+{
+  "$comment": "Bản đồ vị trí Bài 11 (D-035, D-042): w10-11 LT trang 23–26 (điền khuyết, D-026); w10-11 HW trang 2–6. Code cần NumPy chạy bằng numpy trong scripts/.venv; mọi lệnh kiểm chứng tự thêm import numpy. Vị trí / phần tử thứ n đếm từ 1 như các bài trước; câu điền khuyết không đưa phương án của cách hiểu đếm từ 0 vào.",
+  "chapter": 11,
+  "ignore": {
+    "w1011-lt/24": {
+      "R05": "Mục 11 chỉ là bảng ký hiệu kiểu dữ liệu của NumPy (i, b, O, f…), không có câu hỏi hay chỗ trống.",
+      "R06": "Bảng ký hiệu của mục 11, không phải câu hỏi.",
+      "R07": "Bảng ký hiệu của mục 11, không phải câu hỏi.",
+      "R08": "Bảng ký hiệu của mục 11, không phải câu hỏi.",
+      "R09": "Bảng ký hiệu của mục 11, không phải câu hỏi.",
+      "R10": "Bảng ký hiệu của mục 11, không phải câu hỏi.",
+      "R11": "Bảng ký hiệu của mục 11, không phải câu hỏi.",
+      "R12": "Bảng ký hiệu của mục 11, không phải câu hỏi.",
+      "R13": "Bảng ký hiệu của mục 11, không phải câu hỏi."
+    }
+  },
+  "questions": [
+    {
+      "ref": "w1011-lt/23/1", "stem": ["L01"], "code": ["L02"], "ownerAnswer": ["L03"],
+      "fill": [["list"], ["array"], ["createArray"], ["arr"]], "answer": "B",
+      "reason": "np.array(...) tạo mảng NumPy (kiểu ndarray). NumPy không có np.list, np.createArray hay np.arr. Trên slide chỗ trống viết là […].",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "replace": { "np.[": "np.", "](": "(" }, "append": "print(type(arr).__name__, arr)", "want": "ndarray [1 2 3 4 5]" }] }
+    },
+    {
+      "ref": "w1011-lt/23/2", "stem": ["L04"], "code": ["L05"], "ownerAnswer": ["L06"],
+      "fill": [["ndim"], ["dim"], ["ndmin"], ["shape"]], "answer": "C",
+      "reason": "Tham số ndmin của np.array đặt số chiều tối thiểu: ndmin=2 cho mảng 2 chiều (shape (1, 4)). ndim là thuộc tính để đọc số chiều, không phải tham số; np.array không nhận dim hay shape.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(arr.ndim)", "want": "2" }] }
+    },
+    {
+      "ref": "w1011-lt/23/3", "stem": ["L07"], "code": ["L08-L09"], "ownerAnswer": ["L10"],
+      "fill": [["ndim"], ["ndmin"], ["dim"], ["size"]], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề hỏi \"số trường\" của mảng, có lẽ là gõ nhầm \"số chiều\". Nếu là số chiều thì đáp án A (arr.ndim, in ra 1); arr.size là số phần tử (4).",
+      "reason": "arr.ndim là số chiều của mảng. ndmin chỉ là tham số khi tạo mảng; mảng không có thuộc tính dim.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "1" }] }
+    },
+    {
+      "ref": "w1011-lt/23/4", "stem": ["R01"], "code": ["R02-R03"], "ownerAnswer": ["R04"],
+      "fill": [["[1]"], ["(0)"], ["[-1]"], ["[0]"]], "answer": "D",
+      "reason": "Chỉ số bắt đầu từ 0 nên phần tử đầu tiên là arr[0]. arr[1] là phần tử thứ hai, arr[-1] là phần tử cuối; mảng không gọi được như hàm.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "1" }] }
+    },
+    {
+      "ref": "w1011-lt/23/5", "stem": ["R05"], "code": ["R06-R07"], "ownerAnswer": ["R08"],
+      "fill": [["[4]"], ["[5]"], ["(4)"], ["[50]"]], "answer": "A",
+      "reason": "50 là phần tử thứ năm, chỉ số 4: arr[4] (arr[-1] cũng lấy được, nhưng không đưa vào phương án để chỉ có một đáp án). arr[5] và arr[50] vượt phạm vi.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "50" }] }
+    },
+    {
+      "ref": "w1011-lt/23/6", "stem": ["R09"], "code": ["R10-R11"], "ownerAnswer": ["R12"],
+      "fill": [["[0, 1]"], ["[1, 0]"], ["[1]"], ["[2, 1]"]], "answer": "B",
+      "reason": "50 ở dòng chỉ số 1, cột chỉ số 0: arr[1, 0] (arr[1][0] cũng được, không đưa vào phương án). arr[0, 1] là 30; arr[1] là cả dòng; arr[2, 1] vượt phạm vi.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "50" }] }
+    },
+    {
+      "ref": "w1011-lt/24/7", "stem": ["L01"], "code": ["L02-L03"], "ownerAnswer": ["L04"],
+      "fill": [["[2:4]"], ["[1:3]"], ["[1:4]"], ["[2:5]"]], "answer": "C",
+      "reason": "Giá trị thứ 2 đến thứ 4 có chỉ số 1, 2, 3: lát cắt [1:4] (không lấy chỉ số 4).",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "[15 20 25]" }] }
+    },
+    {
+      "ref": "w1011-lt/24/8", "stem": ["L05"], "code": ["L06-L07"], "ownerAnswer": ["L08"],
+      "fill": [["[2:4]"], ["[1:4]"], ["[2:5:2]"], ["[1:4:2]"]], "answer": "D",
+      "reason": "Giá trị thứ 2 và thứ 4 có chỉ số 1 và 3: [1:4:2] (bắt đầu ở 1, bước 2, dừng trước 4).",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "[15 25]" }] }
+    },
+    {
+      "ref": "w1011-lt/24/9", "stem": ["L09"], "code": ["L10-L11"], "ownerAnswer": ["L12"],
+      "fill": [["[1::2]"], ["[2::2]"], ["[1:2]"], ["[::-2]"]], "answer": "A",
+      "reason": "Vị trí đếm từ 1 (như các bài trước và câu 8 bài tập): vị trí chẵn là thứ 2, 4, 6, tức chỉ số 1, 3, 5: [1::2]. Phương án của cách đếm từ 0 ([::2]) không đưa vào để chỉ có một đáp án.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "[15 25 35]" }] }
+    },
+    {
+      "ref": "w1011-lt/24/10", "stem": ["R01"], "code": ["R02-R03"], "ownerAnswer": ["R04"],
+      "fill": [["[1:2]"], ["[::2]"], ["[2::2]"], ["[::3]"]], "answer": "B",
+      "reason": "Vị trí đếm từ 1: vị trí lẻ là thứ 1, 3, 5, 7, tức chỉ số 0, 2, 4, 6: [::2]. Phương án của cách đếm từ 0 ([1::2]) không đưa vào để chỉ có một đáp án.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "[10 20 30 40]" }] }
+    },
+    {
+      "ref": "w1011-lt/24/12", "stem": ["R14"], "code": ["R15-R16"], "ownerAnswer": ["R17"],
+      "fill": [["type"], ["ndim"], ["dtype"], ["datatype"]], "answer": "C",
+      "reason": "arr.dtype là kiểu dữ liệu của mảng (ví dụ int64). Mảng không có thuộc tính type hay datatype; ndim là số chiều.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "int64" }] }
+    },
+    {
+      "ref": "w1011-lt/25/13", "stem": ["L01"], "code": ["L02"], "ownerAnswer": ["L03"],
+      "fill": [["type='S'"], ["dtype='i'"], ["astype='S'"], ["dtype='S'"]], "answer": "D",
+      "reason": "Tham số dtype chỉ định kiểu dữ liệu; 'S' là chuỗi (bytes). np.array không nhận type hay astype; 'i' là số nguyên.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(arr.dtype.kind)", "want": "S" }] }
+    },
+    {
+      "ref": "w1011-lt/25/14", "stem": ["L04"], "code": ["L05-L06"], "ownerAnswer": ["L07"],
+      "fill": [["astype('i')"], ["astype('f')"], ["dtype('i')"], ["toInt()"]], "answer": "A",
+      "reason": "astype('i') tạo bản sao với kiểu số nguyên (bỏ phần thập phân). astype('f') là số thực; dtype là thuộc tính, không gọi được; mảng không có toInt().",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(newarr, newarr.dtype.kind)", "want": "[1 2 3] i" }] }
+    },
+    {
+      "ref": "w1011-lt/25/15", "stem": ["L08"], "code": ["L09-L10"], "ownerAnswer": ["L11"],
+      "fill": [["view()"], ["copy()"], ["clone()"], ["copy"]], "answer": "B",
+      "reason": "copy() tạo bản sao có dữ liệu riêng: sửa mảng gốc thì bản sao không đổi. view() dùng chung dữ liệu với mảng gốc; mảng không có clone(); thiếu () thì chỉ lấy phương thức, không gọi.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "arr[0] = 42\nprint(x)", "want": "[1 2 3 4 5]" }] }
+    },
+    {
+      "ref": "w1011-lt/25/16", "stem": ["R01"], "code": ["R02-R03"], "ownerAnswer": ["R04"],
+      "fill": [["copy()"], ["view"], ["view()"], ["show()"]], "answer": "C",
+      "reason": "view() tạo mảng mới dùng chung dữ liệu với mảng gốc: sửa mảng gốc thì view thấy thay đổi. copy() có dữ liệu riêng; thiếu () thì không gọi phương thức; mảng không có show().",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "arr[0] = 42\nprint(x, x is arr)", "want": "[42  2  3  4  5] False" }] }
+    },
+    {
+      "ref": "w1011-lt/25/17", "stem": ["R05"], "code": ["R06-R07"], "ownerAnswer": ["R08"],
+      "fill": [["shape()"], ["size"], ["ndim"], ["shape"]], "answer": "D",
+      "reason": "arr.shape (thuộc tính, không có ngoặc) là kích thước theo từng chiều: (5,). shape() báo lỗi vì tuple không gọi được; size là tổng số phần tử; ndim là số chiều.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "want": "(5,)" }] }
+    },
+    {
+      "ref": "w1011-lt/25/18", "stem": ["R09"], "code": ["R10-R12"], "ownerAnswer": ["R13"], "softWrap": ["R10"],
+      "fill": [["reshape"], ["resize"], ["shape"], ["transpose"]], "answer": "A",
+      "reason": "reshape(4, 3) trả về mảng mới 4 dòng 3 cột. resize đổi tại chỗ và trả về None; shape là thuộc tính; transpose(4, 3) báo lỗi vì đó là thứ tự trục.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(newarr.shape)", "want": "(4, 3)" }] }
+    },
+    {
+      "ref": "w1011-lt/26/19", "stem": ["L01"], "code": ["L02-L04"], "ownerAnswer": ["L05"], "softWrap": ["L02"],
+      "fill": [["reshape(2, 6)"], ["reshape(-1)"], ["reshape(1)"], ["reshape()"]], "answer": "B",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề ghi \"từ 1-D sang 2-D\" nhưng mảng trong code đang là 2 chiều và đáp án dạng làm phẳng (chép từ câu 18). Nếu đề là \"từ 2-D sang 1-D\" thì đáp án B reshape(-1).",
+      "reason": "reshape(-1) để NumPy tự tính độ dài, cho mảng 1 chiều 12 phần tử. reshape(2, 6) vẫn 2 chiều; reshape(1) báo lỗi vì 12 phần tử không vừa 1 ô; reshape() thiếu kích thước.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(newarr.ndim, newarr.shape)", "want": "1 (12,)" }] }
+    },
+    {
+      "ref": "w1011-lt/26/20", "stem": ["L06"], "code": ["L07-L09"], "ownerAnswer": ["L10"],
+      "fill": [["join"], ["merge"], ["concatenate"], ["append"]], "answer": "C",
+      "reason": "np.concatenate((arr1, arr2)) nối các mảng thành một. NumPy không có np.join hay np.merge; np.append cần 2 tham số (mảng và giá trị thêm vào).",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(arr)", "want": "[1 2 3 4 5 6]" }] }
+    },
+    {
+      "ref": "w1011-lt/26/21", "stem": ["R01"], "code": ["R02-R03"], "ownerAnswer": ["R04"],
+      "fill": [["find"], ["search"], ["argmax"], ["where"]], "answer": "D",
+      "reason": "np.where(arr == 4) trả về chỉ số của mọi phần tử bằng 4: (array([3, 5, 6]),). NumPy không có np.find hay np.search; np.argmax chỉ trả một chỉ số.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(x)", "want": "(array([3, 5, 6]),)" }] }
+    },
+    {
+      "ref": "w1011-lt/26/22", "stem": ["R05"], "code": ["R06-R07"], "ownerAnswer": ["R08"],
+      "fill": [["sort"], ["argsort"], ["order"], ["sorted"]], "answer": "A",
+      "reason": "np.sort(arr) trả về mảng đã sắp xếp tăng dần. np.argsort trả về chỉ số theo thứ tự sắp xếp, không phải giá trị; NumPy không có np.order hay np.sorted.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import numpy as np", "append": "print(x)", "want": "[0 1 2 3]" }] }
+    },
+
+    {
+      "ref": "w1011-hw/2/1", "stem": ["L01"], "options": ["L02-L04"], "answer": "A",
+      "reason": "np.array(...) tạo mảng NumPy. NumPy 2 không còn np.object; không có np.createArray.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\nprint(type({option}).__name__)", "cases": [{ "want": "ndarray" }] }
+    },
+    {
+      "ref": "w1011-hw/2/2", "stem": ["L05"], "options": ["L06-L07"], "answer": "A",
+      "reason": "[[1, 2, 3] [4, 5, 6]] là mảng gồm 2 dòng, mỗi dòng 3 phần tử: 2 chiều (cách ghi thiếu dấu phẩy giữa hai dòng giống cách NumPy in mảng, đọc theo nghĩa thông thường). [1, 2, 3, 4, 5] là 1 chiều; 42 là 0 chiều.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\nprint(np.array([[1, 2, 3], [4, 5, 6]]).ndim, np.array([1, 2, 3, 4, 5]).ndim, np.array(42).ndim)", "expect": "2 1 0" }] }
+    },
+    {
+      "ref": "w1011-hw/2/3", "stem": ["L08"], "options": ["L09-L12"], "answer": "D",
+      "reason": "ndim là thuộc tính (không có ngoặc) cho số chiều. Gọi arr.ndim() báo lỗi vì số nguyên không gọi được; mảng không có dim.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([[1, 2], [3, 4]])\nprint({option})", "cases": [{ "want": "2" }] }
+    },
+    {
+      "ref": "w1011-hw/2/4", "stem": ["L13"], "options": ["L14-L17"], "answer": "A",
+      "reason": "Chỉ số bắt đầu từ 0: arr[0] là phần tử đầu tiên. print(arr, 1) in cả mảng và số 1; arr[1] là phần tử thứ hai; arr[-1] là phần tử cuối.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([5, 6, 7])\n{option}", "cases": [{ "want": "5" }] }
+    },
+    {
+      "ref": "w1011-hw/2/5", "stem": ["L18"], "code": ["L19"], "options": ["L20-L23"], "answer": "B",
+      "reason": "8 ở dòng chỉ số 1, cột chỉ số 2: arr[1, 2]. Các phương án khác vượt phạm vi (mảng chỉ có 2 dòng, 5 cột).",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\n{code}\n{option}", "cases": [{ "want": "8" }] }
+    },
+    {
+      "ref": "w1011-hw/2/6", "stem": ["R01"], "code": ["R02"], "options": ["R03-R06"], "answer": "C",
+      "reason": "3, 4, 5 có chỉ số 2, 3, 4: arr[2:5] (không lấy chỉ số 5).",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\n{code}\n{option}", "cases": [{ "want": "[3 4 5]" }] }
+    },
+    {
+      "ref": "w1011-hw/2/7", "stem": ["R07"], "code": ["R08"], "options": ["R09-R12"], "answer": "C",
+      "reason": "4 số cuối có chỉ số 3, 4, 5, 6: arr[3:] (từ chỉ số 3 tới hết; arr[-4:] cũng được). arr[:4] là 4 số đầu; arr[4:] chỉ có 3 số.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\n{code}\n{option}", "cases": [{ "want": "[4 5 6 7]" }] }
+    },
+    {
+      "ref": "w1011-hw/2/8", "stem": ["R13"], "code": ["R14"], "options": ["R15-R17"], "answer": "D",
+      "reason": "Vị trí đếm từ 1: vị trí lẻ là thứ 1, 3, 5, 7 (chỉ số 0, 2, 4, 6): arr[::2] cho [1 3 5 7]. A và B sai cú pháp; arr[1:2] chỉ có một phần tử.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\n{code}\n{option}", "cases": [{ "want": "[1 3 5 7]" }] }
+    },
+    {
+      "ref": "w1011-hw/2/9", "stem": ["R18"], "options": ["R19"], "answer": "B",
+      "reason": "arr.dtype là kiểu dữ liệu của mảng. Mảng không có type, ntype hay datatype.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([1, 2])\nprint({option})", "cases": [{ "want": "int64" }] }
+    },
+    {
+      "ref": "w1011-hw/2/10", "stem": ["R20"], "options": ["R21-R23"], "answer": "A",
+      "status": "NEEDS_REVIEW", "reviewGroup": "typography",
+      "reviewNote": "Phương án đúng viết dtype = ‘f’ bằng nháy cong nên chạy nguyên văn báo lỗi. Coi là nháy thẳng thì chỉ phương án thứ nhất tạo mảng số thực (float32). Ba phương án trên slide cùng nhãn \"A.\" (giống P8): giữ đúng thứ tự, nhãn tính lại khi hiển thị.",
+      "reason": "dtype='f' tạo mảng số thực. Không chỉ định dtype thì mảng số nguyên; mảng không có toFloat().",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\n{option}\nprint(arr.dtype)", "cases": [{ "replace": { "‘": "'", "’": "'" }, "want": "float32" }] }
+    },
+    {
+      "ref": "w1011-hw/3/11", "stem": ["L01-L02"], "options": ["L03-L06"], "answer": "B",
+      "reason": "View dùng chung dữ liệu với mảng gốc, nên sửa mảng gốc thì view cũng thay đổi theo.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\narr = np.array([1, 2, 3])\nv = arr.view()\narr[0] = 42\nprint(v[0])", "expect": "42" }] }
+    },
+    {
+      "ref": "w1011-hw/3/12", "stem": ["L07-L08"], "options": ["L09-L12"], "answer": "A",
+      "reason": "Copy có dữ liệu riêng, nên sửa mảng gốc thì bản copy không đổi.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\narr = np.array([1, 2, 3])\nc = arr.copy()\narr[0] = 42\nprint(c[0])", "expect": "1" }] }
+    },
+    {
+      "ref": "w1011-hw/3/13", "stem": ["L13"], "options": ["L14-L17"], "answer": "C",
+      "reason": "shape là bộ số cho biết số phần tử trên mỗi chiều, ví dụ (2, 3) là 2 dòng, 3 cột. Số dòng hay số cột chỉ là một phần của shape.",
+      "verify": { "kind": "docs", "refs": ["https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html"] }
+    },
+    {
+      "ref": "w1011-hw/3/14", "stem": ["R01"], "options": ["R02-R05"], "answer": "B",
+      "reason": "arr.shape là thuộc tính (không có ngoặc). arr.shape() báo lỗi vì tuple không gọi được; shape(arr) chỉ dùng được dạng np.shape(arr).",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([[1, 2], [3, 4]])\nprint({option})", "cases": [{ "want": "(2, 2)" }] }
+    },
+    {
+      "ref": "w1011-hw/3/15", "stem": ["R06"], "options": ["R07-R10"], "answer": "D",
+      "status": "NEEDS_REVIEW", "reviewGroup": "multiple",
+      "reviewNote": "concatenate() là cách bài học dạy, nhưng từ NumPy 2.0 có thêm concat() là tên khác của concatenate(), nên với NumPy hiện nay C cũng đúng. Đề xuất D.",
+      "reason": "np.concatenate nối hai hay nhiều mảng. NumPy không có array_join() hay join().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\na = np.array([1, 2])\nb = np.array([3])\nprint(np.concatenate((a, b)), np.concat((a, b)))", "expect": "[1 2 3] [1 2 3]" }] }
+    },
+    {
+      "ref": "w1011-hw/3/16", "stem": ["R11"], "options": ["R12-R15"], "answer": "B",
+      "reason": "np.array_split chia mảng thành nhiều phần. hstack và vstack là ghép mảng, không phải tách, nên D sai.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\nprint(np.{option})", "cases": [{ "replace": { "()": "(np.arange(4), 2)" }, "want": "[array([0, 1]), array([2, 3])]" }] }
+    },
+    {
+      "ref": "w1011-hw/3/17", "stem": ["R16"], "options": ["R17-R20"], "answer": "B",
+      "reason": "np.where(điều kiện) trả về vị trí các phần tử thoả điều kiện. NumPy không có find(), search() hay look().",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([1, 4, 2])\nprint(np.{option})", "cases": [{ "replace": { "()": "(arr == 4)" }, "want": "(array([1]),)" }] }
+    },
+    {
+      "ref": "w1011-hw/3/18", "stem": ["R21-R22"], "options": ["R23-R26"], "answer": "A",
+      "reason": "np.where(arr == 4) trả về chỉ số mọi phần tử bằng 4. Mảng không có search(), find() hay look().",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([1, 4, 2, 4])\nprint({option})", "cases": [{ "want": "(array([1, 3]),)" }] }
+    },
+    {
+      "ref": "w1011-hw/3/19", "stem": ["R27"], "options": ["R28-R31"], "answer": "C",
+      "reason": "np.sort(arr) sắp xếp các phần tử. NumPy không có order(), orderby() hay rank().",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([3, 1, 2])\nprint(np.{option})", "cases": [{ "replace": { "()": "(arr)" }, "want": "[1 2 3]" }] }
+    },
+    {
+      "ref": "w1011-hw/4/20", "stem": ["L01-L02"], "options": ["L03-L06"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "random.randint(100) của NumPy trả số nguyên từ 0 đến 99 (không bao giờ ra 100), nên không phương án nào cho đúng đoạn [0 .. 100]. Nếu đề là [0 .. 100) hoặc 0 đến 99 thì đáp án A. (Khác random.randint của Python lấy cả hai đầu.)",
+      "reason": "numpy.random.randint(high) trả số nguyên trong [0, high). rand() trả số thực trong [0, 1); rand(100) trả mảng 100 số thực; randint() thiếu tham số.",
+      "verify": { "kind": "run", "cases": [{ "setup": "from numpy import random\nrandom.seed(0)\nx = random.randint(100, size=100000)\nprint(x.min(), x.max())", "expect": "0 99" }] }
+    },
+    {
+      "ref": "w1011-hw/4/21", "stem": ["L07-L09"], "options": ["L10-L13"], "answer": "B",
+      "reason": "random.normal nhận loc (giá trị trung bình), scale (độ lệch chuẩn) và size (số lượng). Không có tham số mean, deviation, normal hay s.",
+      "verify": { "kind": "runOptions", "wrap": "from numpy import random\nrandom.seed(0)\nx = {option}\nprint(x.shape, round(float(x.mean())), round(float(x.std()), 1))", "cases": [{ "want": "(1000,) 50 0.2" }] }
+    },
+    {
+      "ref": "w1011-hw/4/22", "stem": ["L14"], "options": ["L15-L18"], "answer": "C",
+      "reason": "np.add(arr1, arr2) cộng từng phần tử của hai mảng (đề ghi array2, ý là arr2). np.append nối thêm phần tử chứ không cộng; sum(arr1, arr2) của Python cộng arr2 với tổng arr1; NumPy không có np.extend.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr1 = np.array([1, 2])\narr2 = np.array([10, 20])\nprint({option})", "cases": [{ "want": "[11 22]" }] }
+    },
+    {
+      "ref": "w1011-hw/4/23", "stem": ["L19"], "options": ["L20-L22"], "answer": "C",
+      "reason": "np.subtract(arr1, arr2) trừ từng phần tử. NumPy không có np.minus hay np.sub; np.min tìm giá trị nhỏ nhất.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr1 = np.array([5, 7])\narr2 = np.array([1, 2])\nprint({option})", "cases": [{ "want": "[4 5]" }] }
+    },
+    {
+      "ref": "w1011-hw/4/24", "stem": ["R01"], "options": ["R02-R05"], "answer": "D",
+      "reason": "Cả ba đều là cách làm tròn số thập phân trong NumPy: trunc và fix bỏ phần thập phân (làm tròn về phía 0), around làm tròn tới số chữ số chỉ định. (Từ NumPy 2.5, np.fix được khuyên thay bằng np.trunc nhưng vẫn dùng được.)",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\nprint(np.trunc(-3.7), np.fix(-3.7), np.around(3.1666, 2))", "expect": "-3.0 -3.0 3.17" }] }
+    },
+    {
+      "ref": "w1011-hw/4/25", "stem": ["R06"], "code": ["R07-R08"], "options": ["R09-R12"], "answer": "D",
+      "reason": "cumsum là tổng tích luỹ: 1, 1 + 2 = 3, 1 + 2 + 3 = 6.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np", "expect": "[1 3 6]" }], "answerIsOutput": true }
+    },
+    {
+      "ref": "w1011-hw/4/26", "stem": ["R13"], "options": ["R14-R17"], "answer": "C",
+      "reason": "NumPy là thư viện nền tảng cho tính toán khoa học với Python (mảng nhiều chiều, đại số tuyến tính…). Vẽ đồ thị là Matplotlib; học máy là scikit-learn…",
+      "verify": { "kind": "docs", "refs": ["https://numpy.org/doc/stable/user/whatisnumpy.html"] }
+    },
+    {
+      "ref": "w1011-hw/4/27", "stem": ["R18"], "options": ["R19-R22"], "answer": "A",
+      "reason": "np.array(list) chuyển list thành mảng NumPy. numpy(...) và array(...) không gọi được khi đã import numpy as np; không có create.array.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\nmy_list = [1, 2, 3]\nprint({option})", "cases": [{ "replace": { "(list)": "(my_list)" }, "want": "[1 2 3]" }] }
+    },
+    {
+      "ref": "w1011-hw/4/28", "stem": ["R23"], "options": ["R24-R27"],
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Mảng 1 chiều 5 phần tử có shape (5,) (tuple một phần tử), không có trong các phương án. (5, 0) là mảng 2 chiều rỗng; (1, 5) và (5, 1) là mảng 2 chiều. Cần sửa phương án hoặc bỏ câu.",
+      "reason": "Chạy thử: np.array([1, 2, 3, 4, 5]).shape là (5,).",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\nprint(np.array([1, 2, 3, 4, 5]).shape)", "expect": "(5,)" }] }
+    },
+    {
+      "ref": "w1011-hw/5/29", "stem": ["L01-L02"], "options": ["L03-L06"], "answer": "A",
+      "status": "NEEDS_REVIEW", "reviewGroup": "multiple",
+      "reviewNote": "Dòng thứ 2, cột thứ 3 là chỉ số (1, 2): cả A arr[1, 2] và C arr[1][2] đều lấy đúng phần tử này. Đề xuất A (cách viết thường dùng của NumPy).",
+      "reason": "Chỉ số bắt đầu từ 0 nên dòng thứ 2 là 1, cột thứ 3 là 2.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\narr = np.array([[1, 2, 3], [4, 5, 6]])\nprint(arr[1, 2], arr[1][2])", "expect": "6 6" }] }
+    },
+    {
+      "ref": "w1011-hw/5/30", "stem": ["L07"], "options": ["L08-L11"], "answer": "B",
+      "reason": "np.zeros((3, 4)) tạo mảng 3 dòng 4 cột toàn số 0. Mảng toàn 1 là np.ones; ma trận đơn vị là np.eye.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\nz = np.zeros((3, 4))\nprint(z.shape, bool((z == 0).all()))", "expect": "(3, 4) True" }] }
+    },
+    {
+      "ref": "w1011-hw/5/31", "stem": ["L12-L13"], "options": ["L14-L17"], "answer": "A",
+      "status": "NEEDS_REVIEW", "reviewGroup": "multiple",
+      "reviewNote": "Cả A (a * b) và B (np.multiply(a, b)) đều nhân từng phần tử. a.dot(b) là tích vô hướng; NumPy không có np.mult. Đề xuất A.",
+      "reason": "Toán tử * trên mảng NumPy chính là np.multiply.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\na = np.array([1, 2])\nb = np.array([3, 4])\nprint(a * b, np.multiply(a, b), a.dot(b))", "expect": "[3 8] [3 8] 11" }] }
+    },
+    {
+      "ref": "w1011-hw/5/32", "stem": ["L18"], "options": ["L19-L22"], "answer": "B",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề viết np.arrange nhưng NumPy không có hàm này (tên đúng là np.arange), giống lỗi tên không khớp P10. Nếu là np.arange thì đáp án B: [5 7 9 11 13], dừng trước 15 nên giá trị lớn nhất không quá 14.",
+      "reason": "np.arange(start, stop, step) lấy giá trị từ start, bước step, không lấy stop.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\nprint(hasattr(np, 'arrange'), np.arange(5, 15, 2))", "expect": "False [ 5  7  9 11 13]" }] }
+    },
+    {
+      "ref": "w1011-hw/5/33", "stem": ["L23"], "options": ["L24-L27"], "answer": "B",
+      "status": "NEEDS_REVIEW", "reviewGroup": "multiple",
+      "reviewNote": "Cả A (arr.mean()) và B (np.mean(arr)) đều tính trung bình. mean(arr) báo lỗi vì chưa import; mảng không có average(). Đề xuất B.",
+      "reason": "arr.mean() và np.mean(arr) cho cùng kết quả.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\narr = np.array([1, 2, 6])\nprint(arr.mean(), np.mean(arr))", "expect": "3.0 3.0" }] }
+    },
+    {
+      "ref": "w1011-hw/5/34", "stem": ["R01"], "options": ["R02-R05"], "answer": "A",
+      "reason": "reshape đổi kích thước (shape) của mảng mà giữ nguyên dữ liệu, ví dụ 6 phần tử thành 2 x 3. Chuyển vị là transpose / .T; đảo ngược là flip.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\nprint(np.reshape(np.arange(6), (2, 3)).shape)", "expect": "(2, 3)" }] }
+    },
+    {
+      "ref": "w1011-hw/5/35", "stem": ["R06"], "options": ["R07-R10"], "answer": "B",
+      "status": "NEEDS_REVIEW", "reviewGroup": "multiple",
+      "reviewNote": "B (np.dot(a, b)) và C (a.dot(b)) là cùng một phép tích nên cả hai đều đúng; D (np.cross) cũng là một loại tích (tích có hướng). A sai cú pháp. Đề xuất B.",
+      "reason": "np.dot(a, b) và a.dot(b) tính tích vô hướng / tích ma trận.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\na = np.array([1, 2, 3])\nb = np.array([4, 5, 6])\nprint(np.dot(a, b), a.dot(b), np.cross(a, b))", "expect": "32 32 [-3  6 -3]" }] }
+    },
+    {
+      "ref": "w1011-hw/5/36", "stem": ["R11"], "options": ["R12-R14"], "answer": "B",
+      "reason": "np.argmax trả về vị trí của giá trị lớn nhất. np.max trả về chính giá trị đó; không có find_max_index hay max_index.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([3, 9, 2])\nprint({option})", "cases": [{ "want": "1" }] }
+    },
+    {
+      "ref": "w1011-hw/5/37", "stem": ["R15"], "options": ["R16-R19"], "answer": "A",
+      "status": "NEEDS_REVIEW",
+      "reviewNote": "Đề hỏi phần tử bé hơn 10 nhưng mọi phương án đều lọc arr > 10 (lớn hơn 10). Nếu đề là \"lớn hơn 10\" thì đáp án A arr[arr > 10].",
+      "reason": "Lọc bằng mảng điều kiện: arr[arr > 10] lấy các phần tử lớn hơn 10. np.extract nhận điều kiện trước; mảng không có filter hay extract.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\narr = np.array([5, 10, 15])\nprint(arr[arr > 10], arr[arr < 10])", "expect": "[15] [5]" }] }
+    },
+    {
+      "ref": "w1011-hw/5/38", "stem": ["R20"], "options": ["R21-R24"], "answer": "A",
+      "reason": "np.sqrt(arr) tính căn bậc hai từng phần tử. Mảng không có phương thức sqrt(); không có square_root.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([4, 9])\nprint({option})", "cases": [{ "want": "[2. 3.]" }] }
+    },
+    {
+      "ref": "w1011-hw/6/39", "stem": ["L01"], "options": ["L02-L05"], "answer": "A",
+      "reason": "np.clip(arr, min, max) giữ các giá trị trong phạm vi chỉ định: giá trị nhỏ hơn min thành min, lớn hơn max thành max. Lọc theo điều kiện là arr[điều kiện].",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\nprint(np.clip(np.array([1, 5, 10]), 2, 8))", "expect": "[2 5 8]" }] }
+    },
+    {
+      "ref": "w1011-hw/6/40", "stem": ["L06-L07"], "options": ["L08-L11"], "answer": "A",
+      "reason": "np.diag(mảng 1 chiều) tạo ma trận đường chéo. np.diagonal chỉ lấy đường chéo của mảng từ 2 chiều trở lên; không có create_diag hay arr.diag().",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([1, 2])\nprint({option})", "cases": [{ "want": "[[1 0]\n [0 2]]" }] }
+    },
+    {
+      "ref": "w1011-hw/6/41", "stem": ["L12-L13"], "options": ["L14-L17"], "answer": "D",
+      "status": "NEEDS_REVIEW", "reviewGroup": "multiple",
+      "reviewNote": "Cả B (arr.cumprod()) và D (np.cumprod(arr)) đều tính tích tích luỹ (và đều nhận tham số axis). prod(arr) báo lỗi vì chưa import; np.multiply cần 2 mảng. Đề xuất D.",
+      "reason": "Tích tích luỹ của [1, 2, 3] là [1, 2, 6].",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\narr = np.array([1, 2, 3])\nprint(arr.cumprod(), np.cumprod(arr))", "expect": "[1 2 6] [1 2 6]" }] }
+    },
+    {
+      "ref": "w1011-hw/6/42", "stem": ["L18"], "options": ["L19-L22"], "answer": "C",
+      "reason": "np.intersect1d(a, b) trả về các giá trị chung (đã sắp xếp, không trùng). NumPy không có np.intersect hay np.common; mảng không có intersection.",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\na = np.array([1, 2, 3])\nb = np.array([2, 3, 4])\nprint({option})", "cases": [{ "want": "[2 3]" }] }
+    },
+    {
+      "ref": "w1011-hw/6/43", "stem": ["R01-R02"], "options": ["R03-R05"], "answer": "A",
+      "status": "NEEDS_REVIEW", "reviewGroup": "multiple",
+      "reviewNote": "A (np.mean(arr, axis=1)), B (arr.mean(axis=0)) và C (np.average(arr, axis=1)) đều tính trung bình theo một trục của mảng 2 chiều; chỉ D sai (mảng 2 chiều không có trục 2). Đề xuất A.",
+      "reason": "axis=0 tính theo cột, axis=1 tính theo dòng.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import numpy as np\narr = np.array([[1, 2], [3, 5]])\nprint(np.mean(arr, axis=1), arr.mean(axis=0), np.average(arr, axis=1))", "expect": "[1.5 4. ] [2.  3.5] [1.5 4. ]" }] }
+    },
+    {
+      "ref": "w1011-hw/6/44", "stem": ["R06"], "options": ["R07-R10"], "answer": "A",
+      "status": "NEEDS_REVIEW", "reviewGroup": "typography",
+      "reviewNote": "Phương án A và D dùng dấu \"–\" thay cho dấu trừ nên chạy nguyên văn báo lỗi. Coi là dấu trừ thì chỉ A đưa mảng về đoạn [0, 1] (D là chuẩn hoá theo trung bình và độ lệch chuẩn).",
+      "reason": "Chuẩn hoá min–max: (arr - min) / (max - min) cho giá trị nhỏ nhất 0, lớn nhất 1. NumPy không có np.scale; mảng không có normalize().",
+      "verify": { "kind": "runOptions", "wrap": "import numpy as np\narr = np.array([2, 4, 6])\nprint({option})", "cases": [{ "replace": { "–": "-" }, "want": "[0.  0.5 1. ]" }] }
+    }
+  ]
+}

@@ -217,6 +217,13 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - E2E chạy với backend + database dev đang chạy (dữ liệu thật), lệnh riêng `npm run test:e2e`, không gộp vào `npm run test`.
 - Trên điện thoại: vuốt trái / phải để chuyển câu (tương đương phím ← →); đồng hồ thi thử luôn hiện khi cuộn.
 
+### D-042 · Thêm Bài 11 (NumPy) cho môn Python, cài NumPy để kiểm chứng · Đã chốt (chủ dự án, 2026-10-02)
+- Chủ dự án bổ sung 2 file `w10-w11-c07_phan-tich-du-lieu-numpy` (lý thuyết + bài tập). Thêm thành **Bài 11 "Phân tích dữ liệu và NumPy"**, làm theo bản đồ vị trí (D-035), D-020, D-026 như 10 bài trước.
+- Cài `numpy` 2.5.3 vào `scripts/.venv` (ghi trong `scripts/requirements.txt`) chỉ để `verify_python_answers.py` chạy thật code NumPy. Không ảnh hưởng web app.
+- Mục 11 trang 24 của file lý thuyết chỉ là bảng ký hiệu kiểu dữ liệu (i, b, O, f…), không có câu hỏi: bỏ qua, ghi lý do trong bản đồ. Phần "BÀI TẬP" lập trình (HW trang 7–11) không đưa vào (P14).
+- Thêm nhóm duyệt `multiple` trong `review.md`: câu một đáp án mà có từ 2 phương án cùng đúng, để chủ dự án quyết cả nhóm.
+- Kết quả: Bài 11 có 65 câu (50 `PUBLISHED`, 15 `NEEDS_REVIEW`); cả môn 360 câu, 312 `PUBLISHED`, 48 `NEEDS_REVIEW`.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

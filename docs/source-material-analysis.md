@@ -12,7 +12,7 @@
 > - **P3**: giải quyết theo P2 (Claude xác định đáp án đúng).
 > - **G5** (D-031): tên môn "Giáo dục quốc phòng và an ninh", slug `gdqp`.
 > - **P5–P14** (D-033, D-034): câu trùng giữ một; câu lỗi đề để `NEEDS_REVIEW`; P7, P8, P9, P11, P14 theo D-034; mã học phần `IPPA233277`, chia 10 bài theo buổi học.
-> - **Kết quả trích xuất Python** (D-036): 295 câu, 262 `PUBLISHED`, 33 `NEEDS_REVIEW` (gồm cả các câu P6, P10). Câu lỗi in ấn và câu hỏi mở đã duyệt; danh sách câu còn chờ quyết nằm ở đầu `database/seed/python/generated/review.md`.
+> - **Kết quả trích xuất Python** (D-036, D-042): 360 câu, 312 `PUBLISHED`, 48 `NEEDS_REVIEW` (gồm cả các câu P6, P10). Bài 11 (NumPy, 2 file w10-w11 bổ sung ngày 2026-10-02) có 65 câu. Câu lỗi in ấn và câu hỏi mở của 10 bài đầu đã duyệt; danh sách câu còn chờ quyết nằm ở đầu `database/seed/python/generated/review.md`.
 > - Còn mở: G4.
 >
 > **Cập nhật Phase 4A (2026-10-01):** đã trích xuất và import đủ 230 câu GDQP; cách làm và kết quả kiểm tra ở [development-plan.md](development-plan.md).

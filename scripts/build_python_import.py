@@ -48,6 +48,8 @@ POSITION_DEPENDENT_RE = re.compile(r"tất cả|cả\s+(3|ba|2|hai|4|bốn)\b|(�
 REVIEW_GROUPS = {
     "open": "Câu hỏi mở không có phương án A–D trong tài liệu (chỉ có bài làm của chủ dự án). Claude tạo 4 phương án "
             "theo cách làm của câu điền khuyết (D-026); đáp án đã chạy kiểm chứng. Cần chủ dự án đồng ý mở rộng D-026",
+    "multiple": "Câu một đáp án nhưng có từ 2 phương án cùng đúng (đã chạy thử từng phương án). Cần chủ dự án chọn: "
+                "giữ một phương án làm đáp án (đề xuất ghi trong từng câu), hay để ngoài bài làm",
     "typography": "Code không chạy được nguyên văn vì ký tự in ấn (PowerPoint đổi \"-\" thành \"–\", nháy thẳng "
                   "thành nháy cong, lệnh không thụt lề do nhãn phương án chiếm chỗ). Đáp án đề xuất đã chạy kiểm chứng "
                   "sau khi sửa ký tự",
