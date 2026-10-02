@@ -2,7 +2,7 @@
 
 Nền tảng web học tập và luyện thi trắc nghiệm **nhiều môn**. Hai môn đầu tiên: **Nhập môn lập trình Python** và **Giáo dục quốc phòng và an ninh**. Môn mới được thêm dưới dạng dữ liệu, không cần sửa kiến trúc.
 
-> **Trạng thái:** đang làm Phase 1 (project setup). Đã có khung frontend và backend; trang chủ hiển thị trạng thái backend/database qua `GET /api/v1/health`. Chưa có tính năng học/làm bài. Tiến độ: [docs/development-plan.md](docs/development-plan.md).
+> **Trạng thái:** đã dùng được để học: chọn môn → luyện tập từng bài (biết ngay đúng/sai) hoặc thi thử có giờ, xem lại bài làm, lượt làm gần đây. Dùng tốt trên điện thoại và cài được lên màn hình chính (PWA). Chưa có đăng nhập (Phase 7). Tiến độ: [docs/development-plan.md](docs/development-plan.md).
 
 ## Công nghệ
 
@@ -96,7 +96,16 @@ npm install        # lần đầu, hoặc khi package.json thay đổi
 npm run dev
 ```
 
-Mở http://localhost:5173. Trang chủ hiện "Backend: hoạt động" và "Database: hoạt động". Vite chuyển các request `/api` sang backend ở cổng 8080.
+Mở http://localhost:5173. Trang chủ hiện danh sách môn (database mới thì cần nhập câu hỏi trước, xem mục dưới). Vite chuyển các request `/api` sang backend ở cổng 8080.
+
+### Cài lên điện thoại (PWA)
+
+Trình duyệt chỉ cho cài khi trang chạy qua **HTTPS** (hoặc `localhost` trên chính máy đó), nên trên điện thoại hãy mở bản đã deploy, không mở bản dev qua địa chỉ IP trong mạng nhà.
+
+- Android (Chrome): menu ⋮ → "Cài đặt ứng dụng" / "Thêm vào màn hình chính".
+- iPhone (Safari): nút Chia sẻ → "Thêm vào MH chính".
+
+Mất mạng vẫn mở được app và thấy thông báo "Bạn đang offline", nhưng không làm bài được (câu hỏi và chấm điểm nằm ở server). Có bản mới thì app hỏi trước khi tải lại.
 
 ### Nhập câu hỏi (một lần mỗi máy, hoặc khi dữ liệu thay đổi)
 

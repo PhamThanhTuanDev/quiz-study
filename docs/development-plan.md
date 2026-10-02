@@ -6,7 +6,7 @@
 ## Tiến độ hiện tại
 
 > Cập nhật: 2026-10-02 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch đã duyệt cả 5 đề xuất (D-040, D-041); đang làm theo "Thứ tự làm", tiến độ ở mục "Tiến độ 10" (bước 1–3 xong; còn bước 4: rà code, tài liệu, báo cáo).
+> **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch đã duyệt cả 5 đề xuất (D-040, D-041); đang làm theo "Thứ tự làm", tiến độ ở mục "Tiến độ 10" **Phase 10 đã làm xong cả 4 bước, chờ chủ dự án duyệt** (2026-10-03). Sau khi duyệt: quay lại Phase 7–9 theo D-039.
 > **2026-10-02:** thêm Bài 11 NumPy cho môn Python (D-042). Theo yêu cầu chủ dự án (D-043), Claude tự sửa các câu lỗi đề cho đúng (có ghi vết, người học thấy "Đã sửa so với tài liệu"): môn Python 360 câu, cả 360 `PUBLISHED`, không còn câu chờ duyệt. Xem mục Phase 4B.
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
@@ -349,7 +349,11 @@ Công việc:
 - [x] Bước 1: thanh đồng hồ + số câu đã làm dính đầu màn hình khi thi thử; `useSwipe` (vuốt trái = câu sau, phải = câu trước; bỏ qua vuốt ngắn / dọc / trong ô code), dòng gợi ý vuốt chỉ hiện trên màn hình cảm ứng; `useHotkey` gắn listener bằng `useLayoutEffect` (trước đó test phím tắt thỉnh thoảng hỏng vì listener gắn trễ). Vùng bấm đã ≥ 44px; không đặt `viewport-fit=cover` nên nội dung tự nằm trong vùng an toàn (tai thỏ). Test 81/81 (chạy 3 lần + file làm bài 10 lần), lint, build đạt; chụp thử cuộn trang ở 390px: đồng hồ vẫn hiện.
 - [x] Bước 2: `vite-plugin-pwa` 1.3.0 (thêm 309 gói chỉ dùng lúc build, 0 lỗ hổng; npm cảnh báo `glob@11` cũ do `workbox-build` kéo theo). Manifest tiếng Việt, service worker lưu sẵn 15 file giao diện, không lưu đệm `/api`; icon 192 / 512 / maskable / apple-touch tạo bằng `scripts/generate-pwa-icons.ps1` (Chrome chụp ở 512px rồi thu nhỏ: Chrome có độ rộng cửa sổ tối thiểu nên chụp nhỏ bị cắt). `OfflineBanner` (+ `useOnlineStatus`), `UpdatePrompt` / `PwaUpdatePrompt` (hỏi trước khi tải bản mới). Kiểm tra bằng Chrome trên bản build (`vite preview`): manifest không lỗi, Chrome báo cài được, service worker điều khiển trang, tắt mạng vẫn mở được trang và hiện "Bạn đang offline". Test 84/84, lint, build đạt.
 - [x] Bước 3: `npm run test:e2e` (`playwright.config.ts`, `e2e/quiz-flow.spec.ts`, có sẵn từ commit `7954ae8`), 3 luồng × 2 khung (Pixel 7, máy tính): luyện tập (Enter / bấm "Kiểm tra", vuốt / phím →), thi thử (nộp, xem lại, lượt làm gần đây), môn không tồn tại. Sửa 2 lỗi khi chạy lần đầu: lệnh bật backend ghi rõ `.\mvnw.cmd` (Windows có thể tắt việc tìm lệnh trong thư mục hiện tại); test chọn môn tìm trong `<main>` (trước đó bấm nhầm link "Trang chủ" của thanh điều hướng). Kết quả 6/6, chạy 2 lần đều đạt; build, lint, 84/84 test Vitest đạt.
-- [ ] Bước 4
+- [x] Bước 4: agent `code-reviewer` rà toàn bộ Phase 10 + D-043: đồng ý, 1 điểm trung bình, 3 điểm nhỏ.
+  - Đã sửa: bản deploy (Dockerfile) chưa trả `index.html` cho đường dẫn của SPA (mở thẳng / tải lại `/subjects/python` ra 404) → `SpaFallbackConfig` + 4 test; manifest được trả đúng kiểu `application/manifest+json` (`server.mime-mappings`). Kiểm tra bằng backend thật có bản build frontend trong `static/`: trang app, `sw.js`, manifest, icon đều 200; `/api/...` sai và file thiếu vẫn 404 Problem Details.
+  - Đã sửa: `edits.options` ghi chữ cái sai thì báo lỗi rõ ràng (trước đó Python dừng với `ValueError`).
+  - Giữ nguyên, có lý do: so khớp phương án khi import bỏ qua cả khoảng trắng / thụt lề (chỉ nhằm bắt phương án bị đổi chỗ; sửa thụt lề trong cùng phương án vẫn là phương án đó); vuốt chỉ loại trừ ô code `pre` (câu hỏi không có nội dung cuộn ngang khác).
+  - Kết quả: backend 113/113, frontend 84/84 + build + lint, E2E 6/6, Python 360/360.
 
 ---
 
