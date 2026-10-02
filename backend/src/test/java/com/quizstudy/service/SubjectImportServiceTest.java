@@ -226,6 +226,19 @@ class SubjectImportServiceTest {
     }
 
     @Test
+    void reimport_allowsTypographyFixes_inTheAnswersOfAQuestionSomeoneHasAnswered() {
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("print(“a”)", true), answer("3 – 1", false))), false);
+        markAsUsed(onlyQuestion());
+
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("print(\"a\")", true), answer("3 - 1", false))), true);
+        flushAndClear();
+
+        assertThat(onlyQuestion().getAnswers()).extracting(Answer::getContent).containsExactly("print(\"a\")", "3 - 1");
+    }
+
+    @Test
     void reimport_allowsFixingTheCorrectAnswer_ofAQuestionSomeoneHasAnswered() {
         importService.importSubject(fileWith("Môn",
                 question("Câu 1", "Đề", PUBLISHED, answer("A", true), answer("B", false))), false);

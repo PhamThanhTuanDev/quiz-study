@@ -3,12 +3,11 @@
   "chapter": 3,
   "questions": [
     {
-      "ref": "w022-hw/3/1",
-      "stem": ["L01"],
-      "options": ["L02-L09"],
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "A (if expression:) và B (if (expression):) đều là cú pháp hợp lệ: cặp ngoặc chỉ là một phần của biểu thức. Câu một đáp án nhưng có hai phương án đúng (P3).",
-      "reason": "Theo https://docs.python.org/3/reference/compound_stmts.html#the-if-statement, if nhận một biểu thức bất kỳ; (expression) cũng là biểu thức. Cả A và B đều đúng."
+      "ref": "w022-hw/3/1", "stem": ["L01"], "options": ["L02-L09"],
+      "reason": "if cần dấu hai chấm cuối dòng; điều kiện có hay không có ngoặc tròn đều được, nên A và B đều đúng, C thiếu dấu hai chấm.",
+      "answer": "D",
+      "edits": {"note": "A và B đều đúng cú pháp (ngoặc tròn chỉ là một phần của biểu thức); thay phương án D bằng \"Cả hai cách A và B đều đúng\".", "options": {"D": "Cả hai cách A và B đều đúng"}},
+      "verify": {"kind": "run", "cases": [{"setup": "def ok(src):\n    try:\n        compile(src, 'x', 'exec')\n        return True\n    except SyntaxError:\n        return False\nprint(ok('if True:\\n    pass'), ok('if (True):\\n    pass'), ok('if True\\n    pass'))", "expect": "True True False"}]}
     },
     {
       "ref": "w022-hw/3/2",
@@ -59,20 +58,12 @@
       }
     },
     {
-      "ref": "w022-hw/3/5",
-      "stem": ["R09-R10"],
-      "code": ["R11-R17"],
-      "ownerAnswer": ["R18"],
-      "fill": [
-        ["if", "==", ":", "elif", ">", ":", "else:"],
-        ["if", "==", ":", "else", ">", ":", "elif:"],
-        ["if", ">", ":", "elif", "==", ":", "else:"],
-        ["if", "=", ":", "elif", ">", ":", "else:"]
-      ],
+      "ref": "w022-hw/3/5", "stem": ["R09-R10"], "code": ["R11-R17"], "ownerAnswer": ["R18"],
+      "fill": [["if", "==", ":", "elif", ">", ":", "else:"], ["if", "==", ":", "else", ">", ":", "elif:"], ["if", ">", ":", "elif", "==", ":", "else:"], ["if", "=", ":", "elif", ">", ":", "else:"]],
       "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề yêu cầu in 1, 2, 3 nhưng code in \"Yes\", \"No\", \"No\" (hai nhánh sau in giống nhau), đề và code mâu thuẫn. Phương án A (if == / elif > / else) là cách điền theo đề, đề xuất làm đáp án nếu sửa lại lệnh in.",
-      "reason": "Theo đề: a bằng b → nhánh if a == b; a lớn hơn b → elif a > b; còn lại → else."
+      "reason": "a bằng b dùng ==, lớn hơn dùng >; các nhánh nối bằng if / elif / else và cuối mỗi điều kiện có dấu hai chấm. D dùng = (gán) sai cú pháp; B đặt điều kiện sau else; C đảo thứ tự điều kiện nên in sai số.",
+      "edits": {"note": "Code gốc in \"Yes\", \"No\", \"No\" không khớp đề (in 1, 2, 3); sửa lệnh in thành print(1), print(2), print(3).", "code": [["print(\"Yes\")", "print(1)"], ["print(\"No\")", "print(2)"], ["print(\"No\")", "print(3)"]]},
+      "verify": {"kind": "fill", "cases": [{"want": "2"}, {"replace": {"a = 50; b = 10": "a = 10; b = 10"}, "want": "1"}, {"replace": {"a = 50; b = 10": "a = 1; b = 10"}, "want": "3"}]}
     },
     {
       "ref": "w022-hw/4/6",
@@ -184,21 +175,11 @@
       "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/reference/compound_stmts.html#finally-clause"] }
     },
     {
-      "ref": "w022-hw/5/15",
-      "stem": ["R01-R02"],
-      "options": ["R03-R10"],
+      "ref": "w022-hw/5/15", "stem": ["R01-R02"], "options": ["R03-R10"],
       "answer": "C",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): trên slide lệnh print('TRUE') nằm thẳng dưới nhãn phương án; thụt vào thì chỉ C đúng. z thuộc [-5; -1] là -5 <= z <= -1 (and), thuộc [1; 5] là 1 <= z <= 5 (and); hai đoạn nối bằng or. Khi chạy thử, lệnh print được thụt vào cho đúng cú pháp (trên slide nó nằm thẳng dưới nhãn phương án). D còn có dấu nháy cong (’) trong tài liệu.",
-      "verify": {
-        "kind": "runOptions",
-        "cases": [
-          { "setup": "z = -3", "replace": { "\nprint(": "\n    print(" }, "want": "TRUE" },
-          { "setup": "z = 3", "replace": { "\nprint(": "\n    print(" }, "want": "TRUE" },
-          { "setup": "z = 0", "replace": { "\nprint(": "\n    print(" }, "want": "" },
-          { "setup": "z = -6", "replace": { "\nprint(": "\n    print(" }, "want": "" },
-          { "setup": "z = 6", "replace": { "\nprint(": "\n    print(" }, "want": "" }
-        ]
-      }
+      "verify": {"kind": "runOptions", "cases": [{"setup": "z = -3", "want": "TRUE"}, {"setup": "z = 3", "want": "TRUE"}, {"setup": "z = 0", "want": ""}, {"setup": "z = -6", "want": ""}, {"setup": "z = 6", "want": ""}]},
+      "edits": {"note": "Thụt lệnh print vào trong if và đổi nháy cong thành nháy thẳng (lỗi trình bày của slide).", "allOptions": [["\nprint(", "\n    print("], ["’", "'"]]}
     },
     {
       "ref": "w022-hw/5/16",

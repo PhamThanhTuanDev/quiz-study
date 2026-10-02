@@ -19,11 +19,10 @@
 
 1. **Nhiều môn, không hard-code một môn.** Môn học là dữ liệu (`subjects`). Không tạo bảng, route, component, enum hay nhánh `if` riêng cho một môn (không `python_questions`, không `if (subject === "python")`). Thêm môn mới không được đòi hỏi sửa code lõi.
 2. **Không xoá, ghi đè, đổi tên hay di chuyển tài liệu nguồn** (các file `*.pdf` ở thư mục gốc và mọi file câu hỏi người dùng cung cấp) khi chưa được đồng ý rõ ràng.
-3. **Không thay đổi nội dung câu hỏi.** Quy tắc về đáp án (chi tiết: `.claude/rules/source-material.md`, D-020, D-021 trong `docs/decisions.md`):
-   - **GDQP:** lấy đáp án theo chữ đỏ trong tài liệu, không tự sửa.
-   - **Python:** dấu tô trong tài liệu là bài làm chưa kiểm chứng của chủ dự án, **không dùng**. Claude tự xác định đáp án đúng; câu có code phải **chạy thật bằng Python 3** để kiểm chứng; ghi lý do cho từng câu.
+3. **Câu hỏi phải đúng để học (D-043).** Giữ nội dung theo tài liệu khi tài liệu đúng; **câu sai, mơ hồ, thiếu, không có hoặc có nhiều đáp án đúng thì Claude tự sửa cho đúng** (đề, code, phương án), không để chờ duyệt. Mỗi chỗ sửa phải ghi vết (bản gốc → bản sửa, lý do) và hiện ghi chú "Đã sửa so với tài liệu" cho người học. Chỉ hỏi chủ dự án khi không thể biết ý đúng. Chi tiết: `.claude/rules/source-material.md`, D-020, D-021, D-043 trong `docs/decisions.md`.
+   - **GDQP:** lấy đáp án theo chữ đỏ trong tài liệu; chỉ sửa khi chắc chắn tài liệu sai (ghi vết như trên).
+   - **Python:** dấu tô trong tài liệu là bài làm chưa kiểm chứng của chủ dự án, **không dùng**. Claude tự xác định đáp án đúng; câu có code phải **chạy thật bằng Python 3** để kiểm chứng (kể cả sau khi sửa); ghi lý do cho từng câu.
    - **Câu điền khuyết** được chuyển thành trắc nghiệm A–D; Claude tạo phương án, phương án sai cũng phải kiểm chứng (D-026).
-   - Câu lỗi đề hoặc mơ hồ thì đánh dấu `NEEDS_REVIEW`, ghi lý do và hỏi chủ dự án.
 4. **Không thêm dependency** (npm, Maven, công cụ) khi chưa nêu lý do và được đồng ý. Ghi quyết định vào `docs/decisions.md`.
 5. **Trước feature lớn phải lập plan**: file sẽ tạo/sửa, dependency, cách kiểm tra. Trình bày và chờ duyệt.
 6. **Không thay đổi lớn ngoài yêu cầu.** Không refactor hay "tiện tay sửa" phần không liên quan; thấy vấn đề thì ghi lại và báo.

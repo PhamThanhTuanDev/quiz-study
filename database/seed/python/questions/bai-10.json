@@ -34,11 +34,11 @@
     },
     {
       "ref": "w0809-lt/33/6", "stem": ["R01-R02"], "code": ["R03-R11"], "ownerAnswer": ["R12"],
-      "fill": [["std.firstname()"], ["Student.printname()"], ["std.printname()"], ["printname(std)"]], "answer": "C",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề nói đối tượng tên std nhưng code tạo x = Student(\"Mike\") (tên không khớp, P10), nên chạy nguyên văn thì mọi phương án báo lỗi NameError. Nếu sửa x thành std thì đáp án C std.printname().",
+      "fill": [["std.firstname()"], ["Student.printname()"], ["std.printname()"], ["printname(std)"]],
+      "answer": "C",
       "reason": "Student kế thừa printname từ Person; gọi qua đối tượng: std.printname(). firstname là chuỗi, không gọi được; gọi qua lớp thì thiếu self; printname không phải hàm đứng riêng.",
-      "verify": { "kind": "fill", "cases": [{ "replace": { "x = Student": "std = Student" }, "want": "Mike" }] }
+      "verify": {"kind": "fill", "cases": [{"want": "Mike"}]},
+      "edits": {"note": "Code gốc tạo x = Student(\"Mike\") trong khi đề gọi đối tượng là std; sửa thành std = Student(\"Mike\").", "code": [["x = Student", "std = Student"]]}
     },
 
     {

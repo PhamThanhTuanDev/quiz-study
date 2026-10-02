@@ -56,11 +56,11 @@
       "verify": { "kind": "fill", "cases": [{ "want": "apple" }] }
     },
     {
-      "ref": "w023-hw/4/10", "stem": ["R08"], "options": ["R09-R12"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Viết trên một dòng như slide thì cả 4 phương án đều sai cú pháp: không được đặt lệnh for sau dấu ; trên cùng một dòng. Nếu hiểu là hai dòng (x = 0 rồi vòng for) thì chỉ A đúng (B, D dùng := sai chỗ, C thiếu dấu hai chấm).",
+      "ref": "w023-hw/4/10", "stem": ["R08"], "options": ["R09-R12"],
+      "answer": "A",
       "reason": "Tách thành hai dòng thì A chạy được và x = 10.",
-      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(x)", "cases": [{ "replace": { "; for": "\nfor" }, "want": "10" }] }
+      "verify": {"kind": "runOptions", "wrap": "{option}\nprint(x)", "cases": [{"want": "10"}]},
+      "edits": {"note": "Slide viết lệnh for sau dấu ; trên cùng một dòng (sai cú pháp với mọi phương án); tách thành hai dòng.", "allOptions": [["; for", "\nfor"]]}
     },
     {
       "ref": "w023-hw/4/11", "stem": ["R13"], "code": ["R14-R17"], "options": ["R18-R21"], "answer": "D",
@@ -78,17 +78,11 @@
       "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/reference/compound_stmts.html#the-for-statement"] }
     },
     {
-      "ref": "w023-hw/5/14", "stem": ["R01"], "code": ["R02-R06"], "options": ["R07-R10"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề hỏi ý nghĩa của x nhưng đoạn chương trình không có biến x; các phương án nói về k (tên biến không khớp, P10). Nếu đề là k thì đáp án A: k là số chữ số của n.",
+      "ref": "w023-hw/5/14", "stem": ["R01"], "code": ["R02-R06"], "options": ["R07-R10"],
+      "answer": "A",
       "reason": "Mỗi lần chia nguyên cho 10 bỏ đi một chữ số, k đếm số lần chia: k là số chữ số của n (n = 1000 cho k = 4, không phải 1 như D).",
-      "verify": {
-        "kind": "run",
-        "cases": [
-          { "stdin": "1000\n", "append": "print(k)", "expect": "Nhập n <= 1000: 4" },
-          { "stdin": "-305\n", "append": "print(k)", "expect": "Nhập n <= 1000: 3" }
-        ]
-      }
+      "verify": {"kind": "run", "cases": [{"stdin": "1000\n", "append": "print(k)", "expect": "Nhập n <= 1000: 4"}, {"stdin": "-305\n", "append": "print(k)", "expect": "Nhập n <= 1000: 3"}]},
+      "edits": {"note": "Đề gốc hỏi ý nghĩa của x nhưng code không có x; sửa thành k cho khớp code và các phương án.", "stem": [["ý ngh ĩa của x", "ý nghĩa của k"]]}
     },
     {
       "ref": "w023-hw/5/15", "stem": ["R11"], "code": ["R12-R16"], "options": ["R17-R20"], "answer": "D",
@@ -117,11 +111,11 @@
       "verify": { "kind": "run", "cases": [{ "expect": "555\n666" }], "answerIsOutput": true }
     },
     {
-      "ref": "w023-hw/6/19", "stem": ["R08"], "code": ["R09-R10"], "options": ["R11-R14"], "answer": "C",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Với bước -2, range(6, 0, -2) là 6, 4, 2 nên in 66, 44, 22 (không phải chỉ 66 44 như đề); không phương án nào cho đúng 66 44. Đề xuất C (-2) nếu sửa đề thành 66 44 22.",
+      "ref": "w023-hw/6/19", "stem": ["R08"], "code": ["R09-R10"], "options": ["R11-R14"],
+      "answer": "C",
       "reason": "Bước 0 báo lỗi ValueError; None báo lỗi TypeError; -1 in 66 55 44 33 22 11.",
-      "verify": { "kind": "runOptions", "intoBlanks": true, "cases": [{ "want": "66\n44\n22" }] }
+      "verify": {"kind": "runOptions", "intoBlanks": true, "cases": [{"want": "66\n44\n22"}]},
+      "edits": {"note": "Đề gốc ghi kết quả 66 44, nhưng range(6, 0, -2) cho 6, 4, 2; sửa thành 66 44 22.", "stem": [["66 44", "66 44 22"]]}
     },
     {
       "ref": "w023-hw/6/20", "stem": ["R15"], "code": ["R16-R20"], "options": ["R21-R24"], "answer": "B",

@@ -34,7 +34,7 @@ import com.quizstudy.repository.UserAnswerRepository;
  * <li>Bài khớp theo thứ tự ({@code displayOrder}); câu khớp theo nguồn (file + nhãn).</li>
  * <li>Câu có trong file: thêm mới, hoặc cập nhật tại chỗ (giữ id của câu và của phương án, để lựa chọn đã lưu
  * trong các lượt làm cũ vẫn trỏ đúng). Câu đã có người làm thì nội dung và số phương án phải giữ nguyên
- * (chỉ được đổi đáp án đúng), vì phương án khớp theo vị trí.</li>
+ * (chỉ được đổi đáp án đúng và sửa ký tự in ấn), vì phương án khớp theo vị trí.</li>
  * <li>Câu không còn trong file: xoá nếu chưa ai làm; đã có người làm thì chuyển {@code ARCHIVED}
  * (.claude/rules/database.md: không xoá cứng câu đã dùng).</li>
  * <li>Bài không còn trong file: xoá cùng các đề của bài, trừ khi bài còn câu hoặc đề đã có người làm.</li>
@@ -170,13 +170,25 @@ public class SubjectContentUpdater {
         }
     }
 
+    /**
+     * Có phương án nào đổi nghĩa không. Chỉ sửa ký tự in ấn (nháy cong thành nháy thẳng, "–" thành "-", khoảng
+     * trắng) thì vẫn là phương án cũ ở đúng vị trí cũ, nên lựa chọn đã lưu vẫn đúng: không tính là đổi (D-043).
+     */
     private static boolean contentChanged(List<Answer> answers, List<AnswerData> newAnswers) {
         for (int i = 0; i < answers.size(); i++) {
-            if (!answers.get(i).getContent().equals(newAnswers.get(i).content())) {
+            if (!ignoringTypography(answers.get(i).getContent()).equals(ignoringTypography(newAnswers.get(i).content()))) {
                 return true;
             }
         }
         return false;
+    }
+
+    static String ignoringTypography(String text) {
+        return text.replaceAll("[‘’]", "'")
+                .replaceAll("[“”]", "\"")
+                .replaceAll("[–—]", "-")
+                .replaceAll("\\s+", " ")
+                .strip();
     }
 
     private void removeChapter(Chapter chapter, boolean hasArchivedQuestions, List<String> problems) {

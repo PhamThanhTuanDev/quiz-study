@@ -82,6 +82,8 @@ class Question:
     review_group: str | None = None
     shuffle: bool = True
     used_lines: list[tuple[int, str]] = field(default_factory=list)
+    # Ghi chú cho người học, hiện cùng đúng/sai: những chỗ đã sửa so với tài liệu (D-043).
+    explanation: str | None = None
 
 
 # ---------------------------------------------------------------- Văn bản
@@ -339,6 +341,9 @@ def build_question(pages: Pages, sources: dict[str, dict], chapter: int, entry: 
     elif kind == "open":
         label += " (gốc: câu hỏi mở)"
 
+    if "edits" in entry:
+        content, code, options = apply_edits(entry["edits"], content, code, options)
+
     answer = entry.get("answer")
     question = Question(
         ref=ref, chapter=chapter, source=source, page=page, number=number, label=label, content=content,
@@ -347,10 +352,52 @@ def build_question(pages: Pages, sources: dict[str, dict], chapter: int, entry: 
         fill_values=fill_values, reason=entry.get("reason", ""), verify=entry.get("verify"),
         duplicate_of=entry.get("duplicateOf"), review_group=entry.get("reviewGroup"),
         used_lines=[(p, line.id) for p, line in stem_lines + code_lines + option_lines + owner_lines],
+        explanation=f"Đã sửa so với tài liệu: {entry['edits']['note']}" if "edits" in entry else None,
     )
     question.shuffle = not any(POSITION_DEPENDENT_RE.search(option) for option in options)
     check_question(question)
     return question
+
+
+def apply_edits(edits: dict, content: str, code: str | None, options: list[str]) -> tuple[str, str | None, list[str]]:
+    """Sửa câu lỗi cho đúng (D-043), ghi vết trong bản đồ thay vì gõ lại cả câu:
+    - "stem" / "code": danh sách [cũ, mới], thay lần xuất hiện đầu tiên, lần lượt theo thứ tự ghi;
+    - "setCode": đặt code mới cho câu tài liệu thiếu code;
+    - "allOptions": danh sách [cũ, mới], thay mọi chỗ trong mọi phương án (ví dụ nháy cong thành nháy thẳng);
+    - "options": {nhãn: nội dung mới}, thay cả phương án theo vị trí trong tài liệu (A = thứ nhất…);
+    - "note" (bắt buộc): mô tả chỗ sửa, hiện cho người học trong phần giải thích.
+    Chuỗi cũ không còn trong tài liệu (tài liệu đổi, gõ nhầm) thì báo lỗi, không sửa âm thầm.
+    """
+    if not str(edits.get("note", "")).strip():
+        raise MapError("edits phải có note mô tả chỗ đã sửa")
+    content = replace_each(content, edits.get("stem", []), "đề")
+    if "setCode" in edits:
+        if code is not None:
+            raise MapError("setCode chỉ dùng cho câu tài liệu không có code; câu có code thì sửa bằng \"code\"")
+        code = edits["setCode"]
+    elif edits.get("code"):
+        if code is None:
+            raise MapError("câu không có code để sửa")
+        code = replace_each(code, edits["code"], "code")
+    options = list(options)
+    for old, new in edits.get("allOptions", []):
+        if not any(old in option for option in options):
+            raise MapError(f"edits.allOptions: không phương án nào có '{old}'")
+        options = [option.replace(old, new) for option in options]
+    for letter, text in edits.get("options", {}).items():
+        index = LETTERS.index(letter)
+        if index >= len(options):
+            raise MapError(f"edits.options: không có phương án {letter}")
+        options[index] = text
+    return content, code, options
+
+
+def replace_each(text: str, pairs: list[list[str]], where: str) -> str:
+    for old, new in pairs:
+        if old not in text:
+            raise MapError(f"edits: không tìm thấy '{old}' trong {where}")
+        text = text.replace(old, new, 1)
+    return text
 
 
 def check_question(q: Question) -> None:
@@ -481,7 +528,7 @@ def question_json(q: Question) -> dict:
         "type": "SINGLE_CHOICE",
         "content": q.content,
         "codeSnippet": q.code,
-        "explanation": None,
+        "explanation": q.explanation,
         "shuffleAnswers": q.shuffle,
         "status": q.status,
         "reviewNote": q.review_note,
@@ -525,6 +572,8 @@ def write_review(config: dict, questions: list[Question], missing: list[str], pa
                 out.append(f"- {LETTERS[i]}. {option.replace(chr(10), ' ⏎ ')}{mark}")
             if q.review_note:
                 out += ["", f"> Cần duyệt: {q.review_note}"]
+            if q.explanation:
+                out += ["", f"> {q.explanation}"]
             if q.reason:
                 out += ["", f"Lý do: {q.reason}"]
             out.append("")

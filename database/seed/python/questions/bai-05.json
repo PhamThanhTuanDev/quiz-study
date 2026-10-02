@@ -40,11 +40,11 @@
     },
     {
       "ref": "w03-hw/3/7", "stem": ["R09"], "code": ["R10-R11"], "ownerAnswer": ["R12"],
-      "fill": [["1:5"], ["2:5"], ["0:5"], ["2:6"]], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Danh sách chỉ có 3 phần tử nhưng đề hỏi phần tử #2 → #5, và không rõ đánh số từ 0 hay từ 1 (câu 1 cùng trang dùng \"thứ #2\" là fruits[1]). Nếu đếm từ 1 thì đáp án A [1:5] (in ['banana', 'cherry']).",
-      "reason": "Lát cắt [1:5] lấy chỉ mục 1 đến 4; list ngắn hơn thì lấy tới hết.",
-      "verify": { "kind": "fill", "cases": [{ "want": "['banana', 'cherry']" }] }
+      "fill": [["1:5"], ["2:5"], ["0:5"], ["1:4"]],
+      "answer": "A",
+      "reason": "Phần tử thứ 2 đến thứ 5 có chỉ số 1 đến 4: lát cắt [1:5] (không lấy chỉ số 5).",
+      "verify": {"kind": "fill", "cases": [{"want": "['banana', 'cherry', 'orange', 'kiwi']"}]},
+      "edits": {"note": "List gốc chỉ có 3 phần tử nên không lấy được phần tử thứ 2 → 5; thêm 3 phần tử và ghi rõ \"thứ 2 đến thứ 5\".", "stem": [["phần tử #2 → #5", "phần tử thứ 2 đến thứ 5"]], "code": [["\"cherry\"]", "\"cherry\", \"orange\", \"kiwi\", \"melon\"]"]]}
     },
     {
       "ref": "w03-hw/3/8", "stem": ["R13"], "code": ["R14-R15"], "ownerAnswer": ["R16"],
@@ -68,9 +68,11 @@
       "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/tutorial/datastructures.html#tuples-and-sequences"] }
     },
     {
-      "ref": "w03-hw/4/12", "stem": ["L25-L26"], "options": ["L27-L30"], "status": "NEEDS_REVIEW",
-      "reviewNote": "Không kiểu nào trong 4 phương án vừa có thứ tự, vừa không thay đổi được, vừa không cho phần tử trùng: tuple cho phép trùng, set không có thứ tự, dictionary thay đổi được, list thay đổi được và cho phép trùng.",
-      "reason": "Đối chiếu tính chất các kiểu tập hợp trong tài liệu Python."
+      "ref": "w03-hw/4/12", "stem": ["L25-L26"], "options": ["L27-L30"],
+      "reason": "Tuple có thứ tự, không thay đổi được và cho phép phần tử trùng. List thay đổi được; set không có thứ tự; dictionary thay đổi được.",
+      "answer": "B",
+      "edits": {"note": "Đề gốc ghi \"phần tử không trùng lặp\", không kiểu nào thoả cả ba ý; sửa thành \"phần tử có thể trùng lặp\" (đúng tính chất của tuple).", "stem": [["phần tử không trùng lặp về giá trị", "phần tử có thể trùng lặp về giá trị"]]},
+      "verify": {"kind": "run", "cases": [{"setup": "t = (1, 1, 2)\nprint(t[0], t.count(1))\nt[0] = 5", "expect": "ERROR: TypeError"}]}
     },
     {
       "ref": "w03-hw/4/13", "stem": ["R01-R03"], "options": ["R04-R07"], "answer": "C",

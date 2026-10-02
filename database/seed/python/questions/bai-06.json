@@ -84,11 +84,11 @@
     },
     {
       "ref": "w041-lt/28/2", "stem": ["L10"], "code": ["L11-L17"], "ownerAnswer": ["L18"],
-      "fill": [["car[\"year\"]", "2020"], ["car.year", "2020"], ["car[\"key\"]", "2020"], ["car(\"year\")", "2020"]], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề nói đổi giá trị của khoá \"key\" nhưng trong car không có khoá \"key\"; 2020 là năm nên có lẽ ý đề là khoá \"year\" (P10). Nếu là \"year\" thì đáp án A car[\"year\"] = 2020; phương án C làm đúng theo chữ của đề nhưng chỉ thêm khoá mới.",
+      "fill": [["car[\"year\"]", "2020"], ["car.year", "2020"], ["car[\"key\"]", "2020"], ["car(\"year\")", "2020"]],
+      "answer": "A",
       "reason": "Gán qua khoá: car[\"year\"] = 2020.",
-      "verify": { "kind": "fill", "cases": [{ "append": "print(car[\"year\"])", "want": "2020" }] }
+      "verify": {"kind": "fill", "cases": [{"append": "print(car[\"year\"])", "want": "2020"}]},
+      "edits": {"note": "Đề gốc ghi khoá \"key\" nhưng car không có khoá này; sửa thành khoá \"year\".", "stem": [["khóa “key”", "khóa \"year\""]]}
     },
     {
       "ref": "w041-lt/28/3", "stem": ["R01"], "code": ["R02-R08"], "ownerAnswer": ["R09"],
@@ -139,18 +139,18 @@
       "verify": { "kind": "run", "cases": [{ "expect": "ERROR: SyntaxError" }] }
     },
     {
-      "ref": "w041-hw/1/8", "stem": ["R14"], "code": ["R15-R17"], "options": ["R18-R21"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề hỏi kết quả soam nhưng code in soduong, biến không tồn tại, nên chạy báo lỗi NameError (D). Nếu hỏi giá trị của soam thì đáp án A [-1, -2] (P10).",
+      "ref": "w041-hw/1/8", "stem": ["R14"], "code": ["R15-R17"], "options": ["R18-R21"],
+      "answer": "A",
       "reason": "*soam nhận các phần tử còn lại trước hai biến cuối: soam = [-1, -2].",
-      "verify": { "kind": "run", "cases": [{ "replace": { "print(soduong)": "print(soam)" }, "expect": "[-1, -2]" }], "answerIsOutput": true }
+      "verify": {"kind": "run", "cases": [{"expect": "[-1, -2]"}], "answerIsOutput": true},
+      "edits": {"note": "Code gốc in soduong (biến không tồn tại) trong khi đề hỏi soam; sửa thành print(soam).", "code": [["print(soduong)", "print(soam)"]]}
     },
     {
-      "ref": "w041-hw/1/9", "stem": ["R22"], "code": ["R23-R25"], "options": ["R26-R28"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề hỏi kết quả soam nhưng code in soduong (in ra 4, không có trong các phương án). Nếu hỏi giá trị của soam thì đáp án A [-1, -2, 3] (P10).",
+      "ref": "w041-hw/1/9", "stem": ["R22"], "code": ["R23-R25"], "options": ["R26-R28"],
+      "answer": "A",
       "reason": "*soam nhận mọi phần tử trừ phần tử cuối: soam = [-1, -2, 3].",
-      "verify": { "kind": "run", "cases": [{ "replace": { "print(soduong)": "print(soam)" }, "expect": "[-1, -2, 3]" }], "answerIsOutput": true }
+      "verify": {"kind": "run", "cases": [{"expect": "[-1, -2, 3]"}], "answerIsOutput": true},
+      "edits": {"note": "Code gốc in soduong trong khi đề hỏi soam; sửa thành print(soam).", "code": [["print(soduong)", "print(soam)"]]}
     },
     {
       "ref": "w041-hw/2/10", "stem": ["L01-L02"], "code": ["L03-L09"], "ownerAnswer": ["L10-L11"],
@@ -170,11 +170,11 @@
       "verify": { "kind": "run", "cases": [{ "expect": "24" }], "answerIsOutput": true }
     },
     {
-      "ref": "w041-hw/2/12", "stem": ["R01"], "code": ["R02-R07"], "options": ["R08-R11"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Mọi phương án đều ghi \"Tổng ngẫu nhiên…\" nhưng chương trình không tính tổng, chỉ tạo tuple 5 số ngẫu nhiên (có lẽ \"Tổng\" là gõ nhầm \"Tạo\"). Nếu vậy đáp án A: 5 phần tử trong đoạn [0, 100] (randint lấy cả hai đầu).",
+      "ref": "w041-hw/2/12", "stem": ["R01"], "code": ["R02-R07"], "options": ["R08-R11"],
+      "answer": "A",
       "reason": "range(5) lặp 5 lần; random.randint(0, 100) trả về số nguyên N với 0 <= N <= 100.",
-      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/random.html#random.randint"] }
+      "verify": {"kind": "docs", "refs": ["https://docs.python.org/3/library/random.html#random.randint"]},
+      "edits": {"note": "Các phương án gốc ghi \"Tổng ngẫu nhiên\" nhưng chương trình chỉ tạo tuple, không tính tổng; sửa thành \"Tạo ngẫu nhiên\".", "allOptions": [["Tổng ngẫu nhiên", "Tạo ngẫu nhiên"]]}
     },
     {
       "ref": "w041-hw/3/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "B",
@@ -182,9 +182,11 @@
       "verify": { "kind": "run", "cases": [{ "setup": "print({1, True}, {0, False})", "expect": "{1} {0}" }] }
     },
     {
-      "ref": "w041-hw/3/2", "stem": ["L06"], "options": ["L07-L10"], "status": "NEEDS_REVIEW",
-      "reviewNote": "Không phương án nào khai báo đúng một set: set{…} sai cú pháp; B là chuỗi (lại dùng nháy cong); set(50, 40, …) báo lỗi vì set() chỉ nhận một đối tượng lặp được; D là tuple. Cách đúng: {50, 40, 20, 30, 10} hoặc set((50, 40, 20, 30, 10)).",
-      "reason": "Chạy thử từng phương án: không phương án nào tạo ra set."
+      "ref": "w041-hw/3/2", "stem": ["L06"], "options": ["L07-L10"],
+      "reason": "Set khai báo bằng ngoặc nhọn chứa các giá trị. B là chuỗi; set(50, 40, …) báo lỗi vì set() chỉ nhận một đối tượng lặp được; D là tuple.",
+      "answer": "A",
+      "edits": {"note": "Không phương án gốc nào khai báo đúng set (A gốc là set{...} sai cú pháp); sửa A thành {50, 40, 20, 30, 10} và đổi nháy cong ở B thành nháy thẳng.", "options": {"A": "{50, 40, 20, 30, 10}"}, "allOptions": [["“", "\""], ["”", "\""]]},
+      "verify": {"kind": "runOptions", "wrap": "x = {option}\nprint(type(x).__name__)", "cases": [{"want": "set"}]}
     },
     {
       "ref": "w041-hw/3/3", "stem": ["L11"], "options": ["L12-L15"], "answer": "A",
@@ -232,9 +234,11 @@
       "verify": { "kind": "run", "cases": [{ "setup": "d = {'a': 1, 'b': 1, 'c': 'x'}\nprint(d)", "expect": "{'a': 1, 'b': 1, 'c': 'x'}" }] }
     },
     {
-      "ref": "w041-hw/5/2", "stem": ["L06"], "options": ["L07-L10"], "answer": "B",
+      "ref": "w041-hw/5/2", "stem": ["L06"], "options": ["L07-L10"],
+      "answer": "B",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong trong {“age”: “20”} là nháy thẳng. Dictionary viết {khoá: giá trị} với khoá chuỗi trong dấu nháy. {age: 20} báo lỗi vì age chưa có; dict(age: 20) và (…: …) sai cú pháp.",
-      "verify": { "kind": "runOptions", "wrap": "x = {option}\nprint(type(x).__name__)", "cases": [{ "replace": { "“": "\"", "”": "\"" }, "want": "dict" }] }
+      "verify": {"kind": "runOptions", "wrap": "x = {option}\nprint(type(x).__name__)", "cases": [{"want": "dict"}]},
+      "edits": {"note": "Đổi nháy cong thành nháy thẳng (lỗi in ấn của slide).", "allOptions": [["“", "\""], ["”", "\""]]}
     },
     {
       "ref": "w041-hw/5/3", "stem": ["L11"], "options": ["L12-L15"], "answer": "A",
@@ -242,16 +246,18 @@
       "verify": { "kind": "runOptions", "wrap": "d = {'a': 1}\n{option} d\nprint('ok')", "cases": [{ "want": "ok" }] }
     },
     {
-      "ref": "w041-hw/5/4", "stem": ["L16"], "options": ["L17-L19"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Có hai cách xoá phần tử theo key: pop(key) (A) và del d[key] (C viết del()). Câu một đáp án nhưng A và C đều có thể đúng. popitem xoá phần tử thêm vào sau cùng; dictionary không có remove.",
-      "reason": "d.pop(\"a\") và del d[\"a\"] đều xoá khoá \"a\".",
-      "verify": { "kind": "run", "cases": [{ "setup": "d = {'a': 1, 'b': 2}\nd.pop('a')\ne = {'a': 1, 'b': 2}\ndel(e['a'])\nprint(d, e)", "expect": "{'b': 2} {'b': 2}" }] }
+      "ref": "w041-hw/5/4", "stem": ["L16"], "options": ["L17-L19"],
+      "answer": "A",
+      "reason": "d.pop(key) xoá phần tử theo key (del d[key] cũng được). popitem() xoá phần tử thêm vào sau cùng; dictionary không có delete() hay remove().",
+      "verify": {"kind": "runOptions", "wrap": "d = {'a': 1, 'b': 2}\nd.{option}\nprint(d)", "cases": [{"replace": {"()": "('a')"}, "want": "{'b': 2}"}]},
+      "edits": {"note": "Phương án C gốc del() cũng xoá được theo key (del d[key]) nên câu có hai đáp án; thay C bằng delete() (không có trong Python).", "options": {"C": "delete()"}}
     },
     {
-      "ref": "w041-hw/5/5", "stem": ["L20-L21"], "options": ["L22-L25"], "answer": "C",
+      "ref": "w041-hw/5/5", "stem": ["L20-L21"], "options": ["L22-L25"],
+      "answer": "C",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong trong dic1[“key”] là nháy thẳng. Truy xuất giá trị theo khoá bằng dic1[\"key\"]. pop() cần khoá và xoá luôn phần tử; dictionary không có key() hay value().",
-      "verify": { "kind": "runOptions", "wrap": "print({option})", "cases": [{ "setup": "dic1 = {\"key\": 7}", "replace": { "“": "\"", "”": "\"" }, "want": "7" }] }
+      "verify": {"kind": "runOptions", "wrap": "print({option})", "cases": [{"setup": "dic1 = {\"key\": 7}", "want": "7"}]},
+      "edits": {"note": "Đổi nháy cong thành nháy thẳng (lỗi in ấn của slide).", "allOptions": [["“", "\""], ["”", "\""]]}
     },
     {
       "ref": "w041-hw/5/6", "stem": ["R01"], "options": ["R02-R04"], "answer": "D",
@@ -264,11 +270,11 @@
       "verify": { "kind": "run", "cases": [{ "expect": "{}" }], "answerIsOutput": true }
     },
     {
-      "ref": "w041-hw/5/8", "stem": ["R13"], "code": ["R14-R20"], "options": ["R21-R24"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề hỏi \"kết quả soam\" nhưng chương trình không có biến soam (có lẽ chép từ phần tuple, P10). Nếu hỏi kết quả in ra thì đáp án A {'two': 22, 'five': 55}.",
+      "ref": "w041-hw/5/8", "stem": ["R13"], "code": ["R14-R20"], "options": ["R21-R24"],
+      "answer": "A",
       "reason": "Chép từng khoá trong keys từ d1 sang d2.",
-      "verify": { "kind": "run", "cases": [{ "expect": "{'two': 22, 'five': 55}" }], "answerIsOutput": true }
+      "verify": {"kind": "run", "cases": [{"expect": "{'two': 22, 'five': 55}"}], "answerIsOutput": true},
+      "edits": {"note": "Đề gốc hỏi \"kết quả soam\" nhưng chương trình không có biến soam; bỏ chữ soam.", "stem": [["kết quả soam của", "kết quả của"]]}
     },
     {
       "ref": "w041-hw/6/9", "stem": ["L01"], "code": ["L02-L05"], "options": ["L06-L09"], "answer": "B",

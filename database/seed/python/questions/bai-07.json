@@ -67,11 +67,11 @@
     },
     {
       "ref": "w05-hw/2/5", "stem": ["R01-R02"], "code": ["R03-R04"], "ownerAnswer": ["R05"],
-      "fill": [["*"], ["**"], ["&"], ["$"]], "answer": "B",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Tham số tên kids nhưng thân hàm dùng kid[\"lname\"] (tên biến không khớp), nên chạy nguyên văn báo lỗi NameError với mọi phương án. Nếu sửa kid thành kids thì đáp án B (**).",
+      "fill": [["*"], ["**"], ["&"], ["$"]],
+      "answer": "B",
       "reason": "**kids gom các đối số có tên (tên và giá trị) vào một dictionary, đọc bằng kids[\"lname\"]. *kids chỉ nhận đối số vị trí.",
-      "verify": { "kind": "fill", "cases": [{ "replace": { "kid[\"lname\"]": "kids[\"lname\"]" }, "append": "my_function(fname=\"Tobias\", lname=\"Refsnes\")", "want": "His last name is Refsnes" }] }
+      "verify": {"kind": "fill", "cases": [{"append": "my_function(fname=\"Tobias\", lname=\"Refsnes\")", "want": "His last name is Refsnes"}]},
+      "edits": {"note": "Code gốc dùng kid[\"lname\"] trong khi tham số tên kids; sửa thành kids[\"lname\"].", "code": [["kid[\"lname\"]", "kids[\"lname\"]"]]}
     },
     {
       "ref": "w05-hw/2/6", "stem": ["R06-R07"], "code": ["R08"], "ownerAnswer": ["R09"],
@@ -105,11 +105,11 @@
       "verify": { "kind": "run", "cases": [{ "append": "r = sum(2, 3)\nprint(r)", "expect": "sum = 5\nNone" }] }
     },
     {
-      "ref": "w05-hw/3/12", "stem": ["R08"], "code": ["R09-R13"], "options": ["R14-R17"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Phương án B, C, D dùng ký hiệu toán ≤ (không phải toán tử Python) nên chạy nguyên văn báo lỗi, chỉ A chạy được. Nhưng nếu hiểu ≤ là <= thì cả 4 phương án đều tìm đúng số lớn nhất (bằng nhau thì gán lại cũng không sao), nên câu không có đáp án duy nhất. Đề xuất A.",
+      "ref": "w05-hw/3/12", "stem": ["R08"], "code": ["R09-R13"], "options": ["R14-R17"],
+      "answer": "A",
       "reason": "max < b thì max = b; max < c thì max = c: cuối cùng max là số lớn nhất.",
-      "verify": { "kind": "runOptions", "intoBlanks": ", ", "cases": [{ "append": "print(find_max(3, 7, 5), find_max(9, 2, 4), find_max(1, 2, 8), find_max(5, 5, 5))", "want": "7 9 8 5" }] }
+      "verify": {"kind": "runOptions", "intoBlanks": ", ", "cases": [{"append": "print(find_max(3, 7, 5), find_max(9, 2, 4), find_max(1, 2, 8), find_max(5, 5, 5))", "want": "7 9 8 5"}]},
+      "edits": {"note": "Phương án gốc B, C, D dùng ký hiệu ≤ và nếu hiểu là <= thì cả 4 phương án đều đúng; sửa B, C, D thành các điều kiện sai.", "options": {"B": "max > b, max < c", "C": "max < b, max > c", "D": "max > b, max > c"}}
     },
     {
       "ref": "w05-hw/3/13", "stem": ["R18-R19"], "options": ["R20-R23"], "answer": "A",
@@ -147,11 +147,11 @@
       "verify": { "kind": "run", "cases": [{ "expect": "ERROR: TypeError" }] }
     },
     {
-      "ref": "w05-hw/5/20", "stem": ["R01"], "code": ["R02-R09"], "options": ["R10-R13"], "answer": "C",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề nói tính tổng nhưng code dùng answer *= v, tức là tính tích. Theo code thì đáp án C (int, 1). Nếu đúng là tính tổng thì phải sửa code thành answer += v và đáp án là B (int, 0).",
+      "ref": "w05-hw/5/20", "stem": ["R01"], "code": ["R02-R09"], "options": ["R10-R13"],
+      "answer": "C",
       "reason": "n phải là số nguyên để dùng range(n): int. Tích bắt đầu từ 1 (bắt đầu từ 0 thì tích luôn bằng 0).",
-      "verify": { "kind": "runOptions", "intoBlanks": ", ", "cases": [{ "stdin": "3\n2\n3\n4\n", "want": "24" }] }
+      "verify": {"kind": "runOptions", "intoBlanks": ", ", "cases": [{"stdin": "3\n2\n3\n4\n", "want": "24"}]},
+      "edits": {"note": "Đề gốc ghi \"tính tổng\" nhưng code nhân dồn (answer *= v); sửa thành \"tính tích\".", "stem": [["tính tổng một mảng", "tính tích các phần tử của một mảng"]]}
     },
     {
       "ref": "w05-hw/5/21", "stem": ["R14"], "options": ["R15-R20"], "answer": "B",
@@ -164,9 +164,11 @@
       "verify": { "kind": "run", "cases": [{ "setup": "def f(a):\n    return a\nf(1, 2)", "expect": "ERROR: TypeError" }] }
     },
     {
-      "ref": "w05-hw/6/23", "stem": ["L08-L09"], "options": ["L10-L13"], "answer": "B",
+      "ref": "w05-hw/6/23", "stem": ["L08-L09"], "options": ["L10-L13"],
+      "answer": "B",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong ở C, D là nháy thẳng (nếu không, C, D cũng gây lỗi). f(10, c) báo lỗi NameError vì c chưa có giá trị. Số và chuỗi đều truyền vào được.",
-      "verify": { "kind": "runOptions", "wrap": "def f(a, b):\n    return a, b\nf({option})\nprint('ok')", "cases": [{ "replace": { "“": "\"", "”": "\"" }, "want": "ERROR: NameError" }] }
+      "verify": {"kind": "runOptions", "wrap": "def f(a, b):\n    return a, b\nf({option})\nprint('ok')", "cases": [{"want": "ERROR: NameError"}]},
+      "edits": {"note": "Đổi nháy cong thành nháy thẳng (lỗi in ấn của slide).", "allOptions": [["“", "\""], ["”", "\""]]}
     },
     {
       "ref": "w05-hw/6/24", "stem": ["L14-L15"], "options": ["L16-L19"], "answer": "C",
@@ -194,11 +196,11 @@
       "verify": { "kind": "run", "errorLine": true, "cases": [{ "replace": { "(1) ": "", "(2)": "", "(3)": "", "(4) ": "", "(5) ": "" }, "expect": "NameError 4" }] }
     },
     {
-      "ref": "w05-hw/7/29", "stem": ["L23-L25"], "options": ["L26-L29"], "answer": "B",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Biến khai báo trong hàm có tính cục bộ (local), không có hiệu lực ở bên ngoài hàm: B. Nhưng \"địa phương\" cũng là cách dịch của \"local\" mà một số tài liệu dùng, nên C (địa phương, ngoài) cũng có thể được coi là đúng. Đề xuất B (thuật ngữ thường dùng).",
+      "ref": "w05-hw/7/29", "stem": ["L23-L25"], "options": ["L26-L29"],
+      "answer": "B",
       "reason": "Biến gán giá trị bên trong hàm là biến cục bộ, chỉ dùng được trong hàm đó.",
-      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/faq/programming.html#what-are-the-rules-for-local-and-global-variables-in-python"] }
+      "verify": {"kind": "docs", "refs": ["https://docs.python.org/3/faq/programming.html#what-are-the-rules-for-local-and-global-variables-in-python"]},
+      "edits": {"note": "Phương án C gốc \"địa phương, ngoài\" cũng đúng (\"địa phương\" là một cách dịch của local); sửa C thành \"toàn cục, trong\".", "options": {"C": "toàn cục, trong"}}
     },
     {
       "ref": "w05-hw/7/30", "stem": ["R01"], "code": ["R02-R06"], "options": ["R07-R10"], "answer": "D",
@@ -211,24 +213,18 @@
       "verify": { "kind": "runOptions", "intoBlanks": true, "cases": [{ "append": "print(USCLN_2(12, 18), USCLN_2(21, 14), USCLN_2(7, 5))", "want": "6 7 1" }] }
     },
     {
-      "ref": "w05-hw/8/32", "stem": ["L01"], "code": ["L02-L08"], "options": ["L09-L12"], "answer": "D",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Dòng a = input(…) không đổi sang int nên a là chuỗi; chạy nguyên văn thì a % b báo lỗi TypeError với mọi phương án. Nếu sửa thành a = int(input(…)) thì chỉ D (b == 0) đúng.",
+      "ref": "w05-hw/8/32", "stem": ["L01"], "code": ["L02-L08"], "options": ["L09-L12"],
+      "answer": "D",
       "reason": "UCLN(a, b) = UCLN(b, a % b); khi b == 0 thì a là ước chung lớn nhất.",
-      "verify": { "kind": "runOptions", "intoBlanks": true, "cases": [
-        { "replace": { "a = input('Nhap vao so nguyen duong a = ')": "a = int(input('Nhap vao so nguyen duong a = '))" }, "stdin": "12\n18\n", "want": "Nhap vao so nguyen duong a = Nhao vao so nguyen duong b = 6" },
-        { "replace": { "a = input('Nhap vao so nguyen duong a = ')": "a = int(input('Nhap vao so nguyen duong a = '))" }, "stdin": "21\n14\n", "want": "Nhap vao so nguyen duong a = Nhao vao so nguyen duong b = 7" }
-      ] }
+      "verify": {"kind": "runOptions", "intoBlanks": true, "cases": [{"stdin": "12\n18\n", "want": "Nhap vao so nguyen duong a = Nhao vao so nguyen duong b = 6"}, {"stdin": "21\n14\n", "want": "Nhap vao so nguyen duong a = Nhao vao so nguyen duong b = 7"}]},
+      "edits": {"note": "Code gốc a = input(...) không đổi sang số nên chương trình lỗi với mọi phương án; sửa thành a = int(input(...)).", "code": [["a = input('Nhap vao so nguyen duong a = ')", "a = int(input('Nhap vao so nguyen duong a = '))"]]}
     },
     {
-      "ref": "w05-hw/8/33", "stem": ["L13"], "code": ["L14-L20"], "options": ["L21-L28"], "answer": "D",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Trên slide dòng (5) thụt lề ngang với while (nằm ngoài vòng lặp) nên a không đổi và chương trình in 0 mãi (vòng lặp vô hạn), không báo lỗi. Nếu tính cả lỗi logic thì đáp án D (dòng 5, phải thụt vào trong while); nếu chỉ tính lỗi cú pháp hoặc lỗi khi chạy thì H (Không có lỗi).",
-      "reason": "Chạy thử: để nguyên thì vòng lặp không dừng; thụt dòng (5) vào trong while thì in đúng dãy Fibonacci nhỏ hơn 1000.",
-      "verify": { "kind": "run", "cases": [
-        { "setup": "import builtins\ncalls = []\ndef print(*args, **kwargs):\n    calls.append(args)\n    if len(calls) > 50:\n        raise SystemExit('VONG_LAP_VO_HAN')\n    builtins.print(*args, **kwargs)", "replace": { "(1) ": "", "(2) ": "", "(3) ": "", "(4) ": "", "(5) ": "", "(6) ": "", "(7) ": "" }, "expect": "ERROR: VONG_LAP_VO_HAN" },
-        { "replace": { "(5)  a, b": "(5)   a, b", "(1) ": "", "(2) ": "", "(3) ": "", "(4) ": "", "(5) ": "", "(6) ": "", "(7) ": "" }, "expect": "0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987" }
-      ] }
+      "ref": "w05-hw/8/33", "stem": ["L13"], "code": ["L14-L20"], "options": ["L21-L28"],
+      "answer": "D",
+      "reason": "Dòng (5) thụt lề ngang với while nên nằm ngoài vòng lặp: a không bao giờ thay đổi, chương trình in 0 mãi không dừng. Thụt dòng (5) vào trong while thì in đúng dãy Fibonacci.",
+      "verify": {"kind": "run", "cases": [{"setup": "import builtins\ncalls = []\ndef print(*args, **kwargs):\n    calls.append(args)\n    if len(calls) > 50:\n        raise SystemExit('VONG_LAP_VO_HAN')\n    builtins.print(*args, **kwargs)", "replace": {"(1) ": "", "(2) ": "", "(3) ": "", "(4) ": "", "(5) ": "", "(6) ": "", "(7) ": ""}, "expect": "ERROR: VONG_LAP_VO_HAN"}, {"replace": {"(5)  a, b": "(5)   a, b", "(1) ": "", "(2) ": "", "(3) ": "", "(4) ": "", "(5) ": "", "(6) ": "", "(7) ": ""}, "expect": "0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987"}]},
+      "edits": {"note": "Ghi rõ chương trình dùng để in dãy Fibonacci nhỏ hơn 1000, để \"lỗi\" là lỗi làm chương trình không đúng yêu cầu (vòng lặp chạy mãi).", "stem": [["bị lỗi ở dòng thứ bao nhiêu", "(in dãy Fibonacci nhỏ hơn 1000) bị lỗi ở dòng thứ bao nhiêu?"]]}
     },
     {
       "ref": "w05-hw/8/34", "stem": ["R01"], "code": ["R02-R08"], "options": ["R09-R12"], "answer": "A",
@@ -236,11 +232,11 @@
       "verify": { "kind": "run", "cases": [{ "expect": "384" }], "answerIsOutput": true }
     },
     {
-      "ref": "w05-hw/8/35", "stem": ["R13-R16"], "options": ["R17-R20"], "answer": "B",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Phát biểu 1 và 2 gần như cùng nghĩa (\"đều có\" và \"chỉ có\" tính cục bộ). Theo bài học (câu 29, 36: tất cả các biến trong hàm đều có tính cục bộ) thì 1 và 3 đúng; 2 sai vì dùng global thì biến trong hàm có tác dụng ra ngoài. Nhưng cũng vì global mà 1 chưa chính xác, nên số phát biểu đúng có thể là 1, 2 hoặc 3. Đề xuất B (2).",
-      "reason": "Biến gán trong hàm là cục bộ trừ khi khai báo global; gọi biến cục bộ ở ngoài hàm báo lỗi NameError.",
-      "verify": { "kind": "run", "cases": [{ "setup": "def f():\n    local_value = 1\n    global shared\n    shared = 2\nf()\nprint(shared)\nprint(local_value)", "expect": "ERROR: NameError" }] }
+      "ref": "w05-hw/8/35", "stem": ["R13-R16"], "options": ["R17-R20"],
+      "answer": "B",
+      "reason": "Phát biểu 1 và 3 đúng; phát biểu 2 sai vì gọi biến cục bộ ở ngoài hàm báo lỗi NameError.",
+      "verify": {"kind": "run", "cases": [{"setup": "def f():\n    local_value = 1\n    global shared\n    shared = 2\nf()\nprint(shared)\nprint(local_value)", "expect": "ERROR: NameError"}]},
+      "edits": {"note": "Phát biểu 1 và 2 gốc gần như cùng nghĩa nên không xác định được số phát biểu đúng; sửa 1 cho chính xác và 2 thành phát biểu sai rõ ràng.", "stem": [["1) Tất cả các biến bên trong hàm đều có tính cục bộ.", "1) Biến được gán giá trị bên trong hàm (không khai báo global) có tính cục bộ."], ["2) Tất cả các biến bên trong hàm chỉ có tính cục bộ.", "2) Biến cục bộ của hàm vẫn dùng được ở bên ngoài hàm."]]}
     },
     {
       "ref": "w05-hw/9/36", "stem": ["L01"], "options": ["L02-L08"], "answer": "A",

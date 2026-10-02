@@ -16,11 +16,11 @@
     },
     {
       "ref": "w07-lt/15/3", "stem": ["R01-R02"], "code": ["R03-R04"], "ownerAnswer": ["R05"],
-      "fill": [["dir(mymodule)"], ["mymodule.dir()"], ["list(mymodule)"], ["dir.mymodule"]], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề nói my_module nhưng code import mymodule (tên không khớp, P10). Phương án viết theo code (mymodule); nếu sửa đề thành mymodule thì đáp án A dir(mymodule).",
+      "fill": [["dir(mymodule)"], ["mymodule.dir()"], ["list(mymodule)"], ["dir.mymodule"]],
+      "answer": "A",
       "reason": "dir(module) trả về danh sách tên (biến, hàm…) có trong module. Module không có phương thức dir(), không duyệt được bằng list(), và dir là hàm nên gọi bằng ngoặc tròn.",
-      "verify": { "kind": "fill", "cases": [{ "setup": "import pathlib, sys\npathlib.Path('mymodule.py').write_text('person1 = {\"name\": \"John\", \"age\": 36}\\n', encoding='utf-8')\nsys.path.insert(0, '')", "want": "['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'person1']" }] }
+      "verify": {"kind": "fill", "cases": [{"setup": "import pathlib, sys\npathlib.Path('mymodule.py').write_text('person1 = {\"name\": \"John\", \"age\": 36}\\n', encoding='utf-8')\nsys.path.insert(0, '')", "want": "['__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'person1']"}]},
+      "edits": {"note": "Đề gốc ghi my_module nhưng code import mymodule; sửa đề thành mymodule.", "stem": [["trong my_module?", "trong mymodule?"]]}
     },
     {
       "ref": "w07-lt/15/4", "stem": ["R06-R07"], "code": ["R08"], "ownerAnswer": ["R09"],

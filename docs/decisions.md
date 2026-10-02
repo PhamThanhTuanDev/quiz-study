@@ -222,7 +222,14 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Cài `numpy` 2.5.3 vào `scripts/.venv` (ghi trong `scripts/requirements.txt`) chỉ để `verify_python_answers.py` chạy thật code NumPy. Không ảnh hưởng web app.
 - Mục 11 trang 24 của file lý thuyết chỉ là bảng ký hiệu kiểu dữ liệu (i, b, O, f…), không có câu hỏi: bỏ qua, ghi lý do trong bản đồ. Phần "BÀI TẬP" lập trình (HW trang 7–11) không đưa vào (P14).
 - Thêm nhóm duyệt `multiple` trong `review.md`: câu một đáp án mà có từ 2 phương án cùng đúng, để chủ dự án quyết cả nhóm.
-- Kết quả: Bài 11 có 65 câu (50 `PUBLISHED`, 15 `NEEDS_REVIEW`); cả môn 360 câu, 312 `PUBLISHED`, 48 `NEEDS_REVIEW`.
+- Kết quả: Bài 11 có 65 câu (50 `PUBLISHED`, 15 `NEEDS_REVIEW`); cả môn 360 câu, 312 `PUBLISHED`, 48 `NEEDS_REVIEW`. (Sau D-043: cả 360 câu đều `PUBLISHED`.)
+
+### D-043 · Câu sai thì Claude tự sửa cho đúng, có ghi vết · Đã chốt (chủ dự án, 2026-10-02)
+- Chủ dự án: mục đích là học, miễn đúng là được; "từ nay thấy chỗ nào sai thì sửa lại cho đúng, không rập khuôn". Thay cách làm cũ (câu lỗi đề / mơ hồ để `NEEDS_REVIEW` chờ duyệt, D-034, D-036, D-042).
+- Câu sai đề, đề và code không khớp, thiếu code, lỗi in ấn, không có hoặc có nhiều đáp án đúng, nhiều cách hiểu: Claude sửa ít nhất có thể cho câu đúng và chỉ còn một đáp án; chỉ hỏi khi không biết được ý đúng.
+- Ghi vết: mục `edits` trong bản đồ Python (`stem` / `code` / `setCode` / `allOptions` / `options` + `note` bắt buộc); script báo lỗi nếu đoạn gốc không còn trong tài liệu. `note` được ghi vào cột `explanation`, người học thấy "Đã sửa so với tài liệu: …" khi xem đúng/sai.
+- Import lại môn đã có người làm: được sửa ký tự in ấn của phương án (nháy cong / thẳng, "–" / "-", khoảng trắng) vì vẫn là phương án cũ ở vị trí cũ; đổi nghĩa phương án vẫn bị chặn như trước.
+- Áp dụng ngay: 48 câu Python đang chờ duyệt và 11 câu đã dùng được nhưng còn lỗi hiển thị (8 câu lỗi in ấn của D-036, 3 câu NumPy) → 58 câu có sửa, 1 câu chỉ chọn đáp án. Môn Python: 360 câu, cả 360 `PUBLISHED`, kiểm chứng 360/360 (320 câu chạy code thật).
 
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.

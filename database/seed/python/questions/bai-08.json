@@ -57,9 +57,11 @@
       "verify": { "kind": "runOptions", "wrap": "s = 'abc'\nprint({option})", "cases": [{ "want": "3" }] }
     },
     {
-      "ref": "w06-hw/2/2", "stem": ["L06-L12"], "options": ["L13-L17", "R12"], "answer": "C",
+      "ref": "w06-hw/2/2", "stem": ["L06-L12"], "options": ["L13-L17", "R12"],
+      "answer": "C",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong là nháy thẳng, khi đó 4 xâu hợp lệ (1, 2, 3, 5). Phương án F. 2 nằm lệch sang cột phải trong PDF nhưng thuộc câu này. Xâu phải đặt trong dấu nháy. python không có nháy là tên biến; 123456 là số nguyên.",
-      "verify": { "kind": "run", "cases": [{ "setup": "items = ['\"123_@##\"', '\"hoa hau\"', '\"346h7g84jd\"', 'python', '\"01028475\"', '123456']\ncount = 0\nfor item in items:\n    try:\n        count += isinstance(eval(item), str)\n    except NameError:\n        pass\nprint(count)", "expect": "4" }] }
+      "verify": {"kind": "run", "cases": [{"setup": "items = ['\"123_@##\"', '\"hoa hau\"', '\"346h7g84jd\"', 'python', '\"01028475\"', '123456']\ncount = 0\nfor item in items:\n    try:\n        count += isinstance(eval(item), str)\n    except NameError:\n        pass\nprint(count)", "expect": "4"}]},
+      "edits": {"note": "Đổi nháy cong của các xâu thành nháy thẳng (lỗi in ấn của slide).", "stem": [["“", "\""], ["”", "\""], ["“", "\""], ["”", "\""], ["“", "\""], ["”", "\""], ["“", "\""], ["”", "\""]]}
     },
     {
       "ref": "w06-hw/2/3", "stem": ["L18"], "options": ["L19-L22"], "answer": "A",
@@ -72,11 +74,11 @@
       "verify": { "kind": "run", "cases": [{ "setup": "s = 'abc'\nprint(s[0], type(s[0]).__name__)\ns[0] = 'x'", "expect": "ERROR: TypeError" }] }
     },
     {
-      "ref": "w06-hw/2/5", "stem": ["R01"], "code": ["R02-R07"], "options": ["R08-R10"], "answer": "B",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề hỏi biến s nhưng chương trình chỉ có s1 và s2 (tên biến không khớp, P10). Nếu hỏi s2 (biến được in ra) thì đáp án B 8644.",
+      "ref": "w06-hw/2/5", "stem": ["R01"], "code": ["R02-R07"], "options": ["R08-R10"],
+      "answer": "B",
       "reason": "s2 ghép các chữ số chẵn của 3986443 theo thứ tự: 8, 6, 4, 4.",
-      "verify": { "kind": "run", "cases": [{ "expect": "8644" }], "answerIsOutput": true }
+      "verify": {"kind": "run", "cases": [{"expect": "8644"}], "answerIsOutput": true},
+      "edits": {"note": "Đề gốc hỏi biến s nhưng chương trình chỉ có s1, s2; sửa thành s2 (biến được in ra).", "stem": [["biến s sẽ", "biến s2 sẽ"]]}
     },
     {
       "ref": "w06-hw/2/6", "stem": ["R11", "R13-R15"], "options": ["R16-R19"], "answer": "B",
@@ -99,11 +101,11 @@
       "verify": { "kind": "run", "cases": [{ "expect": "ERROR: TypeError" }] }
     },
     {
-      "ref": "w06-hw/3/10", "stem": ["L18"], "options": ["L19-L23"], "answer": "C",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Cả 4 xâu đều hợp lệ nếu dấu chấm cuối dòng message = \"This is also a string\". là dấu chấm câu (phương án B, C cũng kết thúc bằng dấu chấm), khi đó đáp án C. Nếu coi dấu chấm đó là một phần của code thì dòng đó báo lỗi cú pháp và đáp án là A.",
+      "ref": "w06-hw/3/10", "stem": ["L18"], "options": ["L19-L23"],
+      "answer": "C",
       "reason": "Xâu có thể dùng nháy đơn hoặc nháy kép, chứa được nháy loại kia bên trong, và dùng \\' để viết nháy đơn trong xâu nháy đơn.",
-      "verify": { "kind": "run", "cases": [{ "setup": "a = 'This is a string in Python'\nmessage = \"This is also a string\"\nb = '\"Beautiful is better than ugly.\". Said Tim Peters'\nd = 'It\\'s also a valid string'\nprint(d)", "expect": "It's also a valid string" }] }
+      "verify": {"kind": "run", "cases": [{"setup": "a = 'This is a string in Python'\nmessage = \"This is also a string\"\nb = '\"Beautiful is better than ugly.\". Said Tim Peters'\nd = 'It\\'s also a valid string'\nprint(d)", "expect": "It's also a valid string"}]},
+      "edits": {"note": "Phương án A gốc có dấu chấm câu dính sau xâu thứ hai, dễ hiểu nhầm là code sai; bỏ dấu chấm và tách hai xâu thành hai dòng.", "options": {"A": "'This is a string in Python'\nmessage = \"This is also a string\""}}
     },
     {
       "ref": "w06-hw/3/11", "stem": ["R01"], "code": ["R02"], "options": ["R03-R06"], "answer": "A",
@@ -161,14 +163,11 @@
       "verify": { "kind": "runOptions", "wrap": "print('a b'.{option})", "cases": [{ "want": "['a', 'b']" }] }
     },
     {
-      "ref": "w06-hw/5/22", "stem": ["L12"], "code": ["L13-L16"], "options": ["L17-L21"], "answer": "B",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Chương trình không có print nên không in gì. Giá trị của st.split() (tách theo khoảng trắng) giữ cả dấu phẩy: ['a,', 'b,', …, 'h'], không khớp phương án nào. Nếu là st.split(', ') thì khớp B.",
-      "reason": "s.split() tách theo khoảng trắng: ['Một', 'năm', 'có', 'bốn', 'mùa'].",
-      "verify": { "kind": "run", "cases": [
-        { "replace": { "\ns.split()": "\nprint(s.split())", "\nst.split()": "\nprint(st.split())" }, "expect": "['Một', 'năm', 'có', 'bốn', 'mùa']\n['a,', 'b,', 'c,', 'd,', 'e,', 'f,', 'g,', 'h']" },
-        { "replace": { "\ns.split()": "\nprint(s.split())", "\nst.split()": "\nprint(st.split(', '))" }, "expect": "['Một', 'năm', 'có', 'bốn', 'mùa']\n['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']" }
-      ] }
+      "ref": "w06-hw/5/22", "stem": ["L12"], "code": ["L13-L16"], "options": ["L17-L21"],
+      "answer": "B",
+      "reason": "split() không tham số tách theo khoảng trắng; split(', ') tách theo dấu phẩy và dấu cách.",
+      "verify": {"kind": "run", "cases": [{"expect": "['Một', 'năm', 'có', 'bốn', 'mùa']\n['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']"}]},
+      "edits": {"note": "Code gốc không in gì và st.split() không bỏ dấu phẩy; sửa thành print(s.split()) và print(st.split(', ')), đổi nháy cong ở phương án thành nháy thẳng.", "code": [["s.split()\nst", "print(s.split())\nst"], ["st.split()", "print(st.split(', '))"]], "allOptions": [["‘", "'"], ["’", "'"]]}
     },
     {
       "ref": "w06-hw/5/23", "stem": ["R01"], "options": ["R02-R06"], "answer": "A",
@@ -176,18 +175,18 @@
       "verify": { "kind": "run", "cases": [{ "setup": "print('-'.join(['a', 'b', 'c']), 'a b c'.split())", "expect": "a-b-c ['a', 'b', 'c']" }] }
     },
     {
-      "ref": "w06-hw/5/24", "stem": ["R07-R11"], "options": ["R12-R15"], "answer": "D",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Điền A (câu lệnh, split(), nối) hay D (câu lệnh đặc biệt, split(), nối danh sách) đều cho phát biểu đúng. Đề xuất D vì khớp cách viết của bài học (lệnh đặc biệt; join nối danh sách các xâu thành một xâu).",
+      "ref": "w06-hw/5/24", "stem": ["R07-R11"], "options": ["R12-R15"],
+      "answer": "D",
       "reason": "split() tách câu thành danh sách; join() nối danh sách các xâu thành một xâu. B (join tách xâu) và C (copy()) sai.",
-      "verify": { "kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#str.split", "https://docs.python.org/3/library/stdtypes.html#str.join"] }
+      "verify": {"kind": "docs", "refs": ["https://docs.python.org/3/library/stdtypes.html#str.split", "https://docs.python.org/3/library/stdtypes.html#str.join"]},
+      "edits": {"note": "Phương án A gốc \"câu lệnh, split(), nối\" cũng cho phát biểu đúng; sửa A thành \"câu lệnh, find(), nối\".", "options": {"A": "câu lệnh, find(), nối"}}
     },
     {
       "ref": "w06-hw/6/25", "stem": ["L01"], "code": ["L02-L04"], "options": ["L05-L08"],
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Chương trình in Hello world (w thường), không phương án nào khớp: A là hello worldB (h thường, thừa chữ B), B là Hello World (W hoa), C, D thiếu chữ. Gần nhất là B; cần chọn đáp án hoặc sửa phương án.",
-      "reason": "Nối \"Hello\", dấu cách và \"world\".",
-      "verify": { "kind": "run", "cases": [{ "expect": "Hello world" }] }
+      "reason": "Nối \"Hello\", dấu cách và \"world\" được Hello world.",
+      "verify": {"kind": "run", "cases": [{"expect": "Hello world"}], "answerIsOutput": true},
+      "answer": "B",
+      "edits": {"note": "Không phương án gốc nào khớp kết quả (B gốc là Hello World, chữ W hoa); sửa B thành Hello world.", "options": {"B": "Hello world"}}
     },
     {
       "ref": "w06-hw/6/26", "stem": ["L09"], "code": ["L10"], "options": ["L11-L13"], "answer": "B",
@@ -200,18 +199,18 @@
       "verify": { "kind": "run", "cases": [{ "setup": "s = \"1, 2, 3, 4, 5\"\nprint(\" \".join(s.split(\",\")))", "expect": "1  2  3  4  5" }] }
     },
     {
-      "ref": "w06-hw/6/28", "stem": ["L21-L22"], "options": ["L23-L26"], "answer": "A",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Chỉ cần join: \" \".join(s) cho P y t h o n. split() không tách \"Python\" thành từng ký tự (cho ['Python']), nên \"split() và join()\" chưa chính xác; replace(\"\", \" \") cũng làm được nhưng thừa dấu cách ở đầu và cuối. Đề xuất A theo ý bài học (tách rồi nối).",
-      "reason": "Nối từng ký tự của xâu bằng dấu cách với join.",
-      "verify": { "kind": "run", "cases": [{ "setup": "s = \"Python\"\nprint(s.split())\nprint(\" \".join(s))\nprint(repr(s.replace(\"\", \" \")))", "expect": "['Python']\nP y t h o n\n' P y t h o n '" }] }
+      "ref": "w06-hw/6/28", "stem": ["L21-L22"], "options": ["L23-L26"],
+      "answer": "A",
+      "reason": "\" \".join(s) nối từng ký tự của xâu bằng dấu cách: P y t h o n. replace(\"\", \" \") thừa dấu cách ở hai đầu; split() cho ['Python'].",
+      "verify": {"kind": "run", "cases": [{"setup": "s = \"Python\"\nprint(\" \".join(s) == \"P y t h o n\", s.replace(\"\", \" \") == \"P y t h o n\", s.split())", "expect": "True False ['Python']"}]},
+      "edits": {"note": "split() không tách \"Python\" thành từng ký tự nên \"split() và join()\" chưa đúng; sửa A thành join().", "options": {"A": "join()"}}
     },
     {
       "ref": "w06-hw/6/29", "stem": ["R01"], "code": ["R02-R05"], "options": ["R06-R09"],
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Chương trình in Good Afternoon! (một dấu cách giữa hai từ, không có dấu cách trước !), không phương án nào khớp: B thiếu dấu cách giữa hai từ, D thừa dấu cách trước dấu !. Cần chọn đáp án hoặc sửa phương án.",
-      "reason": "'Good ' đã có dấu cách cuối, nối với 'Afternoon' và '!'.",
-      "verify": { "kind": "run", "cases": [{ "expect": "Good Afternoon!" }] }
+      "reason": "'Good ' đã có dấu cách cuối, nối với 'Afternoon' và '!' được Good Afternoon!.",
+      "verify": {"kind": "run", "cases": [{"expect": "Good Afternoon!"}]},
+      "answer": "D",
+      "edits": {"note": "Không phương án gốc nào khớp kết quả (D gốc thừa dấu cách trước !); sửa D thành 'Good Afternoon!' và đổi nháy cong thành nháy thẳng.", "allOptions": [["‘", "'"], ["’", "'"]], "options": {"D": "'Good Afternoon!'"}}
     },
     {
       "ref": "w06-hw/6/30", "stem": ["R10"], "code": ["R11-R13"], "options": ["R14-R24"], "answer": "A",

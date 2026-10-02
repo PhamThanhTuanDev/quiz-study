@@ -33,14 +33,17 @@
       "verify": { "kind": "run", "wrap": "print({code})", "cases": [{ "setup": "x = 2024", "expect": "True" }], "answerIsOutput": true }
     },
     {
-      "ref": "w021-lt/30/7", "stem": ["R01-R02"], "code": ["R03"], "options": ["R04-R11"], "answer": "A",
+      "ref": "w021-lt/30/7", "stem": ["R01-R02"], "code": ["R03"], "options": ["R04-R11"],
+      "answer": "A",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi \"–\" là dấu trừ. 2 ** 3 = 8; 8 // 2 = 4; (1 == 2) là False (bằng 0): 9 - 4 - 0 = 5. Slide dùng dấu gạch ngang dài \"–\" thay cho dấu trừ; khi chạy thử thay bằng \"-\".",
-      "verify": { "kind": "run", "wrap": "print({code})", "cases": [{ "replace": { "–": "-" }, "expect": "5" }], "answerIsOutput": true }
+      "verify": {"kind": "run", "wrap": "print({code})", "cases": [{"expect": "5"}], "answerIsOutput": true},
+      "edits": {"note": "Đổi dấu \"–\" trong code thành dấu trừ \"-\" (lỗi in ấn của slide).", "code": [["–", "-"], ["–", "-"]]}
     },
     {
-      "ref": "w021-lt/30/8", "stem": ["R12-R13"], "options": ["R14-R21"], "status": "NEEDS_REVIEW",
-      "reviewNote": "Câu mang tính nhận định, không kiểm chứng được: người mới học gặp cả ba loại lỗi, lỗi cú pháp là phổ biến nhất. Có thể chọn D (Tất cả đều đúng) hoặc A; chủ dự án quyết định.",
-      "reason": "Không có tài liệu chính thức xếp hạng mức độ thường gặp của các loại lỗi."
+      "ref": "w021-lt/30/8", "stem": ["R12-R13"], "options": ["R14-R21"],
+      "reason": "Người mới học gặp cả ba loại lỗi: lỗi cú pháp (viết sai quy tắc), lỗi thực thi (chạy mới phát sinh, ví dụ chia cho 0) và lỗi nghiệp vụ / logic (chạy được nhưng sai yêu cầu).",
+      "answer": "D",
+      "verify": {"kind": "reasoning", "source": "Bài học w02.1: các loại lỗi khi lập trình (cú pháp, thực thi, nghiệp vụ)."}
     },
 
     {
@@ -54,16 +57,18 @@
       "verify": { "kind": "runOptions", "wrap": "print(type({option}).__name__)", "cases": [{ "want": "float" }] }
     },
     {
-      "ref": "w021-hw/3/3", "stem": ["L11"], "code": ["L12"], "options": ["L13-L16"], "answer": "C",
+      "ref": "w021-hw/3/3", "stem": ["L11"], "code": ["L12"], "options": ["L13-L16"],
+      "answer": "C",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi \"–\" là dấu trừ. 3e2 = 300.0 (số thực) nên 2 - 300.0 = -298.0. Slide dùng dấu \"–\" thay cho dấu trừ.",
-      "verify": { "kind": "run", "cases": [{ "replace": { "–": "-" }, "append": "print(x)", "expect": "-298.0" }] }
+      "verify": {"kind": "run", "cases": [{"append": "print(x)", "expect": "-298.0"}]},
+      "edits": {"note": "Đổi dấu \"–\" trong code thành dấu trừ \"-\" (lỗi in ấn của slide).", "code": [["–", "-"]]}
     },
     {
-      "ref": "w021-hw/3/4", "stem": ["L17"], "code": ["L18"], "options": ["L19-L22"], "answer": "C",
-      "status": "NEEDS_REVIEW",
-      "reviewNote": "Code viết ba phép gán trên một dòng cách nhau bằng dấu phẩy (a = 3, b = 4j, c = a – b), không phải cú pháp Python, và dùng dấu \"–\": chạy nguyên văn báo lỗi nên A (Lỗi chương trình) cũng có thể coi là đúng. Hiểu là ba phép gán riêng thì đáp án C (3 - 4j).",
+      "ref": "w021-hw/3/4", "stem": ["L17"], "code": ["L18"], "options": ["L19-L22"],
+      "answer": "C",
       "reason": "Ba phép gán liệt kê trên một dòng: a = 3, b = 4j là số phức hợp lệ, c = 3 - 4j. Khi chạy thử tách thành ba dòng và thay \"–\" bằng \"-\".",
-      "verify": { "kind": "run", "cases": [{ "replace": { ", b = ": "\nb = ", ", c = ": "\nc = ", "–": "-" }, "append": "print(c)", "expect": "(3-4j)" }] }
+      "verify": {"kind": "run", "cases": [{"append": "print(c)", "expect": "(3-4j)"}]},
+      "edits": {"note": "Code gốc viết ba phép gán cách nhau bằng dấu phẩy và dùng dấu \"–\"; sửa thành ba phép gán cách nhau bằng dấu ; với dấu trừ \"-\".", "code": [["a = 3, b = 4j, c = a – b", "a = 3; b = 4j; c = a - b"]], "allOptions": [["–", "-"]]}
     },
     {
       "ref": "w021-hw/3/5", "stem": ["R01"], "code": ["R02"], "options": ["R03-R06"], "answer": "A",
@@ -170,9 +175,11 @@
       "verify": { "kind": "run", "cases": [{ "expect": "3, 1, 3.3333333333333335" }] }
     },
     {
-      "ref": "w021-hw/6/25", "stem": ["L13"], "code": ["L14"], "options": ["L15-L18"], "answer": "D",
+      "ref": "w021-hw/6/25", "stem": ["L13"], "code": ["L14"], "options": ["L15-L18"],
+      "answer": "D",
       "reason": "Lỗi in ấn, chủ dự án duyệt (D-036): coi nháy cong là nháy thẳng (nếu không, phương án A \"Lỗi\" cũng thành đúng). complex('2+8j') trả về số phức (2+8j).",
-      "verify": { "kind": "run", "cases": [{ "replace": { "‘": "'", "’": "'" }, "expect": "(2+8j)" }], "answerIsOutput": true }
+      "verify": {"kind": "run", "cases": [{"expect": "(2+8j)"}], "answerIsOutput": true},
+      "edits": {"note": "Đổi nháy cong trong code thành nháy thẳng (lỗi in ấn của slide).", "code": [["‘", "'"], ["’", "'"]]}
     },
     {
       "ref": "w021-hw/6/26", "stem": ["L19"], "options": ["L20-L23"], "answer": "A",
@@ -195,9 +202,11 @@
       "verify": { "kind": "run", "cases": [{ "setup": "print(hex(2218))", "expect": "0x8aa" }], "answerIsOutput": true }
     },
     {
-      "ref": "w021-hw/6/30", "stem": ["R16"], "options": ["R17-R20"], "status": "NEEDS_REVIEW",
-      "reviewNote": "Đề thiếu câu lệnh cần tính (\"Cho biết kết quả của câu lệnh sau:\" nhưng không có code) nên không xác định được đáp án (P6).",
-      "reason": "Không có code để chạy."
+      "ref": "w021-hw/6/30", "stem": ["R16"], "options": ["R17-R20"],
+      "reason": "Phép chia / luôn cho số thực, kể cả khi chia hết: -100 / 2 = -50.0.",
+      "answer": "B",
+      "edits": {"note": "Tài liệu thiếu câu lệnh; thêm câu lệnh print(-100 / 2) cho khớp các phương án.", "setCode": "print(-100 / 2)"},
+      "verify": {"kind": "run", "cases": [{"expect": "-50.0"}], "answerIsOutput": true}
     }
   ]
 }
