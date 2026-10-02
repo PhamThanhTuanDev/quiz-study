@@ -7,9 +7,11 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 
 async function openFirstSubject(page: Page) {
   await page.goto('/')
-  const firstSubject = page.getByRole('list').first().getByRole('link').first()
+  // Tìm trong <main>: thanh điều hướng phía trên cũng là một danh sách link ("Trang chủ").
+  const firstSubject = page.getByRole('main').getByRole('list').first().getByRole('link').first()
   await expect(firstSubject).toBeVisible()
   await firstSubject.click()
+  await expect(page).toHaveURL(/\/subjects\/[^/]+$/)
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 }
 

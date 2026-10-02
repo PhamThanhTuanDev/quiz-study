@@ -55,6 +55,7 @@
 Có hiệu lực từ Phase 1; cập nhật khi thay đổi.
 
 - Frontend (`frontend/`): `npm run build` · `npm run test` · `npm run lint`
+  - E2E: `npm run test:e2e` (Playwright, Chrome đã cài; tự bật backend + frontend, cần MySQL và môn đã import). Chạy khi đổi luồng làm bài hoặc giao diện chính.
 - Backend (`backend/`): `mvnw.cmd verify` (Windows) hoặc `./mvnw verify`. **Cần JDK 25** (`JAVA_HOME` trỏ JDK 25).
   - `verify` chạy cả `QuizStudyApplicationTests` (profile `test`), nên cần MySQL và database `quiz_study_test`. Tạo database bằng `scripts/setup-database.ps1` (chủ dự án chạy, vì cần mật khẩu root). Máy 2 đã tạo xong.
   - Test repository (`@DataJpaTest`) cũng chạy trên `quiz_study_test` thật (không Testcontainers, D-015), mỗi test tự rollback.

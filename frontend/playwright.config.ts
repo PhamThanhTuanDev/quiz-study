@@ -23,7 +23,8 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'mvnw.cmd -q spring-boot:run',
+      // Ghi rõ "./": Windows có thể tắt việc tìm lệnh trong thư mục hiện tại (NoDefaultCurrentDirectoryInExePath).
+      command: process.platform === 'win32' ? '.\\mvnw.cmd -q spring-boot:run' : './mvnw -q spring-boot:run',
       cwd: '../backend',
       url: 'http://localhost:8080/api/v1/health',
       // Đang chạy sẵn (ví dụ chủ dự án tự bật) thì dùng luôn, không bật thêm.

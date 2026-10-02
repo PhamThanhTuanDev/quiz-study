@@ -117,7 +117,8 @@ Giải thích từng bước: [scripts/README.md](scripts/README.md).
 |---|---|---|
 | Frontend | `frontend/` | `npm run test` · `npm run lint` · `npm run build` |
 | Backend | `backend/` | `.\mvnw.cmd verify` (cần MySQL và database `quiz_study_test`) |
+| E2E (Playwright) | `frontend/` | `npm run test:e2e`: chạy luồng chính trên khung điện thoại và máy tính bằng Chrome đã cài. Tự bật backend và frontend nếu chưa chạy; cần MySQL đang chạy và đã import ít nhất một môn. Lượt làm tạo ra lúc test là dữ liệu thử trong database dev. |
 
 ## Tài liệu nguồn
 
-Các file PDF ở thư mục gốc là tài liệu học tập gốc (câu hỏi ôn tập GDQP; slide và bài tập Python của giảng viên). Chúng là **nguồn chỉ đọc**: nội dung câu hỏi/đáp án được trích xuất sang database mà không sửa đổi. Câu thiếu hoặc nghi vấn đáp án được đánh dấu để chủ dự án duyệt. Việc đưa các file này lên GitHub cần cân nhắc bản quyền (xem Q-02 trong [docs/decisions.md](docs/decisions.md)).
+Các file PDF ở thư mục gốc là tài liệu học tập gốc (câu hỏi ôn tập GDQP; slide và bài tập Python của giảng viên). Chúng là **nguồn chỉ đọc**: nội dung câu hỏi/đáp án được trích xuất sang database, file PDF không bị sửa. Câu trong tài liệu bị sai (đề, code hoặc đáp án) được sửa cho đúng khi đưa vào database, có ghi lại chỗ sửa, và người học thấy ghi chú "Đã sửa so với tài liệu" (D-043). Việc đưa các file này lên GitHub cần cân nhắc bản quyền (xem Q-02 trong [docs/decisions.md](docs/decisions.md)).
