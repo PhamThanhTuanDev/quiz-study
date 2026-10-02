@@ -51,7 +51,9 @@ flowchart TD
 | Routing | React Router, dùng ở chế độ SPA (library mode), **không** dùng "framework mode" (SSR) |
 | Gọi API | `fetch` có sẵn của trình duyệt, bọc trong `src/services/` (đề xuất không thêm axios) |
 | State | `useState` / `useReducer` / Context. **Không** dùng Redux |
-| Test | Vitest + React Testing Library (unit/component); Playwright (E2E) |
+| Test | Vitest + React Testing Library (unit/component); Playwright (E2E, `npm run test:e2e`, Chrome đã cài, khung Pixel 7 + máy tính, D-041) |
+| PWA | `vite-plugin-pwa` (D-040): manifest, icon trong `public/icons/`, service worker lưu sẵn file giao diện để mở được khi mất mạng. **Không** lưu đệm `/api` (không làm bài offline). Có bản mới thì hỏi người dùng (`UpdatePrompt`), không tự tải lại giữa lúc làm bài |
+| Điện thoại | Mobile-first; khi thi thử thanh đồng hồ dính đầu màn hình; vuốt trái/phải trên câu hỏi để chuyển câu (`useSwipe`); máy tính có phím tắt Enter / ← → (`useHotkey`) |
 | Lint | Oxlint, mặc định của template `create-vite` (D-023) |
 | Thiết kế | Hướng "bàn học yên tĩnh" (D-028). Token màu trong `src/index.css`, component dùng class ngữ nghĩa (`bg-primary`, `text-muted`…) |
 | Tải dữ liệu | Hook `useAsync(load)` trả `loading` / `success` / `error` + `reload`; component `AsyncContent` hiển thị đúng trạng thái và giữ focus khi bấm "Thử lại". Chỉ thông điệp của `ApiError` (tiếng Việt) được hiện cho người dùng |
@@ -62,10 +64,12 @@ Cấu trúc thư mục (✔ = đã có từ Phase 3):
 frontend/src/
 ├── components/   # UI tái sử dụng. ✔ Button, ButtonLink, Card, AsyncContent, LoadingState, ErrorState, EmptyState, LetterBadge
 │                 #   ✔ Làm bài (Phase 5): QuestionView, CodeBlock, QuestionNavigator, CountdownTimer, SubmitConfirm, AttemptOutcome
+│                 #   ✔ Phase 6: RecentAttemptList, ShortcutHint · PWA (Phase 10): OfflineBanner, UpdatePrompt, PwaUpdatePrompt
 ├── pages/        # Mỗi route một trang. ✔ HomePage, SubjectPage, AttemptPage, NotFoundPage, RouteErrorPage
 ├── layouts/      # ✔ MainLayout (header, điều hướng, footer) + navigation.ts (danh sách mục điều hướng)
 ├── services/     # Chỗ duy nhất gọi fetch. ✔ apiClient.ts (apiGet, apiPost, apiPut), subjectService.ts, quizService.ts
 ├── hooks/        # ✔ useAsync, useQuizAttempt (trạng thái làm bài), useStartAttempt, useFocusOnChange
+│                 #   ✔ Phase 6/10: useHotkey (phím tắt), useSwipe (vuốt), useOnlineStatus (mất mạng)
 ├── types/        # Kiểu khớp DTO backend. ✔ api.ts (ProblemDetail, InvalidField), subject.ts, quiz.ts
 ├── routes.tsx    # ✔ pageRoutes (danh sách trang) + createAppRoutes() (layout + trang lỗi), dùng chung cho App và test
 ├── App.tsx       # Tạo router từ routes.tsx
@@ -104,7 +108,7 @@ Cấu trúc package dự kiến (package gốc tạm đặt `com.quizstudy`, ch�
 ```
 backend/src/main/java/com/quizstudy/
 ├── QuizStudyApplication.java
-├── config/        # Cấu hình Spring (Security, Jackson, ...)
+├── config/        # Cấu hình Spring: ClockConfig, QuizDefaultsProperties, SpaFallbackConfig (bản deploy trả index.html cho đường dẫn của SPA)
 ├── controller/    # @RestController: SubjectController, QuizController, ...
 ├── service/       # Nghiệp vụ: SubjectService, QuizService (rút câu, chấm điểm), ...
 ├── repository/    # Spring Data JPA: SubjectRepository, QuestionRepository, ...
@@ -125,6 +129,8 @@ Trách nhiệm từng tầng:
 | Entity | Ánh xạ bảng, quan hệ JPA | Được serialize trực tiếp ra JSON |
 
 Cấu hình: `application.yml` + profile `dev` / `test`. Thông tin nhạy cảm (mật khẩu DB…) lấy từ **biến môi trường**, không ghi vào file commit.
+
+Deploy (`Dockerfile` ở thư mục gốc, dùng cho Railway): build frontend, chép `dist/` vào `backend/src/main/resources/static/`, đóng gói một file jar phục vụ cả API lẫn giao diện trên cùng cổng (`PORT`). `SpaFallbackConfig` trả `index.html` cho đường dẫn của app (ví dụ mở thẳng `/subjects/python`); `/api/...` sai đường dẫn và file tĩnh thiếu vẫn 404. Database trên server cần import môn riêng (dữ liệu câu hỏi không nằm trong Git, D-030).
 
 ## 5. Quy ước REST API
 

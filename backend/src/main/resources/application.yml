@@ -31,6 +31,9 @@ spring:
 
 server:
   port: ${PORT:8080}
+  mime-mappings:
+    # Manifest của PWA (frontend build nằm trong static/ khi deploy); mặc định Tomcat trả application/octet-stream.
+    webmanifest: application/manifest+json
 
 quiz:
   defaults:
