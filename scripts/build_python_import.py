@@ -384,10 +384,11 @@ def apply_edits(edits: dict, content: str, code: str | None, options: list[str])
         if not any(old in option for option in options):
             raise MapError(f"edits.allOptions: không phương án nào có '{old}'")
         options = [option.replace(old, new) for option in options]
+    # Chạy sau allOptions: phương án viết lại toàn bộ thì giữ đúng chữ trong bản đồ.
     for letter, text in edits.get("options", {}).items():
-        index = LETTERS.index(letter)
-        if index >= len(options):
-            raise MapError(f"edits.options: không có phương án {letter}")
+        index = LETTERS.find(letter) if len(letter) == 1 else -1
+        if not 0 <= index < len(options):
+            raise MapError(f"edits.options: không có phương án '{letter}'")
         options[index] = text
     return content, code, options
 
