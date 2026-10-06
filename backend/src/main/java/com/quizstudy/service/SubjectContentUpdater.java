@@ -34,7 +34,8 @@ import com.quizstudy.repository.UserAnswerRepository;
  * <li>Bài khớp theo thứ tự ({@code displayOrder}); câu khớp theo nguồn (file + nhãn).</li>
  * <li>Câu có trong file: thêm mới, hoặc cập nhật tại chỗ (giữ id của câu và của phương án, để lựa chọn đã lưu
  * trong các lượt làm cũ vẫn trỏ đúng). Câu đã có người làm thì nội dung và số phương án phải giữ nguyên
- * (chỉ được đổi đáp án đúng và sửa ký tự in ấn), vì phương án khớp theo vị trí.</li>
+ * (chỉ được đổi đáp án đúng, sửa ký tự in ấn, hoặc đổi cách viết có khai báo nội dung cũ), vì phương án khớp
+ * theo vị trí.</li>
  * <li>Câu không còn trong file: xoá nếu chưa ai làm; đã có người làm thì chuyển {@code ARCHIVED}
  * (.claude/rules/database.md: không xoá cứng câu đã dùng).</li>
  * <li>Bài không còn trong file: xoá cùng các đề của bài, trừ khi bài còn câu hoặc đề đã có người làm.</li>
@@ -170,17 +171,26 @@ public class SubjectContentUpdater {
         }
     }
 
-    /**
-     * Có phương án nào đổi nghĩa không. Chỉ sửa ký tự in ấn (nháy cong thành nháy thẳng, "–" thành "-", khoảng
-     * trắng) thì vẫn là phương án cũ ở đúng vị trí cũ, nên lựa chọn đã lưu vẫn đúng: không tính là đổi (D-043).
-     */
+    /** Có phương án nào không còn là phương án cũ ở đúng vị trí cũ không (xem {@link #sameAnswer}). */
     private static boolean contentChanged(List<Answer> answers, List<AnswerData> newAnswers) {
         for (int i = 0; i < answers.size(); i++) {
-            if (!ignoringTypography(answers.get(i).getContent()).equals(ignoringTypography(newAnswers.get(i).content()))) {
+            if (!sameAnswer(answers.get(i).getContent(), newAnswers.get(i))) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Vẫn là phương án cũ, nên lựa chọn đã lưu vẫn đúng: chỉ khác ký tự in ấn (nháy cong / thẳng, "–" / "-",
+     * khoảng trắng, D-043), hoặc file import khai báo nội dung cũ khi đổi cách viết (D-046) và nội dung cũ đó
+     * khớp phương án đang lưu. Phương án bị đảo chỗ thì nội dung cũ khai báo không khớp vị trí, vẫn bị chặn.
+     */
+    private static boolean sameAnswer(String stored, AnswerData incoming) {
+        String current = ignoringTypography(stored);
+        return current.equals(ignoringTypography(incoming.content()))
+                || incoming.previousContent() != null
+                        && current.equals(ignoringTypography(incoming.previousContent()));
     }
 
     static String ignoringTypography(String text) {

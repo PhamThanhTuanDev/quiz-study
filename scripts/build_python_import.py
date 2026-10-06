@@ -84,6 +84,8 @@ class Question:
     used_lines: list[tuple[int, str]] = field(default_factory=list)
     # Ghi chú cho người học, hiện cùng đúng/sai: những chỗ đã sửa so với tài liệu (D-043).
     explanation: str | None = None
+    # Cách viết cũ của từng phương án (cùng vị trí với options), khi chỉ đổi cách viết (D-046); None nếu không đổi.
+    previous_options: list[str] | None = None
 
 
 # ---------------------------------------------------------------- Văn bản
@@ -292,6 +294,17 @@ def option_text(parts: list[str]) -> str:
 
 
 def fill_option_text(values: list[str]) -> str:
+    """Phương án của câu điền khuyết (D-046): một chỗ trống ghi đúng giá trị cần điền; nhiều chỗ trống đánh số
+    theo thứ tự xuất hiện trong code, ví dụ "(1) if · (2) < · (3) :". Không bọc ngoặc vuông, để giá trị [0]
+    hiện đúng là [0] chứ không thành [[0]] (dễ nhầm với code myseries[[0]])."""
+    if len(values) == 1:
+        return values[0]
+    return " · ".join(f"({number}) {value}" for number, value in enumerate(values, 1))
+
+
+def bracketed_fill_option_text(values: list[str]) -> str:
+    """Cách viết trước D-046 ("[if] [<] [:]"). Chỉ để khai báo previousContent: database đã import bản cũ nhận ra
+    đây vẫn là phương án cũ ở vị trí cũ, nên câu đã có người làm vẫn cập nhật được cách viết."""
     return " ".join(f"[{value}]" for value in values)
 
 
@@ -326,8 +339,10 @@ def build_question(pages: Pages, sources: dict[str, dict], chapter: int, entry: 
     if not soft_wraps <= {line.id for _, line in code_lines}:
         raise MapError("softWrap phải là dòng code của chính câu này")
     code = build_code(code_lines, soft_wraps)
+    previous_options = None
     if fill_values:
         options = [fill_option_text(v) for v in fill_values]
+        previous_options = [bracketed_fill_option_text(v) for v in fill_values]
     elif kind == "open":
         options = list(entry["choices"])
     else:
@@ -343,6 +358,8 @@ def build_question(pages: Pages, sources: dict[str, dict], chapter: int, entry: 
 
     if "edits" in entry:
         content, code, options = apply_edits(entry["edits"], content, code, options)
+        if previous_options:
+            previous_options = edit_options(entry["edits"], previous_options)
 
     answer = entry.get("answer")
     question = Question(
@@ -353,6 +370,7 @@ def build_question(pages: Pages, sources: dict[str, dict], chapter: int, entry: 
         duplicate_of=entry.get("duplicateOf"), review_group=entry.get("reviewGroup"),
         used_lines=[(p, line.id) for p, line in stem_lines + code_lines + option_lines + owner_lines],
         explanation=f"Đã sửa so với tài liệu: {entry['edits']['note']}" if "edits" in entry else None,
+        previous_options=previous_options,
     )
     question.shuffle = not any(POSITION_DEPENDENT_RE.search(option) for option in options)
     check_question(question)
@@ -379,6 +397,11 @@ def apply_edits(edits: dict, content: str, code: str | None, options: list[str])
         if code is None:
             raise MapError("câu không có code để sửa")
         code = replace_each(code, edits["code"], "code")
+    return content, code, edit_options(edits, options)
+
+
+def edit_options(edits: dict, options: list[str]) -> list[str]:
+    """Phần "allOptions" / "options" của edits (xem apply_edits)."""
     options = list(options)
     for old, new in edits.get("allOptions", []):
         if not any(old in option for option in options):
@@ -390,7 +413,7 @@ def apply_edits(edits: dict, content: str, code: str | None, options: list[str])
         if not 0 <= index < len(options):
             raise MapError(f"edits.options: không có phương án '{letter}'")
         options[index] = text
-    return content, code, options
+    return options
 
 
 def replace_each(text: str, pairs: list[list[str]], where: str) -> str:
@@ -534,8 +557,16 @@ def question_json(q: Question) -> dict:
         "status": q.status,
         "reviewNote": q.review_note,
         "source": {"file": q.source["file"], "page": q.page, "label": q.label},
-        "answers": [{"content": text, "correct": i == q.answer} for i, text in enumerate(q.options)],
+        "answers": [answer_json(q, i) for i in range(len(q.options))],
     }
+
+
+def answer_json(q: Question, index: int) -> dict:
+    answer = {"content": q.options[index], "correct": index == q.answer}
+    previous = q.previous_options[index] if q.previous_options else None
+    if previous is not None and previous != q.options[index]:
+        answer["previousContent"] = previous
+    return answer
 
 
 def write_review(config: dict, questions: list[Question], missing: list[str], path: Path) -> None:

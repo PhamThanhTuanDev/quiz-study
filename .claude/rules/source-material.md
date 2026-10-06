@@ -15,7 +15,7 @@
   - Câu có code: **chạy thật** bằng Python 3 để lấy kết quả; không đoán.
   - Câu lý thuyết: đối chiếu tài liệu chính thức của Python.
   - Mỗi câu ghi lý do/cách kiểm chứng (ví dụ trong `reason` / `verify` của bản đồ).
-- **Câu điền khuyết (D-026):** chuyển thành trắc nghiệm `SINGLE_CHOICE` 4 phương án A–D. Giữ nguyên đề (kể cả dấu `…`). 1 phương án đúng đã kiểm chứng + 3 phương án sai **đã kiểm chứng là sai** (có code thì chạy thử). Câu nhiều chỗ trống: mỗi phương án ghi đủ các chỗ trống theo thứ tự. `source_label` ghi thêm "(gốc: điền khuyết)"; ghi lý do từng phương án trong JSON trung gian.
+- **Câu điền khuyết (D-026):** chuyển thành trắc nghiệm `SINGLE_CHOICE` 4 phương án A–D. Giữ nguyên đề (kể cả dấu `…`). 1 phương án đúng đã kiểm chứng + 3 phương án sai **đã kiểm chứng là sai** (có code thì chạy thử). Một chỗ trống: phương án ghi đúng giá trị cần điền (không bọc ngoặc). Câu nhiều chỗ trống: mỗi phương án ghi đủ các chỗ trống theo thứ tự, đánh số `(1) … · (2) …` (D-046). `source_label` ghi thêm "(gốc: điền khuyết)"; ghi lý do từng phương án trong JSON trung gian.
 - Trùng nhãn phương án (hai phương án cùng ghi "C.") thì giữ cả, nhãn tính lại khi hiển thị (D-034).
 - Số thứ tự câu gốc không quan trọng (D-021). Được đánh số lại, nhưng giữ số gốc trong `source_label`.
 - Mỗi câu lưu nguồn gốc: `source_file`, `source_page`, `source_label`.

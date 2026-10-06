@@ -245,6 +245,11 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Theo D-043, sửa 23 câu (Bài 12: 16, Bài 13: 7): nhiều phương án cùng đúng (ví dụ `title()` và `set_title()`, `annotate()` và `text()`, `myseries[0]` và `myseries.get(0)`), không có đáp án đúng (`plt.pot`, `plot(projection='3d')`), code sai (`df.read_csv` → `pd.read_csv`), đề chép nhầm (loại "scatter" mà đáp án `hist`), nháy cong.
 - Kết quả: Bài 12 có 29 câu, Bài 13 có 39 câu (13 câu điền khuyết). Cả môn: 13 bài, 428 câu `PUBLISHED`; kiểm chứng 428/428 (379 câu chạy code thật); thử ghi sai 5 câu mới thì 4 câu bị bắt (câu còn lại kiểm chứng kiểu minh hoạ, không đối chiếu được chữ cái). Import lại (`-Replace`): 13 bài, 428 câu, 1719 phương án, khớp JSON.
 
+### D-046 · Cách viết phương án câu điền khuyết · Đã chốt (chủ dự án, 2026-10-06)
+- Trước đây mỗi giá trị điền được bọc ngoặc vuông (`[0]` hiện thành `[[0]]`, `[if] [<] [:]`), dễ nhầm với code (ví dụ `myseries[[0]]`). Chủ dự án đồng ý đổi.
+- Một chỗ trống: ghi đúng giá trị cần điền (`[0]`, `or`, `kind = 'hist'`). Nhiều chỗ trống: đánh số theo thứ tự xuất hiện trong code, ví dụ `(1) if · (2) < · (3) :`. Áp dụng cho cả 94 câu điền khuyết (80 câu một chỗ trống, 14 câu nhiều chỗ trống).
+- Import lại môn đã có người làm: định dạng import có thêm trường không bắt buộc `answers[].previousContent` (nội dung cũ). Câu đã có người làm chỉ nhận cách viết mới nếu nội dung cũ khớp đúng phương án đang lưu ở cùng vị trí, nên phương án bị đảo chỗ vẫn bị chặn. `build_python_import.py` khai báo cách viết cũ cho mọi phương án điền khuyết, để database đã import bản cũ (máy dev, Railway) cập nhật được. Không xoá bài làm nào; trên máy dev có 41 câu điền khuyết đã có người làm, cập nhật được hết.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

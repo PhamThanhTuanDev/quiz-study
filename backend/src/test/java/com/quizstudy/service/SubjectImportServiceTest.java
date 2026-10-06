@@ -110,7 +110,7 @@ class SubjectImportServiceTest {
     @Test
     void importSubject_requiresTheCorrectFlag_onEveryAnswer() {
         QuestionData question = new QuestionData(SINGLE_CHOICE, "Câu hỏi", null, null, true, DRAFT, null,
-                source("Nhãn câu hỏi"), List.of(new AnswerData("A", null), answer("B", false)));
+                source("Nhãn câu hỏi"), List.of(new AnswerData("A", null, null), answer("B", false)));
 
         assertThatThrownBy(() -> importService.importSubject(fileWith("Tên môn", question), false))
                 .isInstanceOfSatisfying(ImportValidationException.class, ex -> assertThat(ex.getProblems())
@@ -236,6 +236,35 @@ class SubjectImportServiceTest {
         flushAndClear();
 
         assertThat(onlyQuestion().getAnswers()).extracting(Answer::getContent).containsExactly("print(\"a\")", "3 - 1");
+    }
+
+    @Test
+    void reimport_allowsRewordingAnswers_whenThePreviousContentMatchesWhatIsStored() {
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("[[0]]", true), answer("[(0)]", false))), false);
+        markAsUsed(onlyQuestion());
+
+        importService.importSubject(fileWith("Môn", question("Câu 1", "Đề", PUBLISHED,
+                reworded("[0]", "[[0]]", true), reworded("(0)", "[(0)]", false))), true);
+        flushAndClear();
+
+        assertThat(onlyQuestion().getAnswers()).extracting(Answer::getContent).containsExactly("[0]", "(0)");
+    }
+
+    @Test
+    void reimport_stillRejectsSwappedAnswers_evenWithAPreviousContent() {
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề", PUBLISHED, answer("[[0]]", true), answer("[(0)]", false))), false);
+        markAsUsed(onlyQuestion());
+
+        // Nội dung cũ được khai báo không khớp phương án đang lưu ở cùng vị trí: lựa chọn đã lưu sẽ trỏ sai.
+        SubjectImportFile swapped = fileWith("Môn", question("Câu 1", "Đề", PUBLISHED,
+                reworded("(0)", "[(0)]", false), reworded("[0]", "[[0]]", true)));
+
+        assertThatThrownBy(() -> importService.importSubject(swapped, true))
+                .isInstanceOfSatisfying(ImportValidationException.class, ex -> assertThat(ex.getProblems())
+                        .containsExactly("Câu 1: nội dung phương án đổi nhưng câu đã có người làm, "
+                                + "chỉ được đổi đáp án đúng"));
     }
 
     @Test
@@ -413,6 +442,11 @@ class SubjectImportServiceTest {
     }
 
     private static AnswerData answer(String content, boolean correct) {
-        return new AnswerData(content, correct);
+        return new AnswerData(content, correct, null);
+    }
+
+    /** Phương án đổi cách viết, kèm nội dung cũ (D-046). */
+    private static AnswerData reworded(String content, String previousContent, boolean correct) {
+        return new AnswerData(content, correct, previousContent);
     }
 }

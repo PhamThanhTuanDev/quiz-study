@@ -72,6 +72,9 @@ public record SubjectImportFile(
     public record AnswerData(
             @NotBlank(message = "không được để trống") String content,
             // Bắt buộc ghi rõ: nếu thiếu (hoặc gõ sai tên trường) mà mặc định false thì đáp án đúng sẽ mất âm thầm.
-            @NotNull(message = "không được để trống") Boolean correct) {
+            @NotNull(message = "không được để trống") Boolean correct,
+            // Không bắt buộc: nội dung cũ khi chỉ đổi cách viết phương án (D-046). Import lại câu đã có người làm
+            // chỉ nhận cách viết mới nếu nội dung cũ này khớp phương án đang lưu ở cùng vị trí.
+            String previousContent) {
     }
 }

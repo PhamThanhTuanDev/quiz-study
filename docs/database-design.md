@@ -344,6 +344,7 @@ Quy tắc khi import (kiểm tra **toàn bộ** file trước, có lỗi thì kh
 - `source.file` và `source.label` bắt buộc và không trùng trong một môn: đây là khoá để import lại khớp câu cũ với câu mới.
 - Slug đã có trong database: dừng, trừ khi chạy với `-Replace` để **cập nhật** môn đó (Phase 5, an toàn với bài làm đã có):
   - Bài khớp theo `displayOrder`; câu khớp theo nguồn. Câu khớp được thì sửa tại chỗ, giữ id câu và id phương án (số phương án đổi thì ghi lại phương án, trừ khi câu đã có người làm: báo lỗi).
+  - Câu đã có người làm: phương án khớp theo vị trí nên chỉ được đổi đáp án đúng, sửa ký tự in ấn (D-043), hoặc đổi cách viết khi phương án khai báo thêm `"previousContent"` (nội dung cũ, không bắt buộc, không lưu vào database; D-046) và nội dung cũ đó khớp phương án đang lưu ở cùng vị trí. Khác đi (ví dụ tài liệu đảo thứ tự phương án) thì báo lỗi.
   - Câu không còn trong file: xoá nếu chưa ai làm; đã có người làm thì chuyển `ARCHIVED`.
   - Bài không còn trong file: xoá cùng đề của bài; nếu bài còn câu hoặc đề đã có người làm thì báo lỗi.
 - Mỗi lần import tạo/cập nhật đề mặc định: mỗi bài một đề `PRACTICE`, cả môn một đề `EXAM` (số câu, thời gian: `quiz.defaults` trong `application.yml`).
