@@ -17,7 +17,7 @@ export default defineConfig({
     locale: 'vi-VN',
   },
   projects: [
-    // Điện thoại: màn hình nhỏ, cảm ứng (gợi ý phím tắt ẩn, có gợi ý vuốt).
+    // Điện thoại: màn hình nhỏ, cảm ứng (gợi ý phím tắt ẩn, chuyển câu bằng nút).
     { name: 'mobile', use: { ...devices['Pixel 7'], channel: 'chrome' } },
     { name: 'desktop', use: { ...devices['Desktop Chrome'], channel: 'chrome' } },
   ],

@@ -13,7 +13,6 @@ import SubmitConfirm from '../components/SubmitConfirm'
 import { useAsync } from '../hooks/useAsync'
 import { useFocusOnChange } from '../hooks/useFocusOnChange'
 import { useHotkey } from '../hooks/useHotkey'
-import { useSwipe } from '../hooks/useSwipe'
 import { useQuizAttempt } from '../hooks/useQuizAttempt'
 import { useStartAttempt } from '../hooks/useStartAttempt'
 import { getAttempt } from '../services/quizService'
@@ -79,10 +78,9 @@ function AttemptContent({ initial }: { initial: Attempt }) {
   const nextMistake = nextMistakeIndex(attempt, currentIndex)
   const goPrevious = () => goTo(currentIndex - 1)
   const goNext = () => goTo(currentIndex + 1)
-  // ← → chuyển câu, song song với bấm nút "Câu trước" / "Câu sau"; trên điện thoại thì vuốt (như lật trang).
+  // ← → chuyển câu, song song với bấm nút "Câu trước" / "Câu sau". Không chuyển câu bằng vuốt (D-044).
   useHotkey('ArrowLeft', goPrevious)
   useHotkey('ArrowRight', goNext)
-  const swipeHandlers = useSwipe({ onSwipeLeft: goNext, onSwipeRight: goPrevious })
 
   return (
     <div className="space-y-6">
@@ -132,7 +130,7 @@ function AttemptContent({ initial }: { initial: Attempt }) {
 
       <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-start lg:gap-8">
         <div className="space-y-6">
-          <div className="rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6" {...swipeHandlers}>
+          <div className="rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6">
             <QuestionView
               key={question.questionId}
               question={question}
@@ -157,8 +155,6 @@ function AttemptContent({ initial }: { initial: Attempt }) {
               </Button>
             </ShortcutHint>
           </div>
-          {/* Chỉ hiện trên màn hình cảm ứng: máy tính đã có gợi ý phím tắt trên nút. */}
-          <p className="text-center text-sm text-muted pointer-fine:hidden">Vuốt trái / phải trên câu hỏi để chuyển câu.</p>
 
           {isExam && !finished && (
             confirming ? (
