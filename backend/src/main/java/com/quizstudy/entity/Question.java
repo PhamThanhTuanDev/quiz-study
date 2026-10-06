@@ -74,7 +74,12 @@ public class Question extends BaseEntity {
      * để luôn khớp với thứ tự thêm vào.
      */
     public Answer addAnswer(String content, boolean correct) {
-        Answer answer = new Answer(this, answers.size() + 1, content, correct);
+        return addAnswer(content, correct, null);
+    }
+
+    /** Như {@link #addAnswer(String, boolean)}, kèm giá trị từng chỗ trống của câu điền khuyết (D-048). */
+    public Answer addAnswer(String content, boolean correct, List<String> blanks) {
+        Answer answer = new Answer(this, answers.size() + 1, content, correct, blanks);
         answers.add(answer);
         return answer;
     }

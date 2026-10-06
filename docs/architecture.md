@@ -54,6 +54,7 @@ flowchart TD
 | Test | Vitest + React Testing Library (unit/component); Playwright (E2E, `npm run test:e2e`, Chrome đã cài, khung Pixel 7 + máy tính, D-041) |
 | PWA | `vite-plugin-pwa` (D-040): manifest, icon trong `public/icons/`, service worker lưu sẵn file giao diện để mở được khi mất mạng. **Không** lưu đệm `/api` (không làm bài offline). Có bản mới thì hỏi người dùng (`UpdatePrompt`), không tự tải lại giữa lúc làm bài |
 | Điện thoại | Mobile-first; khi thi thử thanh đồng hồ dính đầu màn hình; chuyển câu bằng nút / lưới số câu (không dùng vuốt, D-044); máy tính có phím tắt Enter / ← → (`useHotkey`) |
+| Phương án điền khuyết | `AnswerContent`: mỗi chỗ trống (`blanks` từ API) một ô viền, chữ monospace (D-048) |
 | Đoạn code | `CodeBlock` tô màu cú pháp kiểu VS Code Dark+ bằng `codeHighlight.ts` (tự viết, không thêm thư viện, D-047); giữ nguyên thụt lề, cuộn ngang trên điện thoại |
 | Chế độ học | Trang `StudyPage` (D-044): cả bài trên một trang, đáp án đúng tô xanh, không chọn / không chấm; API riêng `/subjects/{slug}/chapters/{id}/study` |
 | Lint | Oxlint, mặc định của template `create-vite` (D-023) |

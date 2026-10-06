@@ -75,6 +75,10 @@ public record SubjectImportFile(
             @NotNull(message = "không được để trống") Boolean correct,
             // Không bắt buộc: nội dung cũ khi chỉ đổi cách viết phương án (D-046). Import lại câu đã có người làm
             // chỉ nhận cách viết mới nếu nội dung cũ này khớp phương án đang lưu ở cùng vị trí.
-            String previousContent) {
+            String previousContent,
+            // Không bắt buộc: câu điền khuyết ghi giá trị từng chỗ trống theo thứ tự (D-048), để hiển thị mỗi
+            // chỗ trống một ô. content vẫn phải ghi đủ chữ của phương án.
+            @Size(min = 1, message = "nếu có thì cần ít nhất một chỗ trống")
+            List<@NotBlank(message = "chỗ trống không được để trống") String> blanks) {
     }
 }

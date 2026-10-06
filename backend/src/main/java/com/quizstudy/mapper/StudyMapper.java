@@ -31,6 +31,6 @@ public final class StudyMapper {
     }
 
     private static StudyAnswerResponse toAnswer(Answer answer) {
-        return new StudyAnswerResponse(answer.getId(), answer.getContent(), answer.isCorrect());
+        return new StudyAnswerResponse(answer.getId(), answer.getContent(), answer.isCorrect(), answer.getBlanks());
     }
 }

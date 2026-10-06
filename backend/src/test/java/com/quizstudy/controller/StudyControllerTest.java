@@ -35,7 +35,8 @@ class StudyControllerTest {
         when(studyService.getChapter("python", 40L)).thenReturn(new StudyChapterResponse(
                 "python", "Nhập môn lập trình Python", 40L, "Bài 4", "Cấu trúc lặp",
                 List.of(new StudyQuestionResponse(9L, 1, "Kết quả của 7 // 2?", null,
-                        List.of(new StudyAnswerResponse(1L, "3.5", false), new StudyAnswerResponse(2L, "3", true)),
+                        List.of(new StudyAnswerResponse(1L, "3.5", false, null),
+                                new StudyAnswerResponse(2L, "3", true, List.of("3"))),
                         null))));
 
         mockMvc.perform(get("/api/v1/subjects/python/chapters/40/study"))
@@ -44,7 +45,9 @@ class StudyControllerTest {
                 .andExpect(jsonPath("$.questions[0].order").value(1))
                 .andExpect(jsonPath("$.questions[0].answers[0].correct").value(false))
                 .andExpect(jsonPath("$.questions[0].answers[1].content").value("3"))
-                .andExpect(jsonPath("$.questions[0].answers[1].correct").value(true));
+                .andExpect(jsonPath("$.questions[0].answers[1].correct").value(true))
+                .andExpect(jsonPath("$.questions[0].answers[0].blanks").isEmpty())
+                .andExpect(jsonPath("$.questions[0].answers[1].blanks[0]").value("3"));
     }
 
     @Test

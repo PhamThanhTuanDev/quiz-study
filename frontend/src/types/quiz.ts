@@ -21,6 +21,8 @@ export interface QuizSummary {
 export interface AnswerOption {
   id: number
   content: string
+  /** Câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); null với phương án thường. */
+  blanks: string[] | null
 }
 
 /**

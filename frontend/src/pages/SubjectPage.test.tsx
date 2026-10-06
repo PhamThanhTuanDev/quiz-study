@@ -35,7 +35,7 @@ const NEW_ATTEMPT: Attempt = {
   expiresAt: null,
   remainingSeconds: null,
   questions: [
-    { questionId: 9, order: 1, content: 'Câu hỏi đầu tiên', codeSnippet: null, answers: [{ id: 1, content: 'A' }, { id: 2, content: 'B' }], selectedAnswerId: null, feedback: null },
+    { questionId: 9, order: 1, content: 'Câu hỏi đầu tiên', codeSnippet: null, answers: [{ id: 1, content: 'A', blanks: null }, { id: 2, content: 'B', blanks: null }], selectedAnswerId: null, feedback: null },
   ],
   result: null,
 }

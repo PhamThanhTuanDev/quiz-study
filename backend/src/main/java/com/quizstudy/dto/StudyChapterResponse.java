@@ -17,6 +17,7 @@ public record StudyChapterResponse(String subjectSlug, String subjectName, Long 
             List<StudyAnswerResponse> answers, String explanation) {
     }
 
-    public record StudyAnswerResponse(Long id, String content, boolean correct) {
+    /** @param blanks câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); NULL với phương án thường */
+    public record StudyAnswerResponse(Long id, String content, boolean correct, List<String> blanks) {
     }
 }

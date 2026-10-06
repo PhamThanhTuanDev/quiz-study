@@ -60,7 +60,7 @@ public final class AttemptMapper {
 
     private static AttemptQuestionResponse toQuestion(QuizResult attempt, UserAnswer answer, Question question) {
         List<AnswerOptionResponse> options = AnswerShuffler.order(attempt.getPublicId(), question).stream()
-                .map(option -> new AnswerOptionResponse(option.getId(), option.getContent()))
+                .map(option -> new AnswerOptionResponse(option.getId(), option.getContent(), option.getBlanks()))
                 .toList();
         Long selectedAnswerId = answer.isAnswered() ? answer.getSelectedAnswer().getId() : null;
         return new AttemptQuestionResponse(question.getId(), answer.getQuestionOrder(), question.getContent(),

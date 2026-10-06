@@ -257,6 +257,12 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - **Không thêm thư viện** (highlight.js, Prism…): viết `components/codeHighlight.ts` (khoảng 100 dòng) tách code thành các đoạn theo loại, trả dữ liệu cho React hiển thị (không dùng `dangerouslySetInnerHTML`). Ghép các đoạn lại luôn ra đúng code gốc; đã chạy thử trên cả 211 đoạn code của môn Python.
 - Quy tắc theo cú pháp Python, vì code của các môn hiện có đều là Python. Code ngôn ngữ khác vẫn hiện đúng chữ, chỉ tô màu kém chính xác (ví dụ `//` của Java không thành chú thích); khi có môn như vậy thì đưa thông tin ngôn ngữ vào dữ liệu, không tách theo môn trong code.
 
+### D-048 · Mỗi chỗ trống của câu điền khuyết hiện thành một ô · Đã chốt (chủ dự án, 2026-10-06)
+- Chủ dự án: phương án nhiều chỗ trống viết liền một dòng (`(1) if · (2) == · …`, D-046) khó nhìn; muốn mỗi chỗ trống nằm trong một ô có viền, có khoảng đệm và cách nhau, như cách slide ghi `[if] [==] [:]` nhưng dễ nhìn hơn.
+- Dữ liệu: cột mới `answers.blanks` (JSON, NULL với phương án thường; migration `V3__add_answer_blanks.sql`) lưu giá trị từng chỗ trống theo thứ tự. Định dạng import có thêm `answers[].blanks` (không bắt buộc). API làm bài và API học trả kèm `blanks`. `content` giữ nguyên chữ đầy đủ, nên bài làm cũ và cách khớp phương án khi import lại không bị ảnh hưởng.
+- Giao diện: component `AnswerContent` hiện mỗi giá trị một ô viền, chữ monospace (áp dụng cả câu một chỗ trống, cho thống nhất); thứ tự chỗ trống chỉ đọc cho trình đọc màn hình. Dùng ở luyện tập, thi thử, trang Học.
+- `build_python_import.py` xuất `blanks` cho 94 câu điền khuyết (376 phương án). Câu điền khuyết không được sửa phương án bằng `edits.options` / `allOptions` (script báo lỗi), vì phương án dựng từ `fill`: sửa thẳng trong `fill` để ô và chữ luôn khớp nhau.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

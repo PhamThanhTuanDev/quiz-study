@@ -357,9 +357,10 @@ def build_question(pages: Pages, sources: dict[str, dict], chapter: int, entry: 
         label += " (gốc: câu hỏi mở)"
 
     if "edits" in entry:
+        if fill_values and ("options" in entry["edits"] or "allOptions" in entry["edits"]):
+            # Phương án điền khuyết dựng từ "fill" (giá trị từng chỗ trống, D-048): sửa thẳng trong "fill".
+            raise MapError("câu điền khuyết: sửa giá trị trong \"fill\", không dùng edits.options / allOptions")
         content, code, options = apply_edits(entry["edits"], content, code, options)
-        if previous_options:
-            previous_options = edit_options(entry["edits"], previous_options)
 
     answer = entry.get("answer")
     question = Question(
@@ -566,6 +567,9 @@ def answer_json(q: Question, index: int) -> dict:
     previous = q.previous_options[index] if q.previous_options else None
     if previous is not None and previous != q.options[index]:
         answer["previousContent"] = previous
+    if q.fill_values:
+        # Giá trị từng chỗ trống (D-048): giao diện hiện mỗi chỗ trống một ô; content giữ chữ đầy đủ.
+        answer["blanks"] = q.fill_values[index]
     return answer
 
 

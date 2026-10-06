@@ -12,8 +12,8 @@ function question(questionId: number, order: number, extra: Partial<AttemptQuest
     content: `Nội dung câu ${order}`,
     codeSnippet: null,
     answers: [
-      { id: questionId * 10 + 1, content: `Phương án 1 của câu ${order}` },
-      { id: questionId * 10 + 2, content: `Phương án 2 của câu ${order}` },
+      { id: questionId * 10 + 1, content: `Phương án 1 của câu ${order}`, blanks: null },
+      { id: questionId * 10 + 2, content: `Phương án 2 của câu ${order}`, blanks: null },
     ],
     selectedAnswerId: null,
     feedback: null,

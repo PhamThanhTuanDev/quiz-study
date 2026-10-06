@@ -159,7 +159,8 @@ public class SubjectContentUpdater {
                 return;
             }
             for (int i = 0; i < answers.size(); i++) {
-                answers.get(i).update(newAnswers.get(i).content(), newAnswers.get(i).correct());
+                AnswerData newAnswer = newAnswers.get(i);
+                answers.get(i).update(newAnswer.content(), newAnswer.correct(), newAnswer.blanks());
             }
         } else if (used) {
             problems.add(data.source().label() + ": số phương án đổi từ " + answers.size() + " thành "

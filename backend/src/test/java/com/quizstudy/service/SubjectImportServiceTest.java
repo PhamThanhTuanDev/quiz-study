@@ -110,11 +110,38 @@ class SubjectImportServiceTest {
     @Test
     void importSubject_requiresTheCorrectFlag_onEveryAnswer() {
         QuestionData question = new QuestionData(SINGLE_CHOICE, "Câu hỏi", null, null, true, DRAFT, null,
-                source("Nhãn câu hỏi"), List.of(new AnswerData("A", null, null), answer("B", false)));
+                source("Nhãn câu hỏi"), List.of(new AnswerData("A", null, null, null), answer("B", false)));
 
         assertThatThrownBy(() -> importService.importSubject(fileWith("Tên môn", question), false))
                 .isInstanceOfSatisfying(ImportValidationException.class, ex -> assertThat(ex.getProblems())
                         .containsExactly("chapters[0].questions[0].answers[0].correct: không được để trống"));
+    }
+
+    @Test
+    void importSubject_rejectsAnEmptyBlank() {
+        SubjectImportFile file = fileWith("Tên môn", question("Câu 1", "Đề", DRAFT,
+                blanksAnswer("(1) if · (2) ", true, "if", " "), answer("B", false)));
+
+        assertThatThrownBy(() -> importService.importSubject(file, false))
+                .isInstanceOfSatisfying(ImportValidationException.class, ex -> assertThat(ex.getProblems())
+                        .containsExactly("chapters[0].questions[0].answers[0].blanks[1]: chỗ trống không được để trống"));
+    }
+
+    @Test
+    void importSubject_storesTheBlanksOfAFillInAnswer_andUpdatesThemOnReimport() {
+        importService.importSubject(fileWith("Môn", question("Câu 1", "Đề", PUBLISHED,
+                blanksAnswer("(1) if · (2) ==", true, "if", "=="), answer("B", false))), false);
+        flushAndClear();
+
+        assertThat(onlyQuestion().getAnswers()).extracting(Answer::getBlanks)
+                .containsExactly(List.of("if", "=="), null);
+
+        importService.importSubject(fileWith("Môn", question("Câu 1", "Đề", PUBLISHED,
+                blanksAnswer("(1) while · (2) ==", true, "while", "=="), answer("B", false))), true);
+        flushAndClear();
+
+        assertThat(onlyQuestion().getAnswers()).extracting(Answer::getBlanks)
+                .containsExactly(List.of("while", "=="), null);
     }
 
     @Test
@@ -442,11 +469,16 @@ class SubjectImportServiceTest {
     }
 
     private static AnswerData answer(String content, boolean correct) {
-        return new AnswerData(content, correct, null);
+        return new AnswerData(content, correct, null, null);
+    }
+
+    /** Phương án của câu điền khuyết, kèm giá trị từng chỗ trống (D-048). */
+    private static AnswerData blanksAnswer(String content, boolean correct, String... blanks) {
+        return new AnswerData(content, correct, null, List.of(blanks));
     }
 
     /** Phương án đổi cách viết, kèm nội dung cũ (D-046). */
     private static AnswerData reworded(String content, String previousContent, boolean correct) {
-        return new AnswerData(content, correct, previousContent);
+        return new AnswerData(content, correct, previousContent, null);
     }
 }

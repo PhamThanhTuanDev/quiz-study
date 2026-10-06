@@ -2,6 +2,7 @@ import { useId, useState, type Ref } from 'react'
 import { useFocusOnChange } from '../hooks/useFocusOnChange'
 import { useHotkey } from '../hooks/useHotkey'
 import type { AnswerOption, AttemptQuestion, AnswerFeedback, QuizMode } from '../types/quiz'
+import AnswerContent from './AnswerContent'
 import Button from './Button'
 import CodeBlock from './CodeBlock'
 import ShortcutHint from './ShortcutHint'
@@ -133,7 +134,7 @@ function AnswerChoice({ name, answer, letter, checked, disabled, feedback, selec
         className="mt-1 size-4 shrink-0 accent-primary"
       />
       <span className="shrink-0 font-semibold">{letter}.</span>
-      <span className="min-w-0 flex-1 wrap-break-word whitespace-pre-wrap">{answer.content}</span>
+      <AnswerContent content={answer.content} blanks={answer.blanks} />
       {/* Trên màn hình chỉ tô màu (xanh: đáp án đúng, đỏ: lựa chọn sai), không thêm chữ theo ý chủ dự án;
           chữ ẩn giữ lại cho trình đọc màn hình, vì người không nhìn thấy màu cần biết phương án nào đúng / sai. */}
       {isCorrectAnswer && <span className="sr-only"> (đáp án đúng)</span>}

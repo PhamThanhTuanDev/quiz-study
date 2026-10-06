@@ -127,6 +127,8 @@ public class SubjectImportService {
     }
 
     private static String describe(ConstraintViolation<SubjectImportFile> violation) {
-        return violation.getPropertyPath() + ": " + violation.getMessage();
+        // Ràng buộc trên phần tử của danh sách chuỗi (ví dụ blanks[1]) có thêm nút "<list element>"; bỏ đi cho dễ đọc.
+        String path = violation.getPropertyPath().toString().replace(".<list element>", "");
+        return path + ": " + violation.getMessage();
     }
 }

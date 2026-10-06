@@ -3,6 +3,8 @@ export interface StudyAnswer {
   id: number
   content: string
   correct: boolean
+  /** Câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); null với phương án thường. */
+  blanks: string[] | null
 }
 
 /** Một câu trong chế độ "Học" (khớp StudyQuestionResponse). Phương án theo đúng thứ tự tài liệu. */

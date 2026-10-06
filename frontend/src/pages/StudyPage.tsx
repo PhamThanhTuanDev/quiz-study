@@ -1,5 +1,6 @@
 import { useCallback, useId } from 'react'
 import { Link, useParams } from 'react-router'
+import AnswerContent from '../components/AnswerContent'
 import AsyncContent from '../components/AsyncContent'
 import CodeBlock from '../components/CodeBlock'
 import EmptyState from '../components/EmptyState'
@@ -88,7 +89,7 @@ function StudyAnswerRow({ answer, letter }: { answer: StudyAnswer; letter: strin
   return (
     <li className={`flex min-h-11 items-start gap-3 rounded-lg border px-4 py-3 ${tone}`}>
       <span className="shrink-0 font-semibold">{letter}.</span>
-      <span className="min-w-0 flex-1 wrap-break-word whitespace-pre-wrap">{answer.content}</span>
+      <AnswerContent content={answer.content} blanks={answer.blanks} />
       {answer.correct && <span className="sr-only"> (đáp án đúng)</span>}
     </li>
   )

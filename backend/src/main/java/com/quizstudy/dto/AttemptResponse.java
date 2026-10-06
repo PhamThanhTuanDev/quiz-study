@@ -29,7 +29,8 @@ public record AttemptResponse(String id, Long quizId, String quizTitle, QuizMode
             List<AnswerOptionResponse> answers, Long selectedAnswerId, AnswerFeedbackResponse feedback) {
     }
 
-    public record AnswerOptionResponse(Long id, String content) {
+    /** @param blanks câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); NULL với phương án thường */
+    public record AnswerOptionResponse(Long id, String content, List<String> blanks) {
     }
 
     /**

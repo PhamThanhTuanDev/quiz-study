@@ -63,7 +63,7 @@ public final class SubjectImportMapper {
 
     public static void addAnswers(Question question, QuestionData data) {
         for (AnswerData answer : data.answers()) {
-            question.addAnswer(answer.content(), answer.correct());
+            question.addAnswer(answer.content(), answer.correct(), answer.blanks());
         }
     }
 }

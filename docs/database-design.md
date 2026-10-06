@@ -1,6 +1,6 @@
 # Thiết kế cơ sở dữ liệu
 
-> Trạng thái: đã duyệt. **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. **Phase 5 đã tạo các bảng làm bài** (`quizzes`, `quiz_results`, `user_answers`) bằng `V2__create_quiz_tables.sql`; `users` ở Phase 7 (khi đó thêm khoá ngoại `quizzes.created_by`, `quiz_results.user_id`).
+> Trạng thái: đã duyệt. Bổ sung 2026-10-06: cột `answers.blanks` (`V3__add_answer_blanks.sql`, D-048). **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. **Phase 5 đã tạo các bảng làm bài** (`quizzes`, `quiz_results`, `user_answers`) bằng `V2__create_quiz_tables.sql`; `users` ở Phase 7 (khi đó thêm khoá ngoại `quizzes.created_by`, `quiz_results.user_id`).
 > DBMS: MySQL 8.0 (máy hiện có MySQL Server 8.0.46).
 
 ## 1. Mục tiêu thiết kế
@@ -92,6 +92,7 @@ erDiagram
         bigint question_id FK
         int display_order
         text content
+        json blanks
         boolean is_correct
         datetime created_at
         datetime updated_at
@@ -205,7 +206,8 @@ Quy tắc toàn vẹn (kiểm tra ở tầng Service, vì MySQL khó ràng buộ
 | `id` | BIGINT | **PK** | |
 | `question_id` | BIGINT | NOT NULL, **FK → questions.id** (ON DELETE CASCADE) | Phương án là một phần của câu hỏi |
 | `display_order` | INT | NOT NULL | Thứ tự gốc (1 = A, 2 = B…). Nhãn A/B/C được **tính khi hiển thị**, không lưu, vì thứ tự có thể bị xáo trộn và nguồn có chỗ trùng nhãn (P8) |
-| `content` | TEXT | NOT NULL | |
+| `content` | TEXT | NOT NULL | Chữ đầy đủ của phương án (kể cả câu điền khuyết) |
+| `blanks` | JSON | NULL | Câu điền khuyết: giá trị từng chỗ trống theo thứ tự, ví dụ `["if", "==", ":"]` (D-048, migration `V3__add_answer_blanks.sql`); giao diện hiện mỗi chỗ trống một ô. NULL với phương án thường |
 | `is_correct` | BOOLEAN | NOT NULL, mặc định FALSE | **Không bao giờ** trả về client trước khi nộp bài |
 | `created_at`, `updated_at` | DATETIME(6) | NOT NULL | |
 
@@ -341,6 +343,7 @@ Quy tắc khi import (kiểm tra **toàn bộ** file trước, có lỗi thì kh
 - Mọi trường bắt buộc phải có; độ dài không vượt cột trong database. `shuffleAnswers` bắt buộc ghi rõ.
 - Mỗi câu có ít nhất 2 phương án; câu `SINGLE_CHOICE` có tối đa 1 phương án đúng; câu `PUBLISHED` có **đúng 1** phương án đúng.
 - Thứ tự phương án giữ đúng thứ tự trong file (1 = A, 2 = B…).
+- Phương án của câu điền khuyết có thể ghi thêm `"blanks": ["if", "==", ":"]` (không bắt buộc, mỗi giá trị không được trống; D-048). `content` vẫn ghi đủ chữ của phương án.
 - `source.file` và `source.label` bắt buộc và không trùng trong một môn: đây là khoá để import lại khớp câu cũ với câu mới.
 - Slug đã có trong database: dừng, trừ khi chạy với `-Replace` để **cập nhật** môn đó (Phase 5, an toàn với bài làm đã có):
   - Bài khớp theo `displayOrder`; câu khớp theo nguồn. Câu khớp được thì sửa tại chỗ, giữ id câu và id phương án (số phương án đổi thì ghi lại phương án, trừ khi câu đã có người làm: báo lỗi).
