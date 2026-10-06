@@ -75,6 +75,17 @@ class ChapterRepositoryTest {
                         tuple(empty.getId(), "Bài 3", 0L));
     }
 
+    @Test
+    void findByIdAndSubjectId_findsTheChapter_onlyWithinItsOwnSubject() {
+        Subject python = entityManager.persist(new Subject("python", "Nhập môn lập trình Python"));
+        Subject gdqp = entityManager.persist(new Subject("gdqp", "Giáo dục quốc phòng và an ninh"));
+        Chapter chapter = entityManager.persist(chapter(python, "Bài 1", 1));
+        entityManager.flush();
+
+        assertThat(chapterRepository.findByIdAndSubjectId(chapter.getId(), python.getId())).contains(chapter);
+        assertThat(chapterRepository.findByIdAndSubjectId(chapter.getId(), gdqp.getId())).isEmpty();
+    }
+
     private static Chapter chapter(Subject subject, String code, int displayOrder) {
         Chapter chapter = new Chapter(subject, "Tên " + code, displayOrder);
         chapter.setCode(code);

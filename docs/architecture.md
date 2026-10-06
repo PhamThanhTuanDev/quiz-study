@@ -53,7 +53,8 @@ flowchart TD
 | State | `useState` / `useReducer` / Context. **Không** dùng Redux |
 | Test | Vitest + React Testing Library (unit/component); Playwright (E2E, `npm run test:e2e`, Chrome đã cài, khung Pixel 7 + máy tính, D-041) |
 | PWA | `vite-plugin-pwa` (D-040): manifest, icon trong `public/icons/`, service worker lưu sẵn file giao diện để mở được khi mất mạng. **Không** lưu đệm `/api` (không làm bài offline). Có bản mới thì hỏi người dùng (`UpdatePrompt`), không tự tải lại giữa lúc làm bài |
-| Điện thoại | Mobile-first; khi thi thử thanh đồng hồ dính đầu màn hình; vuốt trái/phải trên câu hỏi để chuyển câu (`useSwipe`); máy tính có phím tắt Enter / ← → (`useHotkey`) |
+| Điện thoại | Mobile-first; khi thi thử thanh đồng hồ dính đầu màn hình; chuyển câu bằng nút / lưới số câu (không dùng vuốt, D-044); máy tính có phím tắt Enter / ← → (`useHotkey`) |
+| Chế độ học | Trang `StudyPage` (D-044): cả bài trên một trang, đáp án đúng tô xanh, không chọn / không chấm; API riêng `/subjects/{slug}/chapters/{id}/study` |
 | Lint | Oxlint, mặc định của template `create-vite` (D-023) |
 | Thiết kế | Hướng "bàn học yên tĩnh" (D-028). Token màu trong `src/index.css`, component dùng class ngữ nghĩa (`bg-primary`, `text-muted`…) |
 | Tải dữ liệu | Hook `useAsync(load)` trả `loading` / `success` / `error` + `reload`; component `AsyncContent` hiển thị đúng trạng thái và giữ focus khi bấm "Thử lại". Chỉ thông điệp của `ApiError` (tiếng Việt) được hiện cho người dùng |
@@ -65,12 +66,12 @@ frontend/src/
 ├── components/   # UI tái sử dụng. ✔ Button, ButtonLink, Card, AsyncContent, LoadingState, ErrorState, EmptyState, LetterBadge
 │                 #   ✔ Làm bài (Phase 5): QuestionView, CodeBlock, QuestionNavigator, CountdownTimer, SubmitConfirm, AttemptOutcome
 │                 #   ✔ Phase 6: RecentAttemptList, ShortcutHint · PWA (Phase 10): OfflineBanner, UpdatePrompt, PwaUpdatePrompt
-├── pages/        # Mỗi route một trang. ✔ HomePage, SubjectPage, AttemptPage, NotFoundPage, RouteErrorPage
+├── pages/        # Mỗi route một trang. ✔ HomePage, SubjectPage, StudyPage, AttemptPage, NotFoundPage, RouteErrorPage
 ├── layouts/      # ✔ MainLayout (header, điều hướng, footer) + navigation.ts (danh sách mục điều hướng)
-├── services/     # Chỗ duy nhất gọi fetch. ✔ apiClient.ts (apiGet, apiPost, apiPut), subjectService.ts, quizService.ts
+├── services/     # Chỗ duy nhất gọi fetch. ✔ apiClient.ts (apiGet, apiPost, apiPut), subjectService.ts, quizService.ts, studyService.ts
 ├── hooks/        # ✔ useAsync, useQuizAttempt (trạng thái làm bài), useStartAttempt, useFocusOnChange
-│                 #   ✔ Phase 6/10: useHotkey (phím tắt), useSwipe (vuốt), useOnlineStatus (mất mạng)
-├── types/        # Kiểu khớp DTO backend. ✔ api.ts (ProblemDetail, InvalidField), subject.ts, quiz.ts
+│                 #   ✔ Phase 6/10: useHotkey (phím tắt), useOnlineStatus (mất mạng)
+├── types/        # Kiểu khớp DTO backend. ✔ api.ts (ProblemDetail, InvalidField), subject.ts, quiz.ts, study.ts
 ├── routes.tsx    # ✔ pageRoutes (danh sách trang) + createAppRoutes() (layout + trang lỗi), dùng chung cho App và test
 ├── App.tsx       # Tạo router từ routes.tsx
 └── main.tsx      # Điểm vào
@@ -152,6 +153,7 @@ API dự kiến (chốt chi tiết ở từng phase):
 | GET | `/api/v1/subjects` | ✔ Danh sách môn đã publish, kèm số bài và số câu `PUBLISHED` | 4 |
 | GET | `/api/v1/subjects/{slug}` | ✔ Chi tiết môn + các bài (số câu mỗi bài). Không có hoặc chưa publish → 404 | 4 |
 | GET | `/api/v1/subjects/{slug}/quizzes` | ✔ Các đề của môn: đề cả môn trước, rồi theo thứ tự bài; số câu thực tế mỗi lượt | 5 |
+| GET | `/api/v1/subjects/{slug}/chapters/{chapterId}/study` | ✔ Chế độ học (D-044): mọi câu `PUBLISHED` của bài kèm đáp án đúng và giải thích. Bài không thuộc môn → 404 | sau 10 |
 | POST | `/api/v1/quizzes/{quizId}/attempts` | ✔ Bắt đầu lượt làm → 201 + `Location`; câu hỏi và phương án **không kèm đáp án đúng** | 5 |
 | GET | `/api/v1/attempts/{attemptId}` | ✔ Mở lại lượt làm (tải lại trang); thi thử quá hạn thì được chấm. Thi thử đã kết thúc: kèm đáp án đúng của mọi câu để xem lại (D-038) | 5–6 |
 | PUT | `/api/v1/attempts/{attemptId}/answers/{questionId}` | ✔ Lưu lựa chọn. Luyện tập: trả đúng/sai + đáp án đúng **của câu đó**, khoá câu | 5 |

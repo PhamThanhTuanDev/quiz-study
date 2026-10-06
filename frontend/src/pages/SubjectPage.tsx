@@ -2,6 +2,7 @@ import { useCallback, useId } from 'react'
 import { Link, useParams } from 'react-router'
 import AsyncContent from '../components/AsyncContent'
 import Button from '../components/Button'
+import ButtonLink from '../components/ButtonLink'
 import Card from '../components/Card'
 import EmptyState from '../components/EmptyState'
 import ErrorState from '../components/ErrorState'
@@ -73,7 +74,9 @@ function SubjectDetails({ subject, quizzes }: SubjectWithQuizzes) {
         <h2 id={chaptersHeadingId} className="text-lg font-semibold">
           Các bài
         </h2>
-        <p className="mt-1 text-sm text-muted">Luyện tập theo bài: trả lời câu nào biết ngay câu đó đúng hay sai.</p>
+        <p className="mt-1 text-sm text-muted">
+          Học: xem câu hỏi kèm đáp án đúng. Luyện tập: trả lời câu nào biết ngay câu đó đúng hay sai.
+        </p>
         {subject.chapters.length === 0 ? (
           <div className="mt-3">
             <EmptyState title="Môn này chưa có bài nào" />
@@ -90,18 +93,29 @@ function SubjectDetails({ subject, quizzes }: SubjectWithQuizzes) {
                     <p>{chapter.title}</p>
                     <p className="text-sm text-muted">{chapter.questionCount} câu</p>
                   </div>
-                  {practice && practice.questionCount > 0 && (
-                    <Button
-                      variant="secondary"
-                      // Nhiều nút cùng chữ "Luyện tập": thêm tên bài để trình đọc màn hình phân biệt.
-                      // Tên bắt đầu bằng đúng chữ đang hiện, để người dùng giọng nói gọi được nút.
-                      aria-label={`${practiceLabel} ${chapter.title}`}
-                      onClick={() => void starter.start(practice.id)}
-                      disabled={starter.pendingQuizId !== null}
-                    >
-                      {practiceLabel}
-                    </Button>
-                  )}
+                  <div className="flex gap-2">
+                    {chapter.questionCount > 0 && (
+                      <ButtonLink
+                        variant="secondary"
+                        to={`/subjects/${subject.slug}/chapters/${chapter.id}/study`}
+                        aria-label={`Học ${chapter.title}`}
+                      >
+                        Học
+                      </ButtonLink>
+                    )}
+                    {practice && practice.questionCount > 0 && (
+                      <Button
+                        variant="secondary"
+                        // Nhiều nút cùng chữ "Luyện tập": thêm tên bài để trình đọc màn hình phân biệt.
+                        // Tên bắt đầu bằng đúng chữ đang hiện, để người dùng giọng nói gọi được nút.
+                        aria-label={`${practiceLabel} ${chapter.title}`}
+                        onClick={() => void starter.start(practice.id)}
+                        disabled={starter.pendingQuizId !== null}
+                      >
+                        {practiceLabel}
+                      </Button>
+                    )}
+                  </div>
                 </li>
               )
             })}

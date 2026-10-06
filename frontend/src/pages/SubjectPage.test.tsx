@@ -73,6 +73,18 @@ describe('SubjectPage', () => {
     expect(screen.getByRole('button', { name: 'Luyện tập Quan điểm cơ bản' })).toBeEnabled()
   })
 
+  it('offers a "Học" link next to "Luyện tập" for every chapter that has questions', async () => {
+    mockApi({ 'GET /api/v1/subjects/gdqp': GDQP, 'GET /api/v1/subjects/gdqp/quizzes': QUIZZES })
+
+    renderRoute('/subjects/gdqp')
+
+    const study = await screen.findByRole('link', { name: 'Học Quan điểm cơ bản' })
+    expect(study).toHaveAttribute('href', '/subjects/gdqp/chapters/2/study')
+    const chapterRow = study.closest('li')
+    expect(chapterRow).not.toBeNull()
+    expect(within(chapterRow as HTMLElement).getByRole('button', { name: 'Luyện tập Quan điểm cơ bản' })).toBeInTheDocument()
+  })
+
   it('starts a practice attempt and opens it', async () => {
     const fetchMock = mockApi({
       'GET /api/v1/subjects/gdqp': GDQP,

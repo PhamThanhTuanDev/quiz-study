@@ -1,6 +1,7 @@
 package com.quizstudy.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,9 @@ import com.quizstudy.entity.QuestionStatus;
 public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
     List<Chapter> findBySubjectIdOrderByDisplayOrderAsc(Long subjectId);
+
+    /** Bài theo id, chỉ khi thuộc đúng môn (URL ghép slug môn với id bài không khớp thì coi như không có). */
+    Optional<Chapter> findByIdAndSubjectId(Long id, Long subjectId);
 
     /**
      * Các bài của một môn theo thứ tự, kèm số câu ở trạng thái {@code questionStatus}.

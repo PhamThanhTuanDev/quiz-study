@@ -1,8 +1,8 @@
-import { expect, test, type Locator, type Page } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Luồng chính trên điện thoại và máy tính: chọn môn → luyện tập (kiểm tra từng câu) → thi thử (nộp, xem lại)
- * → "Lượt làm gần đây". Không phụ thuộc môn cụ thể nào: luôn chọn môn đầu tiên trong danh sách.
+ * Luồng chính trên điện thoại và máy tính: chọn môn → học (xem đáp án) → luyện tập (kiểm tra từng câu) → thi thử
+ * (nộp, xem lại) → "Lượt làm gần đây". Không phụ thuộc môn cụ thể nào: luôn chọn môn đầu tiên trong danh sách.
  */
 
 async function openFirstSubject(page: Page) {
@@ -13,18 +13,6 @@ async function openFirstSubject(page: Page) {
   await firstSubject.click()
   await expect(page).toHaveURL(/\/subjects\/[^/]+$/)
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-}
-
-/** Vuốt ngang trên một phần tử (màn hình cảm ứng): tạo đúng chuỗi sự kiện touchstart → touchend. */
-async function swipe(element: Locator, direction: 'left' | 'right') {
-  await element.evaluate((target, dir) => {
-    const box = target.getBoundingClientRect()
-    const y = box.top + box.height / 2
-    const [fromX, toX] = dir === 'left' ? [box.right - 20, box.left + 20] : [box.left + 20, box.right - 20]
-    const touch = (x: number) => new Touch({ identifier: 1, target, clientX: x, clientY: y })
-    target.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, touches: [touch(fromX)], changedTouches: [touch(fromX)] }))
-    target.dispatchEvent(new TouchEvent('touchend', { bubbles: true, touches: [], changedTouches: [touch(toX)] }))
-  }, direction)
 }
 
 test('luyện tập: chọn đáp án, kiểm tra, biết ngay đúng hay sai, rồi sang câu sau', async ({ page, isMobile }) => {
@@ -42,12 +30,26 @@ test('luyện tập: chọn đáp án, kiểm tra, biết ngay đúng hay sai, r
   await expect(page.getByRole('radio').first()).toBeDisabled()
 
   if (isMobile) {
-    await expect(page.getByText('Vuốt trái / phải trên câu hỏi để chuyển câu.')).toBeVisible()
-    await swipe(page.getByRole('article'), 'left')
+    await page.getByRole('button', { name: 'Câu sau →' }).click()
   } else {
     await page.keyboard.press('ArrowRight')
   }
   await expect(page.getByRole('heading', { name: /^Câu 2\// })).toBeVisible()
+})
+
+test('học: xem cả bài, mỗi câu có đúng một đáp án tô xanh, không có ô chọn', async ({ page }) => {
+  await openFirstSubject(page)
+  await page.getByRole('link', { name: /^Học / }).first().click()
+
+  await expect(page).toHaveURL(/\/chapters\/\d+\/study$/)
+  const questions = page.getByRole('article')
+  await expect(questions.first()).toBeVisible()
+  await expect(page.getByText('✓ Đáp án đúng')).toHaveCount(await questions.count())
+  await expect(page.getByRole('radio')).toHaveCount(0)
+
+  // Mở lại đúng đường dẫn (tải lại trang, link chia sẻ) vẫn ra bài học.
+  await page.reload()
+  await expect(questions.first()).toBeVisible()
 })
 
 test('thi thử: làm vài câu, nộp, xem lại, rồi thấy trong "Lượt làm gần đây"', async ({ page }) => {

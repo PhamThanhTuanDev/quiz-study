@@ -215,7 +215,7 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 ### D-041 · E2E bằng Playwright, dùng Chrome đã cài · Đã chốt (chủ dự án, 2026-10-01)
 - Thêm devDependency `@playwright/test` 1.63 (Apache-2.0). Chạy bằng Chrome đã cài trên máy (`channel: 'chrome'`), không tải trình duyệt riêng của Playwright.
 - E2E chạy với backend + database dev đang chạy (dữ liệu thật), lệnh riêng `npm run test:e2e`, không gộp vào `npm run test`.
-- Trên điện thoại: vuốt trái / phải để chuyển câu (tương đương phím ← →); đồng hồ thi thử luôn hiện khi cuộn.
+- Trên điện thoại: vuốt trái / phải để chuyển câu (tương đương phím ← →); đồng hồ thi thử luôn hiện khi cuộn. (Vuốt đã bỏ theo D-044.)
 
 ### D-042 · Thêm Bài 11 (NumPy) cho môn Python, cài NumPy để kiểm chứng · Đã chốt (chủ dự án, 2026-10-02)
 - Chủ dự án bổ sung 2 file `w10-w11-c07_phan-tich-du-lieu-numpy` (lý thuyết + bài tập). Thêm thành **Bài 11 "Phân tích dữ liệu và NumPy"**, làm theo bản đồ vị trí (D-035), D-020, D-026 như 10 bài trước.
@@ -230,6 +230,12 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Ghi vết: mục `edits` trong bản đồ Python (`stem` / `code` / `setCode` / `allOptions` / `options` + `note` bắt buộc); script báo lỗi nếu đoạn gốc không còn trong tài liệu. `note` được ghi vào cột `explanation`, người học thấy "Đã sửa so với tài liệu: …" khi xem đúng/sai.
 - Import lại môn đã có người làm: được sửa ký tự in ấn của phương án (nháy cong / thẳng, "–" / "-", khoảng trắng) vì vẫn là phương án cũ ở vị trí cũ; đổi nghĩa phương án vẫn bị chặn như trước.
 - Áp dụng ngay: 48 câu Python đang chờ duyệt và 11 câu đã dùng được nhưng còn lỗi hiển thị (8 câu lỗi in ấn của D-036, 3 câu NumPy) → 58 câu có sửa, 1 câu chỉ chọn đáp án. Môn Python: 360 câu, cả 360 `PUBLISHED`, kiểm chứng 360/360 (320 câu chạy code thật).
+
+### D-044 · Chế độ "Học" xem đáp án; bỏ vuốt chuyển câu · Đã chốt (chủ dự án, 2026-10-06)
+- Chủ dự án yêu cầu nút **"Học"** cạnh nút "Luyện tập" của mỗi bài: trang học hiện câu hỏi kèm đáp án đúng tô xanh, không chọn đáp án.
+- API riêng `GET /api/v1/subjects/{slug}/chapters/{chapterId}/study` (`StudyController` → `StudyService`) trả mọi câu `PUBLISHED` của bài, phương án theo thứ tự tài liệu (không xáo), kèm `correct` và `explanation`. Quy tắc "API làm bài không trả đáp án trước khi trả lời / nộp" vẫn giữ nguyên cho luyện tập và thi thử: học là chế độ riêng, người học chủ động chọn xem đáp án. Không lưu gì, không chấm điểm.
+- Trang `/subjects/:slug/chapters/:chapterId/study` hiện cả bài trên một trang để cuộn đọc liền mạch; đáp án đúng có viền / nền xanh và chữ "✓ Đáp án đúng" (không chỉ dựa vào màu); có giải thích / ghi chú "Đã sửa so với tài liệu" nếu có.
+- Bỏ tính năng vuốt trái / phải trên câu hỏi để chuyển câu (D-040, D-041): chuyển câu bằng nút "Câu trước" / "Câu sau", lưới số câu, hoặc phím ← → trên máy tính. Xoá `useSwipe`; test giữ lại một ca kiểm tra vuốt không đổi câu.
 
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.

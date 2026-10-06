@@ -4,12 +4,14 @@ import AttemptPage from './pages/AttemptPage'
 import HomePage from './pages/HomePage'
 import NotFoundPage from './pages/NotFoundPage'
 import RouteErrorPage from './pages/RouteErrorPage'
+import StudyPage from './pages/StudyPage'
 import SubjectPage from './pages/SubjectPage'
 
 /** Các trang hiển thị bên trong layout chung. Thêm trang mới: thêm một mục vào đây. */
 export const pageRoutes: RouteObject[] = [
   { index: true, element: <HomePage /> },
   { path: 'subjects/:slug', element: <SubjectPage /> },
+  { path: 'subjects/:slug/chapters/:chapterId/study', element: <StudyPage /> },
   { path: 'attempts/:attemptId', element: <AttemptPage /> },
   { path: '*', element: <NotFoundPage /> },
 ]
