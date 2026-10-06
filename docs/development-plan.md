@@ -5,9 +5,10 @@
 
 ## Tiến độ hiện tại
 
-> Cập nhật: 2026-10-02 (phiên 2, trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
-> **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch đã duyệt cả 5 đề xuất (D-040, D-041); đang làm theo "Thứ tự làm", tiến độ ở mục "Tiến độ 10" **Phase 10 đã làm xong cả 4 bước, chờ chủ dự án duyệt** (2026-10-03). Sau khi duyệt: quay lại Phase 7–9 theo D-039.
-> **2026-10-02:** thêm Bài 11 NumPy cho môn Python (D-042). Theo yêu cầu chủ dự án (D-043), Claude tự sửa các câu lỗi đề cho đúng (có ghi vết, người học thấy "Đã sửa so với tài liệu"): môn Python 360 câu, cả 360 `PUBLISHED`, không còn câu chờ duyệt. Xem mục Phase 4B.
+> Cập nhật: 2026-10-06 (trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
+> **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch đã duyệt cả 5 đề xuất (D-040, D-041); tiến độ ở mục "Tiến độ 10". **Phase 10 đã làm xong cả 4 bước, chờ chủ dự án duyệt** (2026-10-03). Sau khi duyệt: quay lại Phase 7–9 theo D-039.
+> **2026-10-02:** thêm Bài 11 NumPy cho môn Python (D-042). Theo yêu cầu chủ dự án (D-043), Claude tự sửa các câu lỗi đề cho đúng (có ghi vết, người học thấy "Đã sửa so với tài liệu"). Xem mục Phase 4B.
+> **2026-10-06 (theo yêu cầu chủ dự án):** chế độ **"Học"** (nút cạnh "Luyện tập", xem câu hỏi kèm đáp án đúng tô xanh) và bỏ vuốt chuyển câu (D-044); thêm Bài 12 Matplotlib, Bài 13 Pandas (D-045): môn Python 13 bài, 428 câu, cả 428 `PUBLISHED`. Đã đẩy lên GitHub theo yêu cầu.
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)
 - **Frontend** (`frontend/`): `create-vite@9.2.1` template `react-ts`. React 19.3, TypeScript 6.0 (`strict`), Vite 8.3, Tailwind CSS 4.3, React Router 8.4, Vitest 5.0 + React Testing Library 16, Oxlint (D-023). Proxy `/api` → `http://localhost:8080`. Trang chủ hiển thị trạng thái backend/database. Kết quả: 7/7 test, lint sạch, build đạt.
@@ -89,6 +90,7 @@ Khó hơn GDQP: 19 file slide 2 cột, phương án xếp dạng lưới (theo c
 - [x] Bước 5: chủ dự án duyệt (D-036): 8 câu lỗi in ấn và 1 câu hỏi mở chuyển sang `PUBLISHED`; 33 câu còn lại giữ `NEEDS_REVIEW`. Build, kiểm chứng (289 câu đạt), import lại với `-Replace`, so database với JSON: khớp hoàn toàn. Trang chủ qua `localhost:5173` hiện GDQP 230 câu, Python 262 câu.
 - [x] Bổ sung 2026-10-02 (D-042): **Bài 11 NumPy** (`bai-11.json`, nguồn `w1011-lt` trang 23–26, `w1011-hw` trang 2–6): 65 câu, 50 `PUBLISHED`, 15 `NEEDS_REVIEW` (2 lỗi in ấn, 7 nhiều phương án đúng, 6 lỗi đề / không có đáp án đúng). Cài NumPy 2.5.3 vào `scripts/.venv`. Kiểm chứng cả môn: 354 câu đạt (315 câu chạy code thật); thử ghi sai 5 câu NumPy đều bị bắt. Import lại (`-Replace`): 11 bài, 360 câu, 1451 phương án, khớp JSON; thêm đề luyện tập mặc định cho Bài 11.
 - [x] Bổ sung 2026-10-02 (D-043): Claude tự sửa câu lỗi thay vì để chờ duyệt. Mục `edits` trong bản đồ (sửa đề / code / phương án, `note` bắt buộc, ghi vào `explanation`). Sửa 48 câu `NEEDS_REVIEW` và 11 câu còn lỗi hiển thị (58 câu có sửa, 1 câu chỉ chọn đáp án). Import cho phép sửa ký tự in ấn của phương án ở câu đã có người làm (thêm test). Kết quả: 360 câu `PUBLISHED`, kiểm chứng 360/360 (320 câu chạy code thật), database khớp JSON.
+- [x] Bổ sung 2026-10-06 (D-045): **Bài 12 Matplotlib** (`bai-12.json`, `w1213-lt` trang 32, `w1213-hw` trang 3–5): 29 câu; **Bài 13 Pandas** (`bai-13.json`, `w14-lt` trang 30–31, `w14-hw` trang 3–5): 39 câu (13 điền khuyết). Sửa 23 câu theo D-043. Cài matplotlib 3.11.2, pandas 3.0.6 vào `scripts/.venv`; kiểm chứng chạy matplotlib ở chế độ Agg với bộ đệm font chung. Cả môn: 428 câu `PUBLISHED`, kiểm chứng 428/428 (379 câu chạy code thật); import lại khớp JSON (13 bài, 1719 phương án).
 
 ### Điểm kỹ thuật đã phát hiện
 - ID `4.1.1.RELEASE` trong metadata của Spring Initializr **không phải** phiên bản Maven. Trên Maven Central là `4.1.1`; `pom.xml` đã được sửa.

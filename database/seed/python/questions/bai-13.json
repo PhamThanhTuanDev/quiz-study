@@ -1,0 +1,226 @@
+{
+  "$comment": "Bản đồ vị trí Bài 13 (D-035, D-045): w14 LT trang 30–31 (điền khuyết, D-026); w14 HW trang 3–5. Code pandas chạy bằng pandas trong scripts/.venv. Series / DataFrame trong lệnh kiểm chứng dùng nhãn mặc định 0, 1, 2… như trong bài. Phần BÀI TẬP lập trình (HW trang 6–10) không đưa vào (P14).",
+  "chapter": 13,
+  "ignore": {
+    "w14-lt/31": { "R07": "Dòng chỉ có số \"11.\", tài liệu không có nội dung câu 11." },
+    "w14-hw/3": { "L24": "Dòng chỉ có số \"6.\" ở cuối cột trái; câu 6 thật nằm ở đầu cột phải." }
+  },
+  "questions": [
+    {
+      "ref": "w14-lt/30/1", "stem": ["L01"], "code": ["L02"], "ownerAnswer": ["L03"],
+      "fill": [["DataFrame"], ["series"], ["array"], ["Series"]], "answer": "D",
+      "reason": "pd.Series(mylist) tạo Series (mảng một chiều có nhãn). pd.DataFrame tạo bảng 2 chiều; pd.array tạo mảng của pandas, không phải Series; tên phân biệt hoa thường nên pd.series báo lỗi.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\nmylist = [1, 7, 2]", "replace": { "pd.": "s = pd." }, "append": "print(type(s).__name__)", "want": "Series" }] }
+    },
+    {
+      "ref": "w14-lt/30/2", "stem": ["L04-L05"], "code": ["L06"], "ownerAnswer": ["L07"],
+      "fill": [["(0)"], ["[1]"], ["[0]"], ["[-1]"]], "answer": "C",
+      "reason": "Series có nhãn mặc định 0, 1, 2… nên myseries[0] là giá trị đầu tiên (myseries.iloc[0] cũng được, không đưa vào phương án). myseries[1] là giá trị thứ hai; myseries(0) báo lỗi vì Series không gọi được như hàm; myseries[-1] báo lỗi KeyError vì không có nhãn -1.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\nmyseries = pd.Series([10, 20, 30])", "replace": { "myseries": "x = myseries" }, "append": "print(x)", "want": "10" }] }
+    },
+    {
+      "ref": "w14-lt/30/3", "stem": ["L08"], "code": ["L09"], "ownerAnswer": ["L10"],
+      "fill": [["labels = [\"x\", \"y\", \"z\"]"], ["index = [\"x\", \"y\", \"z\"]"], ["name = [\"x\", \"y\", \"z\"]"], ["columns = [\"x\", \"y\", \"z\"]"]], "answer": "B",
+      "reason": "Tham số index đặt nhãn cho các phần tử của Series. pd.Series không có tham số labels hay columns; name là tên của cả Series và phải là một giá trị (list báo lỗi).",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\nmylist = [1, 7, 2]", "replace": { "pd.Series": "s = pd.Series" }, "append": "print(list(s.index))", "want": "['x', 'y', 'z']" }] }
+    },
+    {
+      "ref": "w14-lt/30/4", "stem": ["L11"], "code": ["L12"], "ownerAnswer": ["L13"],
+      "fill": [["Series"], ["Table"], ["DataFrame"], ["dataframe"]], "answer": "C",
+      "reason": "pd.DataFrame(data) tạo DataFrame (bảng 2 chiều). pd.Series(data) với dictionary tạo Series một chiều; pandas không có Table; tên phân biệt hoa thường nên pd.dataframe báo lỗi.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndata = {'calories': [420, 380], 'duration': [50, 40]}", "replace": { "pd.": "df = pd." }, "append": "print(type(df).__name__, df.shape)", "want": "DataFrame (2, 2)" }] }
+    },
+    {
+      "ref": "w14-lt/30/5", "stem": ["R01"], "code": ["R02"], "ownerAnswer": ["R03"],
+      "fill": [["loc[1]"], ["head(0)"], ["loc[0]"], ["row(0)"]], "answer": "C",
+      "reason": "Dòng có nhãn mặc định 0, 1… nên df.loc[0] là dòng đầu tiên (df.iloc[0] cũng được, không đưa vào phương án). df.loc[1] là dòng thứ hai; head(0) trả về 0 dòng; DataFrame không có row().",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndf = pd.DataFrame({'calories': [420, 380], 'duration': [50, 40]})", "replace": { "df.": "r = df." }, "append": "print(r.to_dict())", "want": "{'calories': 420, 'duration': 50}" }] }
+    },
+    {
+      "ref": "w14-lt/30/2-2", "stem": ["R04"], "code": ["R05"], "ownerAnswer": ["R06"],
+      "fill": [["read_json"], ["read_csv"], ["load_csv"], ["open_csv"]], "answer": "B",
+      "reason": "pd.read_csv(đường_dẫn) đọc tập tin CSV thành DataFrame. read_json đọc JSON (với nội dung CSV sẽ báo lỗi); pandas không có load_csv hay open_csv.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\nopen('data.csv', 'w', encoding='utf-8').write('calories,duration\\n420,50\\n380,40\\n')\ndata = 'data.csv'", "append": "print(df.shape)", "want": "(2, 2)" }] },
+      "edits": { "note": "read_csv là hàm của pandas (pd.read_csv), DataFrame không có df.read_csv; sửa code thành df = pd.…(data).", "code": [["df.…(data)", "df = pd.…(data)"]] }
+    },
+    {
+      "ref": "w14-lt/30/3-2", "stem": ["R07"], "code": ["R08"], "ownerAnswer": ["R09"],
+      "fill": [["head()"], ["info()"], ["describe()"], ["to_string()"]], "answer": "D",
+      "reason": "df.to_string() trả về chuỗi chứa toàn bộ dữ liệu (print(df) với bảng lớn chỉ hiện phần đầu và cuối). head() chỉ lấy 5 dòng đầu; info() in thông tin các cột; describe() là thống kê mô tả.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndf = pd.DataFrame({'a': range(100)})", "replace": { "df.": "r = df." }, "append": "print(type(r).__name__, len(str(r).splitlines()))", "want": "str 101" }] }
+    },
+    {
+      "ref": "w14-lt/30/4-2", "stem": ["R10"], "code": ["R11"], "ownerAnswer": ["R12"],
+      "fill": [["load_json"], ["read_csv"], ["open_json"], ["read_json"]], "answer": "D",
+      "reason": "pd.read_json(đường_dẫn) đọc dữ liệu JSON thành DataFrame. read_csv đọc nội dung JSON như CSV nên ra bảng sai; pandas không có load_json hay open_json.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\nopen('data.json', 'w', encoding='utf-8').write('{\"calories\": [420, 380], \"duration\": [50, 40]}')\ndata = 'data.json'", "append": "print(df.shape)", "want": "(2, 2)" }] },
+      "edits": { "note": "read_json là hàm của pandas (pd.read_json), DataFrame không có df.read_json; sửa code thành df = pd.…(data).", "code": [["df.…(data)", "df = pd.…(data)"]] }
+    },
+    {
+      "ref": "w14-lt/31/5", "stem": ["L01-L02"], "code": ["L03"], "ownerAnswer": ["L04"],
+      "fill": [["DataFrame"], ["Series"], ["read_dict"], ["from_dict"]], "answer": "A",
+      "reason": "pd.DataFrame(data) nạp dictionary thành DataFrame: mỗi khoá là một cột. pd.Series(data) tạo Series một chiều; pandas không có pd.read_dict hay pd.from_dict (from_dict là của lớp DataFrame: pd.DataFrame.from_dict).",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndata = {'calories': [420, 380], 'duration': [50, 40]}", "replace": { "pd.": "df = pd." }, "append": "print(type(df).__name__, df.shape)", "want": "DataFrame (2, 2)" }] }
+    },
+    {
+      "ref": "w14-lt/31/6", "stem": ["L05"], "code": ["L06"], "ownerAnswer": ["L07"],
+      "fill": [["fillna"], ["dropna"], ["isnull"], ["fill"]], "answer": "A",
+      "reason": "fillna(130) thay các ô rỗng bằng 130. dropna xoá dòng có ô rỗng (dropna(130) còn báo lỗi); isnull chỉ kiểm tra ô rỗng, không nhận giá trị; DataFrame không có fill().",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndf = pd.DataFrame({'calories': [420.0, None, 380.0]})", "replace": { "df.": "df = df." }, "append": "print(df['calories'].tolist())", "want": "[420.0, 130.0, 380.0]" }] }
+    },
+    {
+      "ref": "w14-lt/31/7", "stem": ["L08"], "options": ["L09-L10"], "answer": "A",
+      "reason": "Hệ số tương quan (df.corr()) nằm trong khoảng -1 đến 1; trị tuyệt đối càng gần 1 thì quan hệ càng chặt. 0.9 hoặc -0.9 được xem là tương quan tốt (cùng chiều hoặc ngược chiều).",
+      "verify": { "kind": "reasoning", "source": "W3Schools – Pandas Data Correlations (https://www.w3schools.com/python/pandas/pandas_correlations.asp): \"Good Correlation\" ví dụ 0.9 / -0.9; định nghĩa hệ số tương quan Pearson trong pandas.DataFrame.corr." }
+    },
+    {
+      "ref": "w14-lt/31/8", "stem": ["L11-L12"], "code": ["L13"], "ownerAnswer": ["L14"],
+      "fill": [["chart"], ["show"], ["draw"], ["plot"]], "answer": "D",
+      "reason": "df.plot() vẽ biểu đồ từ dữ liệu của DataFrame (dùng matplotlib). DataFrame không có chart(), show() hay draw().",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndf = pd.DataFrame({'calories': [420, 380]})", "replace": { "df.": "ax = df." }, "append": "print(type(ax).__name__)", "want": "Axes" }] }
+    },
+    {
+      "ref": "w14-lt/31/9", "stem": ["R01"], "code": ["R02"], "ownerAnswer": ["R03"],
+      "fill": [["kind = 'line'"], ["type = 'scatter'"], ["kind = 'scatter'"], ["kind = 'dot'"]], "answer": "C",
+      "reason": "Tham số kind chọn loại biểu đồ: kind='scatter' cùng x, y vẽ biểu đồ phân tán. kind='line' vẽ đường; df.plot không có tham số type; 'dot' không phải loại biểu đồ hợp lệ.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndf = pd.DataFrame({'Duration': [60, 60, 45, 30], 'Calories': [409, 479, 340, 282]})", "replace": { "df.plot": "ax = df.plot" }, "append": "print(type(ax.collections[0]).__name__ if ax.collections else 'không có điểm')", "want": "PathCollection" }] }
+    },
+    {
+      "ref": "w14-lt/31/10", "stem": ["R04"], "code": ["R05"], "ownerAnswer": ["R06"],
+      "fill": [["kind = 'scatter'"], ["kind = 'hist'"], ["kind = 'bar'"], ["kind = 'histogram'"]], "answer": "B",
+      "reason": "kind='hist' vẽ histogram (đếm tần suất, trục y là Frequency) cho một cột. kind='bar' vẽ mỗi giá trị một cột; scatter cần cả x và y nên báo lỗi với một cột; 'histogram' không phải tên hợp lệ.",
+      "verify": { "kind": "fill", "cases": [{ "setup": "import pandas as pd\ndf = pd.DataFrame({'Duration': [60, 60, 45, 30], 'Calories': [409, 479, 340, 282]})", "replace": { "df[": "ax = df[" }, "append": "print(ax.get_ylabel())", "want": "Frequency" }] },
+      "edits": { "note": "Đề gốc ghi loại “scatter” (chép từ câu 9) nhưng code chỉ có một cột và đáp án là hist; sửa đề thành loại histogram.", "stem": [["loại “scatter”", "loại histogram"]] }
+    },
+
+    {
+      "ref": "w14-hw/3/1", "stem": ["L01"], "options": ["L02-L04"], "answer": "B",
+      "reason": "pd.Series(mylist) tạo Series từ list. Pandas không có createSeries() hay getSeries().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\nmylist = [1, 7, 2]\nprint(type({option}).__name__)", "cases": [{ "want": "Series" }] }
+    },
+    {
+      "ref": "w14-hw/3/2", "stem": ["L05"], "options": ["L06-L09"], "answer": "C",
+      "reason": "myseries[0] lấy giá trị có nhãn 0, tức giá trị đầu tiên với nhãn mặc định. get(myseries, 0) báo lỗi vì không có hàm get; get là phương thức nên myseries.get[0] báo lỗi.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\nmyseries = pd.Series([10, 20, 30])\nprint({option})", "cases": [{ "want": "10" }] },
+      "edits": { "note": "myseries.get(0) (phương án B gốc) cũng lấy được giá trị có nhãn 0, tức giá trị đầu tiên, nên đề gốc có 2 đáp án; thay B bằng myseries.get[0] (báo lỗi).", "options": { "B": "myseries.get[0]" } }
+    },
+    {
+      "ref": "w14-hw/3/3", "stem": ["L10"], "options": ["L11-L14"], "answer": "A",
+      "reason": "Tham số index đặt nhãn cho các phần tử. pd.Series không có tham số lables (viết sai) hay names.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\nmylist = [1, 7, 2]\nprint(list({option}.index))", "cases": [{ "want": "['x', 'y', 'z']" }] },
+      "edits": { "note": "Đề gốc ghi nhãn x, y, x; sửa thành x, y, z cho khớp các phương án.", "stem": [["x, y, x", "x, y, z"]] }
+    },
+    {
+      "ref": "w14-hw/3/4", "stem": ["L15"], "options": ["L16-L19"], "answer": "B",
+      "reason": "pd.DataFrame(data) tạo DataFrame. Tên phân biệt hoa thường nên pd.dataframe báo lỗi; pandas không có pd.df.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndata = {'calories': [420, 380], 'duration': [50, 40]}\nprint(type({option}).__name__)", "cases": [{ "want": "DataFrame" }] }
+    },
+    {
+      "ref": "w14-hw/3/5", "stem": ["L20"], "options": ["L21-L23"], "answer": "B",
+      "reason": "df.loc[0] lấy dòng có nhãn 0 (dòng đầu tiên). df.get(0) và df[0] tìm cột tên 0 (không có: get trả về None, df[0] báo lỗi KeyError).",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'calories': [420, 380], 'duration': [50, 40]})\nprint({option}.to_dict())", "cases": [{ "want": "{'calories': 420, 'duration': 50}" }] }
+    },
+    {
+      "ref": "w14-hw/3/6", "stem": ["R01-R02"], "options": ["R03-R06"], "answer": "A",
+      "reason": "df.loc[[0, 1]] truyền danh sách nhãn nên lấy cả dòng 0 và dòng 1. [0-1] là [-1] (không có nhãn -1, báo lỗi); \"df.[...]\" sai cú pháp.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'calories': [420, 380, 390], 'duration': [50, 40, 45]})\nprint({option}.shape)", "cases": [{ "want": "(2, 2)" }] }
+    },
+    {
+      "ref": "w14-hw/3/7", "stem": ["R07-R08"], "options": ["R09-R12"], "answer": "D",
+      "reason": "pd.read_csv() đọc tập tin CSV thành DataFrame. Pandas không có read_file(), ReadCSV() hay ReadFile().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\nopen('data.csv', 'w', encoding='utf-8').write('calories,duration\\n420,50\\n')\ndf = pd.{option}\nprint(df.shape)", "cases": [{ "replace": { "()": "('data.csv')" }, "want": "(1, 2)" }] }
+    },
+    {
+      "ref": "w14-hw/3/8", "stem": ["R13"], "options": ["R14-R17"], "answer": "A",
+      "reason": "df.head(20) trả về 20 dòng đầu. DataFrame không có row(), top() hay start().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': range(30)})\nprint(len({option}))", "cases": [{ "want": "20" }] }
+    },
+    {
+      "ref": "w14-hw/3/9", "stem": ["R18"], "options": ["R19-R22"], "answer": "B",
+      "reason": "df.to_string() trả về chuỗi chứa toàn bộ dữ liệu của DataFrame. DataFrame không có Full(), print_full() hay dump().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': range(100)})\nr = {option}\nprint(type(r).__name__, len(r.splitlines()))", "cases": [{ "want": "str 101" }] }
+    },
+    {
+      "ref": "w14-hw/3/10", "stem": ["R23-R24"], "options": ["R25-R28"], "answer": "A",
+      "reason": "pd.read_json() đọc dữ liệu JSON thành DataFrame. Pandas không có ReadFile(), ReadJSON() hay read_file().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\nopen('data.json', 'w', encoding='utf-8').write('{\"calories\": [420, 380]}')\ndf = pd.{option}\nprint(df.shape)", "cases": [{ "replace": { "()": "('data.json')" }, "want": "(2, 1)" }] }
+    },
+    {
+      "ref": "w14-hw/4/11", "stem": ["L01-L02"], "options": ["L03-L06"], "answer": "A",
+      "reason": "pd.DataFrame(data) nạp dictionary thành DataFrame. Pandas không có ReadJSON() hay load_json() (đọc JSON là pd.read_json()).",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndata = {'calories': [420, 380], 'duration': [50, 40]}\nprint(type({option}).__name__)", "cases": [{ "want": "DataFrame" }] }
+    },
+    {
+      "ref": "w14-hw/4/12", "stem": ["L07"], "options": ["L08-L11"], "answer": "C",
+      "reason": "head(n) trả về tiêu đề (tên cột) cùng n dòng đầu tiên, tính từ trên cùng (mặc định 5 dòng). Bắt đầu từ cuối là tail().",
+      "verify": { "kind": "docs", "refs": ["https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.head.html"] },
+      "edits": { "note": "Phương án B gốc (\"Trả về số hàng đã chỉ định, bắt đầu từ đầu\") cũng mô tả đúng head() nên đề gốc có 2 đáp án; sửa B thành \"bắt đầu từ cuối\" (việc của tail()).", "options": { "B": "Trả về số hàng đã chỉ định, bắt đầu từ cuối" } }
+    },
+    {
+      "ref": "w14-hw/4/13", "stem": ["L12-L13"], "options": ["L14-L17"], "answer": "A",
+      "reason": "head() không truyền số dòng thì trả về 5 dòng đầu (n=5).",
+      "verify": { "kind": "run", "cases": [{ "setup": "import pandas as pd\nprint(len(pd.DataFrame({'a': range(30)}).head()))", "expect": "5" }] }
+    },
+    {
+      "ref": "w14-hw/4/14", "stem": ["L18"], "options": ["L19-L22"], "answer": "A",
+      "reason": "tail(n) trả về n dòng cuối (mặc định 5; dòng cuối cùng là tail(1)). DataFrame không có foot() hay back(); last() đã bị bỏ ở pandas 3.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': range(10)})\nprint(df.{option}['a'].tolist())", "cases": [{ "want": "[5, 6, 7, 8, 9]" }] },
+      "edits": { "note": "tail() trả về các dòng cuối (mặc định 5 dòng), không chỉ một dòng; sửa đề cho đúng và thêm dấu hỏi.", "stem": [["trả về dòng cuối cùng trong Pandas", "trả về các dòng cuối cùng của DataFrame trong Pandas?"]] }
+    },
+    {
+      "ref": "w14-hw/4/15", "stem": ["L23"], "options": ["L24-L27"], "answer": "C",
+      "reason": "dropna() xoá các dòng có ô rỗng (NaN / None). DataFrame không có delete_null hay remove_null().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': [1, None, 3]})\nprint(len(df.{option}))", "cases": [{ "want": "2" }] }
+    },
+    {
+      "ref": "w14-hw/4/16", "stem": ["L28"], "options": ["L29"], "answer": "A",
+      "reason": "median() trả về trung vị: giá trị ở giữa khi sắp xếp. mean() là trung bình cộng, mode() là giá trị xuất hiện nhiều nhất.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ns = pd.Series([1, 2, 2, 9, 10])\nprint(s.{option})", "cases": [{ "want": "2.0" }] }
+    },
+    {
+      "ref": "w14-hw/4/17", "stem": ["R01-R02"], "options": ["R03-R04"], "answer": "A",
+      "reason": "Mặc định (inplace=False) dropna() trả về DataFrame mới đã bỏ các dòng có ô rỗng, DataFrame gốc giữ nguyên.",
+      "verify": { "kind": "run", "cases": [{ "setup": "import pandas as pd\ndf = pd.DataFrame({'a': [1, None]})\nnew = df.dropna()\nprint(len(df), len(new), new is df)", "expect": "2 1 False" }] }
+    },
+    {
+      "ref": "w14-hw/4/18", "stem": ["R05"], "options": ["R06-R09"], "answer": "C",
+      "reason": "fillna(giá_trị) điền các ô rỗng bằng giá trị mới. Pandas không có value_null(), insertna() hay replacena().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': [1, None]})\nprint(df.{option}['a'].values)", "cases": [{ "replace": { "()": "(0)" }, "want": "[1. 0.]" }] }
+    },
+    {
+      "ref": "w14-hw/4/19", "stem": ["R10-R11"], "options": ["R12-R13"], "answer": "C",
+      "reason": "dropna(inplace=True) xoá trực tiếp trên DataFrame gốc (và trả về None). dropna không có tham số original hay keep.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': [1, None]})\ndf.{option}\nprint(len(df))", "cases": [{ "want": "1" }] }
+    },
+    {
+      "ref": "w14-hw/4/20", "stem": ["R14-R15"], "options": ["R16"], "answer": "C",
+      "reason": "mode() trả về giá trị xuất hiện nhiều lần nhất (có thể nhiều giá trị nên kết quả là Series). median() là trung vị, mean() là trung bình cộng.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ns = pd.Series([1, 2, 2, 9, 10])\nprint(s.{option}.tolist())", "cases": [{ "want": "[2]" }] }
+    },
+    {
+      "ref": "w14-hw/4/21", "stem": ["R17"], "options": ["R18"], "answer": "B",
+      "reason": "mean() trả về giá trị trung bình cộng: (1 + 2 + 2 + 9 + 10) / 5 = 4.8. median() là trung vị, mode() là giá trị xuất hiện nhiều nhất.",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ns = pd.Series([1, 2, 2, 9, 10])\nprint(s.{option})", "cases": [{ "want": "4.8" }] }
+    },
+    {
+      "ref": "w14-hw/4/22", "stem": ["R19"], "options": ["R20-R22"], "answer": "D",
+      "reason": "drop_duplicates() xoá các dòng trùng lặp. duplicates() không có (phát hiện dòng trùng là duplicated()); không có delete_duplicates() hay remove_duplicates().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': [1, 1, 2]})\nprint(len({option}))", "cases": [{ "want": "2" }] }
+    },
+    {
+      "ref": "w14-hw/5/23", "stem": ["L01-L02"], "options": ["L03-L06"], "answer": "A",
+      "reason": "duplicated() trả về True ở các dòng trùng với một dòng phía trên. Không có duplicate() hay dup().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': [1, 1, 2]})\nprint({option}.tolist())", "cases": [{ "want": "[False, True, False]" }] }
+    },
+    {
+      "ref": "w14-hw/5/24", "stem": ["L07-L08"], "options": ["L09-L12"], "answer": "C",
+      "reason": "corr() tính hệ số tương quan giữa các cột (mối quan hệ giữa các cột). DataFrame không có relation(), correlation() hay rel().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': [1, 2, 3], 'b': [2, 4, 6]})\nprint({option}.loc['a', 'b'])", "cases": [{ "want": "1.0" }] }
+    },
+    {
+      "ref": "w14-hw/5/25", "stem": ["L13"], "options": ["L14"], "answer": "B",
+      "reason": "df.plot() vẽ biểu đồ từ dữ liệu của DataFrame. DataFrame không có print() hay draw().",
+      "verify": { "kind": "runOptions", "wrap": "import pandas as pd\ndf = pd.DataFrame({'a': [1, 2]})\nprint(type({option}).__name__)", "cases": [{ "want": "Axes" }] }
+    }
+  ]
+}

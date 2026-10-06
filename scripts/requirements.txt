@@ -2,5 +2,7 @@
 #   py -m venv scripts\.venv
 #   scripts\.venv\Scripts\python -m pip install -r scripts\requirements.txt
 pymupdf==1.28.2
-# Chỉ để verify_python_answers.py chạy kiểm chứng câu hỏi bài NumPy (D-042).
+# Chỉ để verify_python_answers.py chạy kiểm chứng câu hỏi bài NumPy (D-042), Matplotlib và Pandas (D-045).
 numpy==2.5.3
+matplotlib==3.11.2
+pandas==3.0.6

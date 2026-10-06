@@ -32,22 +32,27 @@ import sys
 import tempfile
 
 from build_python_import import BLANK_RE, LETTERS, Question, build_all, normalize
+from python_source import GENERATED_DIR
 
 TIMEOUT_SECONDS = 5
+# Matplotlib (D-045): vẽ ở chế độ Agg (không mở cửa sổ, plt.show() không chặn) và dùng chung bộ đệm font giữa
+# các lần chạy; nếu không, mỗi lần chạy lại dựng bộ đệm font mất khoảng 4 giây, sát giới hạn thời gian.
+MPL_CONFIG_DIR = GENERATED_DIR / ".mplconfig"
 # So phương án với kết quả chạy: "9, 15, 27" khớp kết quả in "9\n15\n27", "‘c’" khớp "c".
 LOOSE_IGNORED_RE = re.compile(r"[\s,'\"‘’“”]")
 ERROR_OPTIONS = {"lỗi", "chươngtrìnhbịlỗi", "chươngtrìnhbáolỗi"}
 
 
-def run_python(code: str, stdin: str = "") -> str:
+def run_python(code: str, stdin: str = "", timeout: float = TIMEOUT_SECONDS) -> str:
     with tempfile.TemporaryDirectory() as workdir:
         try:
             # -I (cô lập) bỏ qua mọi biến môi trường PYTHON*, nên bật UTF-8 bằng tuỳ chọn -X utf8;
             # nếu không, Windows ghi lỗi bằng bảng mã cp1252 (ví dụ dấu nháy cong thành byte 0x92).
             result = subprocess.run(
                 [sys.executable, "-I", "-X", "utf8", "-c", code], input=stdin, capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=TIMEOUT_SECONDS, cwd=workdir,
-                env={"SYSTEMROOT": os.environ.get("SYSTEMROOT", "")},
+                encoding="utf-8", errors="replace", timeout=timeout, cwd=workdir,
+                env={"SYSTEMROOT": os.environ.get("SYSTEMROOT", ""), "MPLBACKEND": "Agg",
+                     "MPLCONFIGDIR": str(MPL_CONFIG_DIR)},
             )
         except subprocess.TimeoutExpired:
             return "TIMEOUT"
@@ -203,6 +208,9 @@ def main() -> int:
         return 1
 
     targets = [q for q in questions if q.verify and not q.duplicate_of and (not only or q.ref in only)]
+    # Lần đầu trên máy mới, matplotlib dựng bộ đệm font (vài giây): làm trước một lần, không tính vào câu nào.
+    MPL_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    run_python("import matplotlib.font_manager", timeout=120)
     failed = tied = 0
     for q in targets:
         try:

@@ -237,6 +237,14 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Trang `/subjects/:slug/chapters/:chapterId/study` hiện cả bài trên một trang để cuộn đọc liền mạch; đáp án đúng có viền / nền xanh và chữ "✓ Đáp án đúng" (không chỉ dựa vào màu); có giải thích / ghi chú "Đã sửa so với tài liệu" nếu có.
 - Bỏ tính năng vuốt trái / phải trên câu hỏi để chuyển câu (D-040, D-041): chuyển câu bằng nút "Câu trước" / "Câu sau", lưới số câu, hoặc phím ← → trên máy tính. Xoá `useSwipe`; test giữ lại một ca kiểm tra vuốt không đổi câu.
 
+### D-045 · Thêm Bài 12 (Matplotlib) và Bài 13 (Pandas) cho môn Python · Đã chốt (chủ dự án, 2026-10-06)
+- Chủ dự án bổ sung 4 file `w12-w13-c08_bieu-dien-du-lieu-matplotlib` và `w14-c09_thu-vien-pandas` (lý thuyết + bài tập), yêu cầu thêm phần trắc nghiệm. Thêm thành **Bài 12 "Biểu diễn dữ liệu với Matplotlib"** và **Bài 13 "Thư viện Pandas"**, làm theo bản đồ vị trí (D-035), D-020, D-026, D-043.
+- Cài `matplotlib` 3.11.2 và `pandas` 3.0.6 vào `scripts/.venv` (ghi trong `scripts/requirements.txt`) chỉ để `verify_python_answers.py` chạy thật code của hai bài này, cùng lý do với NumPy ở D-042. Không ảnh hưởng web app.
+- `verify_python_answers.py` cho code chạy với `MPLBACKEND=Agg` (vẽ không mở cửa sổ, `plt.show()` không chặn) và bộ đệm font chung `database/seed/python/generated/.mplconfig` (không commit); làm nóng bộ đệm một lần trước khi kiểm chứng. Nếu không, mỗi lần chạy matplotlib mất khoảng 4 giây, sát giới hạn 5 giây.
+- Bỏ qua 2 dòng chỉ có số, không có câu hỏi: "11." (w14 LT trang 31) và "6." (w14 HW trang 3, câu 6 thật ở cột phải). Phần hướng dẫn / bài tập lập trình (P14) không đưa vào.
+- Theo D-043, sửa 23 câu (Bài 12: 16, Bài 13: 7): nhiều phương án cùng đúng (ví dụ `title()` và `set_title()`, `annotate()` và `text()`, `myseries[0]` và `myseries.get(0)`), không có đáp án đúng (`plt.pot`, `plot(projection='3d')`), code sai (`df.read_csv` → `pd.read_csv`), đề chép nhầm (loại "scatter" mà đáp án `hist`), nháy cong.
+- Kết quả: Bài 12 có 29 câu, Bài 13 có 39 câu (13 câu điền khuyết). Cả môn: 13 bài, 428 câu `PUBLISHED`; kiểm chứng 428/428 (379 câu chạy code thật); thử ghi sai 5 câu mới thì 4 câu bị bắt (câu còn lại kiểm chứng kiểu minh hoạ, không đối chiếu được chữ cái). Import lại (`-Replace`): 13 bài, 428 câu, 1719 phương án, khớp JSON.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

@@ -65,7 +65,7 @@ powershell -ExecutionPolicy Bypass -File scripts\import-subject.ps1 -Slug python
 ```
 
 - `build_python_import.py` dừng và không ghi file nếu có lỗi: mã dòng sai, dòng của trang trắc nghiệm chưa được dùng (hoặc dùng hai lần), số câu không khớp, câu `PUBLISHED` không có đúng 1 đáp án.
-- `verify_python_answers.py` chạy code trong tiến trình Python riêng (thư mục tạm, tối đa 5 giây). Mọi câu `PUBLISHED` phải có kiểm chứng và đều phải đạt.
+- `verify_python_answers.py` chạy code trong tiến trình Python riêng (thư mục tạm, tối đa 5 giây). Mọi câu `PUBLISHED` phải có kiểm chứng và đều phải đạt. Code matplotlib chạy ở chế độ Agg (không mở cửa sổ) với bộ đệm font chung trong `generated/.mplconfig` (D-045).
 - Ngoài vị trí, bản đồ có vài chỉnh sửa layout, chỉ thêm hoặc bớt khoảng trắng: `spaceBefore` (chèn một dấu cách khi chữ dính liền trên slide), `softWrap` (nối lại dòng code bị slide tự ngắt vì quá dài), `ignore` (bỏ dòng không phải câu hỏi, phải ghi lý do).
 - Câu tài liệu sai thì sửa bằng mục `edits` (D-043), áp dụng sau khi dựng nội dung từ PDF:
 

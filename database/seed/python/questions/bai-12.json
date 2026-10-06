@@ -1,0 +1,168 @@
+{
+  "$comment": "Bản đồ vị trí Bài 12 (D-035, D-045): w12-13 LT trang 32; w12-13 HW trang 3–5. Code matplotlib chạy bằng matplotlib trong scripts/.venv, chế độ Agg (verify_python_answers.py tự đặt). Phần HƯỚNG DẪN / BÀI TẬP lập trình (HW trang 6–17) không đưa vào (P14).",
+  "chapter": 12,
+  "questions": [
+    {
+      "ref": "w1213-lt/32/1", "stem": ["L01"], "options": ["L02-L03", "R01-R02"], "answer": "B",
+      "reason": "Matplotlib là thư viện vẽ biểu đồ, dùng để trực quan hoá dữ liệu. Thao tác dữ liệu là việc của Pandas; học máy, xử lý văn bản là việc của các thư viện khác.",
+      "verify": { "kind": "docs", "refs": ["https://matplotlib.org/stable/"] }
+    },
+    {
+      "ref": "w1213-lt/32/2", "stem": ["L04"], "options": ["L05-L06", "R03-R04"], "answer": "A",
+      "reason": "plt.savefig('ten_tap_tin.png') lưu biểu đồ thành tập tin. Matplotlib không có saveplot(), exportfig() hay downloadfig().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nimport os\nplt.plot([1, 2])\nplt.{option}\nprint(os.path.exists('bieu_do.png'))", "cases": [{ "replace": { "()": "('bieu_do.png')" }, "want": "True" }] }
+    },
+    {
+      "ref": "w1213-lt/32/3", "stem": ["L07"], "options": ["L08-L09", "R05-R06"], "answer": "A",
+      "reason": "subplot(nrows, ncols, index) chia hình thành lưới và vẽ nhiều biểu đồ con trên cùng một hình. Đặt tên biểu đồ con là set_title(), chỉnh khoảng cách là subplots_adjust() / tight_layout().",
+      "verify": { "kind": "docs", "refs": ["https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplot.html"] },
+      "edits": { "note": "Mỗi lần gọi subplot() là thêm một biểu đồ con vào hình, nên phương án C gốc (\"Thêm biểu đồ con vào biểu đồ\") cũng đúng; thay C bằng \"Xoá biểu đồ con khỏi biểu đồ\".", "options": { "C": "Xoá biểu đồ con khỏi biểu đồ" } }
+    },
+    {
+      "ref": "w1213-lt/32/4", "stem": ["L10"], "options": ["L11-L12", "R07-R08"], "answer": "A",
+      "reason": "imshow() hiển thị dữ liệu dạng ảnh (mảng 2 chiều hoặc ảnh màu), trả về đối tượng AxesImage. Đặt tên là title(), scatter plot là scatter(), histogram là hist().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import matplotlib.pyplot as plt\nimage = plt.imshow([[0, 1], [1, 0]])\nprint(type(image).__name__)", "expect": "AxesImage" }] }
+    },
+    {
+      "ref": "w1213-lt/32/5", "stem": ["L13"], "options": ["L14-L15", "R09-R10"], "answer": "B",
+      "reason": "Cách khai báo thông dụng là import matplotlib.pyplot as plt. Không có thư viện matplot; \"import matplotlib pyplot\" sai cú pháp; matplotlib không có tên plt để import.",
+      "verify": { "kind": "runOptions", "wrap": "{option}\nprint(plt.__name__)", "cases": [{ "want": "matplotlib.pyplot" }] },
+      "edits": { "note": "Phương án C gốc (from matplotlib import pyplot as plt) cũng khai báo đúng; thay bằng from matplotlib import plt (báo lỗi ImportError).", "options": { "C": "from matplotlib import plt" } }
+    },
+
+    {
+      "ref": "w1213-hw/3/1", "stem": ["L01"], "options": ["L02-L05"], "answer": "C",
+      "reason": "scatter() vẽ biểu đồ phân tán (scatter plot). plot() vẽ đường, bar() vẽ cột; matplotlib không có line().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nr = plt.{option}\nprint(type(r).__name__)", "cases": [{ "replace": { "()": "([1, 2], [3, 4])" }, "want": "PathCollection" }] }
+    },
+    {
+      "ref": "w1213-hw/3/2", "stem": ["L06"], "options": ["L07-L10"], "answer": "A",
+      "reason": "xlabel() đặt nhãn cho trục x. Nhãn trục y là ylabel(), tên biểu đồ là title(), chú thích là legend().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import matplotlib.pyplot as plt\nplt.xlabel('Năm')\nax = plt.gca()\nprint(repr(ax.get_xlabel()), repr(ax.get_ylabel()), repr(ax.get_title()))", "expect": "'Năm' '' ''" }] }
+    },
+    {
+      "ref": "w1213-hw/3/3", "stem": ["L11"], "options": ["L12-L14"], "spaceBefore": { "L12": "B. Hiển thị nhãn các trục" }, "answer": "C",
+      "reason": "legend() hiển thị chú thích (tên của từng đường / nhóm dữ liệu, lấy từ tham số label). Tiêu đề là title(), nhãn trục là xlabel() / ylabel(), lưới là grid().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import matplotlib.pyplot as plt\nplt.plot([1, 2], label='Doanh thu')\nlegend = plt.legend()\nprint(type(legend).__name__, [text.get_text() for text in legend.get_texts()])", "expect": "Legend ['Doanh thu']" }] }
+    },
+    {
+      "ref": "w1213-hw/3/4", "stem": ["L15"], "options": ["L16-L19"], "answer": "B",
+      "reason": "Với đối tượng Axes, ax.set_title('...') đặt tiêu đề. ax.title là thuộc tính (đối tượng Text) nên ax.title('...') báo lỗi; không có plot_title() hay set_plot_title().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots(1)\nax.{option}\nprint(ax.get_title(loc='center'))", "cases": [{ "replace": { "()": "('Doanh thu')" }, "want": "Doanh thu" }] },
+      "edits": { "note": "plt.title() (phương án A) cũng đặt được tiêu đề nên đề gốc có 2 đáp án; đề sửa thành hỏi với đối tượng Axes (ax), khi đó chỉ ax.set_title() đúng (ax.title là thuộc tính, gọi ax.title() báo lỗi).", "stem": [["Làm thế nào để thiết lập", "Với đối tượng Axes (ax), làm thế nào để thiết lập"]] }
+    },
+    {
+      "ref": "w1213-hw/3/5", "stem": ["L20"], "options": ["L21-L24"], "answer": "A",
+      "reason": "'classic' là một style có sẵn (plt.style.available), dùng với plt.style.use('classic'). Không có style modern, trendy hay fancy.",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nplt.style.use('{option}')\nprint('ok')", "cases": [{ "want": "ok" }] },
+      "edits": { "note": "Làm rõ \"kiểu biểu đồ\" là style (giao diện) dùng với plt.style.use(), không phải loại biểu đồ (đường, cột…).", "stem": [["Kiểu biểu đồ nào hợp lệ", "Kiểu (style) biểu đồ nào dùng được với plt.style.use()"]] }
+    },
+    {
+      "ref": "w1213-hw/3/6", "stem": ["L25"], "options": ["L26-L29"], "answer": "A",
+      "reason": "xticks() lấy / đặt các vạch đánh dấu (vị trí và nhãn) trên trục x. Trục y là yticks(); tên trục x là xlabel(); giới hạn trục x là xlim().",
+      "verify": { "kind": "docs", "refs": ["https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.xticks.html"] },
+      "edits": { "note": "xticks() đặt cả vị trí và nhãn của vạch đánh dấu trên trục x, nên C, D gốc (\"Nhãn cho đánh dấu\", \"Vị trí của đánh dấu\") cũng đúng một phần; thay bằng việc của xlabel() và xlim().", "options": { "C": "Đặt tên cho trục x", "D": "Đặt giới hạn giá trị của trục x" } }
+    },
+    {
+      "ref": "w1213-hw/3/7", "stem": ["R01"], "options": ["R02-R05"], "answer": "A",
+      "reason": "annotate('chữ', xy=(x, y)) thêm chú thích tại một điểm (có thể kèm mũi tên). Matplotlib không có add_text(), add_note() hay add_annotation().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nr = plt.{option}\nprint(type(r).__name__)", "cases": [{ "replace": { "()": "('Đỉnh', xy=(1, 2))" }, "want": "Annotation" }] },
+      "edits": { "note": "Tài liệu có hai phương án cùng nhãn B; text() (B thứ hai) cũng thêm chữ chú thích lên biểu đồ nên đề gốc có 2 đáp án. Thay text() bằng add_note() (không có).", "options": { "C": "add_note()" } }
+    },
+    {
+      "ref": "w1213-hw/3/8", "stem": ["R06"], "options": ["R07-R09"], "answer": "A",
+      "reason": "grid() hiển thị (bật / tắt, định dạng) đường lưới. Màu nền là set_facecolor(), chia biểu đồ con là subplot(); khoảng cách lưới phụ thuộc vạch đánh dấu (xticks / yticks), không chỉnh bằng grid().",
+      "verify": { "kind": "docs", "refs": ["https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.grid.html"] },
+      "edits": { "note": "grid() còn đặt được màu lưới (grid(color=...)) và ẩn lưới (grid(False)), nên B, C gốc (\"Đặt màu sắc cho lưới\", \"Xóa đường lưới\") cũng đúng một phần; thay bằng việc không phải của grid().", "options": { "B": "Đặt màu nền cho biểu đồ", "C": "Chia biểu đồ thành nhiều biểu đồ con" } }
+    },
+    {
+      "ref": "w1213-hw/3/9", "stem": ["R10"], "options": ["R11-R14"], "answer": "D",
+      "reason": "plt.figure(figsize=(rộng, cao)) đặt kích thước hình (đơn vị inch). Không có set_size(), figure_size() hay set_figure_size().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nfig = plt.{option}\nprint(fig.bbox_inches.width, fig.bbox_inches.height)", "cases": [{ "replace": { "()": "(4, 3)" }, "want": "4.0 3.0" }] }
+    },
+    {
+      "ref": "w1213-hw/3/10", "stem": ["R15"], "options": ["R16-R19"], "answer": "B",
+      "reason": "Tham số alpha (0 = trong suốt, 1 = đục) chỉnh độ trong suốt, ví dụ plt.plot(x, y, alpha=0.5). plot() không có tham số transparency; không có set_transparency() hay set_opacity().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import matplotlib.pyplot as plt\nline, = plt.plot([1, 2], alpha=0.5)\nprint(line.get_alpha())\ntry:\n    plt.plot([1, 2], transparency=0.5)\nexcept AttributeError:\n    print('transparency: lỗi')\nprint(hasattr(line, 'set_transparency'), hasattr(line, 'set_opacity'))", "expect": "0.5\ntransparency: lỗi\nFalse False" }] },
+      "edits": { "note": "Các thành phần vẽ có phương thức set_alpha() (ví dụ line.set_alpha(0.5)) nên D gốc cũng đúng; thay bằng set_opacity() (không có).", "options": { "D": "Phương thức set_opacity()" } }
+    },
+    {
+      "ref": "w1213-hw/3/11", "stem": ["R20"], "options": ["R21-R23"], "answer": "D",
+      "reason": "Biểu đồ 3D vẽ trên trục 3D, tạo bằng fig.add_subplot(projection='3d') (hoặc plt.axes(projection='3d')), rồi vẽ bằng ax.plot(), ax.scatter()… Không có plot_3d(), scatter_3d() hay create_3d_plot().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import matplotlib.pyplot as plt\nax = plt.figure().add_subplot(projection='3d')\nprint(type(ax).__name__)\ntry:\n    plt.plot([1], [2], projection='3d')\nexcept AttributeError:\n    print('plot(projection=...): lỗi')\nprint([hasattr(plt, name) for name in ('plot_3d', 'scatter_3d', 'create_3d_plot')])", "expect": "Axes3D\nplot(projection=...): lỗi\n[False, False, False]" }] },
+      "edits": { "note": "projection='3d' là tham số khi tạo trục (add_subplot(), axes()), không phải của plot(): plt.plot(..., projection='3d') báo lỗi, nên đề gốc không có đáp án đúng. Sửa D cho đúng.", "options": { "D": "Tạo trục bằng add_subplot() với tham số projection='3d'" } }
+    },
+    {
+      "ref": "w1213-hw/4/12", "stem": ["L01"], "options": ["L02-L05"], "answer": "D",
+      "reason": "Biểu đồ động (animation) tạo bằng lớp FuncAnimation trong matplotlib.animation. Không có create_animation(), animate() hay animation().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import matplotlib.pyplot as plt\nfrom matplotlib.animation import FuncAnimation\nprint(FuncAnimation.__name__, [hasattr(plt, name) for name in ('create_animation', 'animate', 'animation')])", "expect": "FuncAnimation [False, False, False]" }] }
+    },
+    {
+      "ref": "w1213-hw/4/13", "stem": ["L06"], "options": ["L07-L10"], "answer": "D",
+      "reason": "fill_between(x, y) tô màu vùng giữa đường và trục (biểu đồ vùng). Không có area(), filled_plot() hay fill_area().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nr = plt.{option}\nprint(type(r).__name__)", "cases": [{ "replace": { "()": "([1, 2], [3, 4])" }, "want": "FillBetweenPolyCollection" }] },
+      "edits": { "note": "fill() (phương án A gốc) cũng tô màu một vùng (đa giác) trên biểu đồ nên đề gốc có 2 đáp án; thay bằng fill_area() (không có).", "options": { "A": "fill_area()" } }
+    },
+    {
+      "ref": "w1213-hw/4/14", "stem": ["L11"], "options": ["L12-L15"], "answer": "C",
+      "reason": "colorbar() thêm cột màu (thang màu) cho ảnh / biểu đồ màu. Không có add_colorbar(), create_colorbar() hay set_colorbar().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nplt.imshow([[1, 2], [3, 4]])\nr = plt.{option}\nprint(type(r).__name__)", "cases": [{ "want": "Colorbar" }] }
+    },
+    {
+      "ref": "w1213-hw/4/15", "stem": ["L16"], "options": ["L17-L19"], "answer": "A",
+      "reason": "triplot() vẽ lưới tam giác (các cạnh và đỉnh). Bề mặt tam giác 3D là plot_trisurf(); màu / nhãn không phải việc của triplot().",
+      "verify": { "kind": "docs", "refs": ["https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.triplot.html"] }
+    },
+    {
+      "ref": "w1213-hw/4/16", "stem": ["L20"], "options": ["L21-L22"], "answer": "A",
+      "reason": "polar(theta, r) vẽ đồ thị trên hệ toạ độ cực. Nhãn / lưới toạ độ cực chỉnh bằng thetagrids(), rgrids(); thang logarit là xscale() / yscale().",
+      "verify": { "kind": "docs", "refs": ["https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.polar.html"] },
+      "edits": { "note": "Biểu đồ radar cũng vẽ trên toạ độ cực bằng polar(), nên D gốc (\"Vẽ biểu đồ radar\") cũng đúng; thay bằng việc không phải của polar().", "options": { "D": "Đổi trục sang thang logarit" } }
+    },
+    {
+      "ref": "w1213-hw/4/17", "stem": ["L23"], "options": ["L24-L27"], "answer": "B",
+      "reason": "Đã import matplotlib.pyplot as plt thì gọi plt.plot(x, y). plot(x, y) thiếu plt nên báo lỗi NameError; plt(x, y) báo lỗi vì module không gọi được như hàm; plot.plt sai.",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nx = [1, 2]\ny = [3, 4]\nr = {option}\nprint(type(r[0]).__name__)", "cases": [{ "want": "Line2D" }] },
+      "edits": { "note": "Phương án B gốc viết nhầm plt.pot(x, y) (báo lỗi) nên đề gốc không có đáp án chạy được; sửa thành plt.plot(x, y). Tài liệu có hai phương án cùng nhãn C.", "options": { "B": "plt.plot(x, y)" } }
+    },
+    {
+      "ref": "w1213-hw/4/18", "stem": ["R01"], "options": ["R02-R05"], "answer": "A",
+      "reason": "plot(x_values, y_values) vẽ biểu đồ đường. Matplotlib không có create_line_graph(), draw_line() hay lineplot() (lineplot() là của thư viện seaborn).",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nx_values = [1, 2]\ny_values = [3, 4]\nr = plt.{option}\nprint(type(r[0]).__name__)", "cases": [{ "want": "Line2D" }] }
+    },
+    {
+      "ref": "w1213-hw/4/19", "stem": ["R06"], "options": ["R07-R10"], "answer": "B",
+      "reason": "bar(x, y, color='red') đặt màu các cột qua tham số color. bar() không có tham số bar_color; không có set_bar_color() hay Customize_color().",
+      "verify": { "kind": "run", "cases": [{ "setup": "import matplotlib.pyplot as plt\nbars = plt.bar([1, 2], [3, 4], color='red')\nprint(bars[0].get_facecolor())\ntry:\n    plt.bar([1], [2], bar_color='red')\nexcept AttributeError:\n    print('bar_color: lỗi')\nprint(hasattr(bars[0], 'set_bar_color'), hasattr(plt, 'Customize_color'))", "expect": "(1.0, 0.0, 0.0, 1.0)\nbar_color: lỗi\nFalse False" }] },
+      "edits": { "note": "Mỗi cột (Rectangle) có phương thức set_color() nên C gốc cũng đổi được màu cột; thay bằng set_bar_color() (không có).", "options": { "C": "set_bar_color()" } }
+    },
+    {
+      "ref": "w1213-hw/4/20", "stem": ["R11"], "options": ["R12-R15"], "answer": "D",
+      "reason": "agg_filter là hàm lọc ảnh: khi vẽ, phần hình của thành phần được dựng thành mảng điểm ảnh rồi đưa qua hàm này (ví dụ làm mờ, đổ bóng). \"agg\" là bộ vẽ Anti-Grain Geometry, không liên quan dữ liệu tổng hợp.",
+      "verify": { "kind": "docs", "refs": ["https://matplotlib.org/stable/api/_as_gen/matplotlib.artist.Artist.set_agg_filter.html"] },
+      "edits": { "note": "agg là bộ vẽ Anti-Grain Geometry, không phải \"tổng hợp\"; sửa D cho đúng nghĩa: bộ lọc áp lên hình ảnh (điểm ảnh) của thành phần khi vẽ.", "options": { "D": "Áp dụng bộ lọc lên hình ảnh (điểm ảnh) của thành phần khi vẽ" } }
+    },
+    {
+      "ref": "w1213-hw/4/21", "stem": ["R16-R17"], "options": ["R18-R19"], "answer": "B",
+      "reason": "add_subplot(231) nghĩa là lưới 2 hàng, 3 cột, ô thứ 1. 123 là 1 hàng 2 cột ô thứ 3 (báo lỗi vì lưới chỉ có 2 ô); 321 là 3 hàng 2 cột; 3*2 = 6 không phải số 3 chữ số nên báo lỗi.",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nfig = plt.figure()\n{option}\nprint(ax1.get_subplotspec().get_geometry()[:2])", "cases": [{ "want": "(2, 3)" }] }
+    },
+    {
+      "ref": "w1213-hw/5/22", "stem": ["L01"], "options": ["L02-L05"], "answer": "C",
+      "reason": "barh() vẽ biểu đồ thanh ngang; bar() vẽ cột đứng. Không có bar_hor() hay hbar().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nx = ['a', 'b']\ny = [3, 4]\nr = {option}\nprint(r.orientation)", "cases": [{ "want": "horizontal" }] }
+    },
+    {
+      "ref": "w1213-hw/5/23", "stem": ["L06-L07"], "options": ["L08-L11"], "answer": "D",
+      "reason": "'r-' là đường liền màu đỏ, marker='s' là điểm hình vuông. 'square', 'sqr' không phải ký hiệu marker; 'R' không phải mã màu; ax.plot(x, y, 'r', 's') coi 's' là dữ liệu khác, không phải marker.",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nx = [1, 2]\ny = [3, 4]\nlines = {option}\nprint(lines[0].get_color(), lines[0].get_marker(), lines[0].get_linestyle())", "cases": [{ "want": "r s -" }] },
+      "edits": { "note": "Đổi nháy cong trong marker = 's’ thành nháy thẳng (lỗi in ấn của slide).", "allOptions": [["’", "'"]] }
+    },
+    {
+      "ref": "w1213-hw/5/24", "stem": ["R01"], "options": ["R02-R09"], "answer": "C",
+      "reason": "ax.set(xlabel=..., ylabel=..., title=...) đặt cùng lúc nhãn trục x, y và tiêu đề. A dùng xlabel, ylabel, title như biến chưa có (NameError); \"ax.(...)\" sai cú pháp; Axes không có set_labels().",
+      "verify": { "kind": "runOptions", "wrap": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots()\n{option}\nprint(ax.get_xlabel(), ax.get_ylabel(), ax.get_title())", "cases": [{ "want": "Year Amount Title of Graph" }] },
+      "edits": { "note": "D gốc (gọi ax.set() ba lần) cũng đặt đủ nhãn x, y và tiêu đề nên đề gốc có 2 đáp án; thay D bằng ax.set_labels(...) (không có). Đổi nháy cong ở phương án A thành nháy thẳng.", "allOptions": [["’", "'"]], "options": { "D": "ax.set_labels(xlabel='Year', ylabel='Amount', title='Title of Graph')" } }
+    }
+  ]
+}
