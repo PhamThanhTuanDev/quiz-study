@@ -24,7 +24,7 @@ paths:
 - **Mobile-first**: class Tailwind không tiền tố áp dụng cho mobile; mở rộng bằng `sm:` `md:` `lg:`. Kiểm tra ở 360px, 768px, 1280px.
 - Vùng bấm tối thiểu khoảng 44×44px; chữ đủ lớn trên điện thoại.
 - HTML ngữ nghĩa (`button`, `nav`, `main`, `label`), điều hướng được bằng bàn phím.
-- Đoạn code trong câu hỏi hiển thị bằng `<pre><code>` font monospace, giữ nguyên thụt lề, cuộn ngang được trên mobile.
+- Đoạn code trong câu hỏi hiển thị bằng component `CodeBlock` (`<pre><code>` font monospace, giữ nguyên thụt lề, cuộn ngang được trên mobile, tô màu cú pháp kiểu VS Code, D-047).
 - Luôn có trạng thái loading / lỗi / rỗng.
 - Không hard-code tên môn hay hiển thị riêng theo môn; mọi thứ lấy từ dữ liệu API.
 

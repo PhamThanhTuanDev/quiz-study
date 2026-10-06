@@ -251,6 +251,12 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Một chỗ trống: ghi đúng giá trị cần điền (`[0]`, `or`, `kind = 'hist'`). Nhiều chỗ trống: đánh số theo thứ tự xuất hiện trong code, ví dụ `(1) if · (2) < · (3) :`. Áp dụng cho cả 94 câu điền khuyết (80 câu một chỗ trống, 14 câu nhiều chỗ trống).
 - Import lại môn đã có người làm: định dạng import có thêm trường không bắt buộc `answers[].previousContent` (nội dung cũ). Câu đã có người làm chỉ nhận cách viết mới nếu nội dung cũ khớp đúng phương án đang lưu ở cùng vị trí, nên phương án bị đảo chỗ vẫn bị chặn. `build_python_import.py` khai báo cách viết cũ cho mọi phương án điền khuyết, để database đã import bản cũ (máy dev, Railway) cập nhật được. Không xoá bài làm nào; trên máy dev có 41 câu điền khuyết đã có người làm, cập nhật được hết.
 
+### D-047 · Tô màu cú pháp trong đoạn code giống VS Code · Đã chốt (chủ dự án, 2026-10-06)
+- Chủ dự án: code toàn chữ đen khó đọc, muốn có màu như VS Code để phân biệt từ khoá, tên biến…
+- Khung code nền tối, dùng bảng màu Dark+ của VS Code (token `code-*` trong `src/index.css`, mọi màu chữ tương phản ≥ 4.5:1 với nền): từ khoá khai báo xanh dương, từ khoá điều khiển (`if`, `for`, `return`, `import`…) tím, tên hàm vàng, tên lớp / kiểu có sẵn xanh ngọc, biến xanh nhạt, chuỗi cam, số xanh lá nhạt, chú thích xanh lá.
+- **Không thêm thư viện** (highlight.js, Prism…): viết `components/codeHighlight.ts` (khoảng 100 dòng) tách code thành các đoạn theo loại, trả dữ liệu cho React hiển thị (không dùng `dangerouslySetInnerHTML`). Ghép các đoạn lại luôn ra đúng code gốc; đã chạy thử trên cả 211 đoạn code của môn Python.
+- Quy tắc theo cú pháp Python, vì code của các môn hiện có đều là Python. Code ngôn ngữ khác vẫn hiện đúng chữ, chỉ tô màu kém chính xác (ví dụ `//` của Java không thành chú thích); khi có môn như vậy thì đưa thông tin ngôn ngữ vào dữ liệu, không tách theo môn trong code.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

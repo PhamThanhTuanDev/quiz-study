@@ -30,6 +30,20 @@
   --color-danger-soft: #fef2f2;
   --color-warning: #b45309; /* amber-700 */
   --color-warning-soft: #fffbeb;
+
+  /* Khung code: nền tối, tô màu theo bảng màu Dark+ của VS Code (D-047). Mọi màu chữ đạt tương phản
+     ≥ 4.5:1 trên nền (thấp nhất là chú thích ≈ 5:1). */
+  --color-code-bg: #1e1e1e;
+  --color-code-text: #d4d4d4; /* dấu câu, toán tử */
+  --color-code-keyword: #569cd6; /* def, class, and, None, self… */
+  --color-code-control: #c586c0; /* if, for, return, import… */
+  --color-code-function: #dcdcaa; /* tên hàm khi khai báo / gọi */
+  --color-code-class: #4ec9b0; /* tên lớp, kiểu có sẵn (int, str…) */
+  --color-code-variable: #9cdcfe; /* tên biến, thuộc tính */
+  --color-code-constant: #4fc1ff; /* tên viết hoa toàn bộ, ví dụ MAX */
+  --color-code-string: #ce9178;
+  --color-code-number: #b5cea8;
+  --color-code-comment: #6a9955;
 }
 
 @layer base {
