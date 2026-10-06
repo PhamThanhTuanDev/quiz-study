@@ -44,7 +44,8 @@ test('học: xem cả bài, mỗi câu có đúng một đáp án tô xanh, khô
   await expect(page).toHaveURL(/\/chapters\/\d+\/study$/)
   const questions = page.getByRole('article')
   await expect(questions.first()).toBeVisible()
-  await expect(page.getByText('✓ Đáp án đúng')).toHaveCount(await questions.count())
+  // Đáp án đúng tô xanh; mỗi câu có đúng một chữ ẩn "(đáp án đúng)" cho trình đọc màn hình.
+  await expect(page.getByText('(đáp án đúng)')).toHaveCount(await questions.count())
   await expect(page.getByRole('radio')).toHaveCount(0)
 
   // Mở lại đúng đường dẫn (tải lại trang, link chia sẻ) vẫn ra bài học.

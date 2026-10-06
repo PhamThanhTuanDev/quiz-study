@@ -91,8 +91,12 @@ describe('AttemptPage – luyện tập', () => {
     expect(await screen.findByRole('status')).toHaveTextContent('✗ Chưa đúng. Đáp án đúng là A.')
     await waitFor(() => expect(screen.getByRole('status')).toHaveFocus())
     expect(screen.getByRole('radio', { name: /Phương án 1 của câu 1/ })).toBeDisabled()
-    expect(screen.getByText('✓ Đáp án đúng')).toBeInTheDocument()
-    expect(screen.getByText('✗ Bạn chọn')).toBeInTheDocument()
+    // Đúng / sai chỉ thể hiện bằng màu trên màn hình; trình đọc màn hình vẫn nghe được qua tên của phương án.
+    // \s*: jsdom ghép tên các phần tử con không chèn khoảng trắng (trình duyệt thật có).
+    expect(screen.getByRole('radio', { name: /Phương án 1 của câu 1\s*\(đáp án đúng\)/ })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /Phương án 2 của câu 1\s*\(bạn chọn, sai\)/ })).toBeInTheDocument()
+    expect(screen.queryByText('✓ Đáp án đúng')).not.toBeInTheDocument()
+    expect(screen.queryByText('✗ Bạn chọn')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Kiểm tra' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Câu 1, sai' })).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledWith(
@@ -135,7 +139,7 @@ describe('AttemptPage – thi thử', () => {
     expect(await screen.findByText('Đã trả lời 1/2 câu')).toBeInTheDocument()
     expect(fetchMock).toHaveBeenCalledWith('/api/v1/attempts/luot-1/answers/1', expect.objectContaining({ method: 'PUT' }))
     expect(screen.queryByRole('status')).not.toBeInTheDocument()
-    expect(screen.queryByText(/Đáp án đúng/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/đáp án đúng/i)).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Câu 1, đã trả lời' })).toBeInTheDocument()
   })
 
@@ -191,7 +195,7 @@ describe('AttemptPage – thi thử', () => {
     expect(screen.getByRole('heading', { name: 'Câu 2/2' })).toHaveFocus()
     expect(screen.getByRole('status')).toHaveTextContent('– Bạn bỏ trống câu này. Đáp án đúng là B.')
     expect(screen.getByRole('status')).toHaveTextContent('Vì lý do X.')
-    expect(screen.getByText('✓ Đáp án đúng')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /\(đáp án đúng\)/ })).toBeInTheDocument()
     // Câu đang xem là câu sai duy nhất: không còn câu sai nào khác để nhảy tới.
     expect(screen.queryByRole('button', { name: 'Xem câu sai tiếp theo' })).not.toBeInTheDocument()
   })

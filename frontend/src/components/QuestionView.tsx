@@ -134,8 +134,10 @@ function AnswerChoice({ name, answer, letter, checked, disabled, feedback, selec
       />
       <span className="shrink-0 font-semibold">{letter}.</span>
       <span className="min-w-0 flex-1 wrap-break-word whitespace-pre-wrap">{answer.content}</span>
-      {isCorrectAnswer && <span className="shrink-0 text-sm font-semibold text-success">✓ Đáp án đúng</span>}
-      {isWrongChoice && <span className="shrink-0 text-sm font-semibold text-danger">✗ Bạn chọn</span>}
+      {/* Trên màn hình chỉ tô màu (xanh: đáp án đúng, đỏ: lựa chọn sai), không thêm chữ theo ý chủ dự án;
+          chữ ẩn giữ lại cho trình đọc màn hình, vì người không nhìn thấy màu cần biết phương án nào đúng / sai. */}
+      {isCorrectAnswer && <span className="sr-only"> (đáp án đúng)</span>}
+      {isWrongChoice && <span className="sr-only"> (bạn chọn, sai)</span>}
     </label>
   )
 }

@@ -61,10 +61,12 @@ describe('StudyPage', () => {
     const options = within(first).getAllByRole('listitem')
     expect(options).toHaveLength(4)
     expect(options[3]).toHaveTextContent('D.')
-    expect(options[3]).toHaveTextContent('✓ Đáp án đúng')
+    // Đáp án đúng chỉ tô xanh trên màn hình; chữ ẩn cho trình đọc màn hình.
     expect(options[3]).toHaveClass('border-success')
-    expect(options[0]).not.toHaveTextContent('Đáp án đúng')
+    expect(within(options[3]).getByText('(đáp án đúng)')).toHaveClass('sr-only')
     expect(options[0]).not.toHaveClass('border-success')
+    expect(options[0]).not.toHaveTextContent('đáp án đúng')
+    expect(screen.queryByText('✓ Đáp án đúng')).not.toBeInTheDocument()
   })
 
   it('shows the explanation, e.g. what was fixed compared with the source document', async () => {

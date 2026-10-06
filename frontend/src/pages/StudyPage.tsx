@@ -83,13 +83,13 @@ function StudyQuestionCard({ question, total }: { question: StudyQuestion; total
 }
 
 function StudyAnswerRow({ answer, letter }: { answer: StudyAnswer; letter: string }) {
-  // Không chỉ dựa vào màu: đáp án đúng có thêm chữ "✓ Đáp án đúng".
+  // Trên màn hình chỉ tô xanh đáp án đúng; chữ ẩn cho trình đọc màn hình (người không nhìn thấy màu).
   const tone = answer.correct ? 'border-success bg-success-soft' : 'border-line bg-surface'
   return (
     <li className={`flex min-h-11 items-start gap-3 rounded-lg border px-4 py-3 ${tone}`}>
       <span className="shrink-0 font-semibold">{letter}.</span>
       <span className="min-w-0 flex-1 wrap-break-word whitespace-pre-wrap">{answer.content}</span>
-      {answer.correct && <span className="shrink-0 text-sm font-semibold text-success">✓ Đáp án đúng</span>}
+      {answer.correct && <span className="sr-only"> (đáp án đúng)</span>}
     </li>
   )
 }

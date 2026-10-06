@@ -234,7 +234,8 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 ### D-044 · Chế độ "Học" xem đáp án; bỏ vuốt chuyển câu · Đã chốt (chủ dự án, 2026-10-06)
 - Chủ dự án yêu cầu nút **"Học"** cạnh nút "Luyện tập" của mỗi bài: trang học hiện câu hỏi kèm đáp án đúng tô xanh, không chọn đáp án.
 - API riêng `GET /api/v1/subjects/{slug}/chapters/{chapterId}/study` (`StudyController` → `StudyService`) trả mọi câu `PUBLISHED` của bài, phương án theo thứ tự tài liệu (không xáo), kèm `correct` và `explanation`. Quy tắc "API làm bài không trả đáp án trước khi trả lời / nộp" vẫn giữ nguyên cho luyện tập và thi thử: học là chế độ riêng, người học chủ động chọn xem đáp án. Không lưu gì, không chấm điểm.
-- Trang `/subjects/:slug/chapters/:chapterId/study` hiện cả bài trên một trang để cuộn đọc liền mạch; đáp án đúng có viền / nền xanh và chữ "✓ Đáp án đúng" (không chỉ dựa vào màu); có giải thích / ghi chú "Đã sửa so với tài liệu" nếu có.
+- Trang `/subjects/:slug/chapters/:chapterId/study` hiện cả bài trên một trang để cuộn đọc liền mạch; đáp án đúng có viền / nền xanh; có giải thích / ghi chú "Đã sửa so với tài liệu" nếu có.
+- Bổ sung (chủ dự án, 2026-10-06): bỏ chữ "✓ Đáp án đúng" / "✗ Bạn chọn" hiện trên phương án (trang Học, luyện tập, xem lại thi thử) vì màu xanh / đỏ đã đủ rõ. Chữ vẫn giữ ở dạng ẩn (`sr-only`) cho trình đọc màn hình, vì người không nhìn thấy màu cần biết phương án nào đúng / sai. Ô kết quả bên dưới ("Chưa đúng. Đáp án đúng là B.") giữ nguyên.
 - Bỏ tính năng vuốt trái / phải trên câu hỏi để chuyển câu (D-040, D-041): chuyển câu bằng nút "Câu trước" / "Câu sau", lưới số câu, hoặc phím ← → trên máy tính. Xoá `useSwipe`; test giữ lại một ca kiểm tra vuốt không đổi câu.
 
 ### D-045 · Thêm Bài 12 (Matplotlib) và Bài 13 (Pandas) cho môn Python · Đã chốt (chủ dự án, 2026-10-06)
