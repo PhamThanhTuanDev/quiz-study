@@ -11,6 +11,10 @@ Chạy từ thư mục gốc project:
     scripts\\.venv\\Scripts\\python scripts\\build_python_import.py [--allow-incomplete]
 --allow-incomplete: chỉ dựng các bài đã có bản đồ (dùng khi đang làm dở), không ghi import.json.
 
+Câu Claude tự soạn từ tài liệu khác (D-049, ví dụ file tóm tắt môn .docx): database/seed/python/authored/
+bai-NN.json (commit), ghi đủ đề / code / 4 phương án / đáp án / lý do / kiểm chứng, vì không có vị trí PDF để
+lấy lại nội dung. Nguồn khai báo trong "authoredSources" của subject.json.
+
 Kết quả (không commit, D-030): database/seed/python/generated/import.json và review.md.
 """
 
@@ -28,6 +32,7 @@ import pymupdf
 from python_source import GENERATED_DIR, SEED_DIR, PageLine, load_config, page_lines, quiz_page_numbers, source_path
 
 MAPS_DIR = SEED_DIR / "questions"
+AUTHORED_DIR = SEED_DIR / "authored"
 LETTERS = "ABCDEFGH"
 BLANK = "…"
 # Chỗ trống trên slide viết bằng "…" hoặc ba dấu chấm "..." (w04.1 LT trang 20, 28).
@@ -65,7 +70,7 @@ class Question:
     ref: str
     chapter: int
     source: dict
-    page: int
+    page: int | None  # None: câu tự soạn (D-049), không có trang PDF
     number: int
     label: str
     content: str
@@ -74,7 +79,7 @@ class Question:
     answer: int | None
     status: str
     review_note: str | None
-    kind: str  # "choice" | "fill"
+    kind: str  # "choice" | "fill" | "open" | "authored"
     fill_values: list[list[str]] | None
     reason: str
     verify: dict | None
@@ -459,13 +464,42 @@ def check_question(q: Question) -> None:
 # ---------------------------------------------------------------- Toàn bộ môn
 
 
-def load_maps() -> list[dict]:
+def load_maps(directory: Path = MAPS_DIR) -> list[dict]:
     maps = []
-    for path in sorted(MAPS_DIR.glob("bai-*.json")):
+    for path in sorted(directory.glob("bai-*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
         data["_path"] = path
         maps.append(data)
     return maps
+
+
+def build_authored_question(sources: dict[str, dict], chapter: int, entry: dict) -> Question:
+    """Câu Claude tự soạn (D-049). ref dạng <nguồn>/<mục trong tài liệu>/<số câu>, ví dụ "tomtat/2.5/1".
+
+    Lý do (reason) được hiện cho người học trong phần giải thích, vì đây là nội dung giải thích tự soạn.
+    """
+    ref = entry.get("ref", "")
+    parts = ref.split("/")
+    if len(parts) != 3 or parts[0] not in sources or not parts[2].isdigit():
+        raise MapError(f"ref '{ref}' phải có dạng <nguồn>/<mục>/<số câu>, nguồn có trong authoredSources")
+    source, section, number = sources[parts[0]], parts[1], int(parts[2])
+    options = list(entry.get("options", []))
+    if len(options) != 4 or len(set(options)) != 4:
+        raise MapError("câu tự soạn phải có đúng 4 phương án khác nhau")
+    answer = entry.get("answer")
+    if answer not in LETTERS[:4]:
+        raise MapError("câu tự soạn phải có đáp án A–D")
+    reason = str(entry.get("reason", "")).strip()
+    question = Question(
+        ref=ref, chapter=chapter, source=source, page=None, number=number,
+        label=f"{source['label']} mục {section} – Câu {number}", content=entry.get("content", ""),
+        code=entry.get("code"), options=options, answer=LETTERS.index(answer), status="PUBLISHED", review_note=None,
+        kind="authored", fill_values=None, reason=reason, verify=entry.get("verify"), duplicate_of=None,
+        explanation=reason or None,
+    )
+    question.shuffle = not any(POSITION_DEPENDENT_RE.search(option) for option in options)
+    check_question(question)
+    return question
 
 
 def build_all(allow_incomplete: bool) -> tuple[dict, list[Question], list[str], list[str]]:
@@ -495,6 +529,18 @@ def build_all(allow_incomplete: bool) -> tuple[dict, list[Question], list[str], 
                 if not why.strip():
                     errors.append(f"{page_ref} {line_id}: bỏ qua dòng thì phải ghi lý do")
                 mark_used(used, key, [(int(page), line_id)], f"bỏ qua: {why}", errors)
+
+    authored_sources = {s["key"]: s for s in config.get("authoredSources", [])}
+    chapter_numbers = {c["number"] for c in config["chapters"]}
+    for data in load_maps(AUTHORED_DIR):
+        if data.get("chapter") not in chapter_numbers:
+            errors.append(f"{data['_path'].name}: bài {data.get('chapter')} không có trong subject.json")
+            continue
+        for entry in data.get("questions", []):
+            try:
+                questions.append(build_authored_question(authored_sources, data["chapter"], entry))
+            except (MapError, KeyError, TypeError, ValueError) as error:
+                errors.append(f"{data['_path'].name} · {entry.get('ref', '?')}: {error}")
 
     check_coverage(config, pages, mapped_chapters, used, errors)
     check_duplicates(questions, errors)
@@ -600,7 +646,8 @@ def write_review(config: dict, questions: list[Question], missing: list[str], pa
             continue
         out += ["", f"## Bài {chapter['number']}: {chapter['title']}", ""]
         for q in items:
-            out += [f"### {q.label} · trang {q.page} · {q.status}", "", q.content, ""]
+            page = f"trang {q.page}" if q.page is not None else "tự soạn"
+            out += [f"### {q.label} · {page} · {q.status}", "", q.content, ""]
             if q.code:
                 out += ["```python", q.code, "```", ""]
             for i, option in enumerate(q.options):

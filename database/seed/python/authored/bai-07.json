@@ -1,0 +1,300 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 4.1–4.4: hàm, phạm vi biến, tham số, lambda, đệ quy, hàm thông dụng.",
+  "chapter": 7,
+  "questions": [
+    {
+      "ref": "tomtat/4.1/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def f():\n    pass\n\nprint(f())",
+      "options": [
+        "None",
+        "pass",
+        "0",
+        "Không in gì"
+      ],
+      "answer": "A",
+      "reason": "Hàm không có lệnh return thì trả về None, nên print(f()) in None.",
+      "verify": {
+        "kind": "output",
+        "expect": "None"
+      }
+    },
+    {
+      "ref": "tomtat/4.1/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def tong_hieu(a, b):\n    return a + b, a - b\n\nprint(tong_hieu(5, 3))",
+      "options": [
+        "8",
+        "[8, 2]",
+        "8 2",
+        "(8, 2)"
+      ],
+      "answer": "D",
+      "reason": "return nhiều giá trị cách nhau dấu phẩy thì hàm trả về một tuple.",
+      "verify": {
+        "kind": "output",
+        "expect": "(8, 2)"
+      }
+    },
+    {
+      "ref": "tomtat/4.1/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "n = 3\n\ndef increase():\n    n = 2\n    n = n + 1\n\nincrease()\nprint(n)",
+      "options": [
+        "2",
+        "4",
+        "3",
+        "Báo lỗi UnboundLocalError"
+      ],
+      "answer": "C",
+      "reason": "Gán n trong hàm tạo một biến CỤC BỘ khác, không đụng tới biến n bên ngoài, nên n ngoài vẫn là 3.",
+      "verify": {
+        "kind": "output",
+        "expect": "3"
+      }
+    },
+    {
+      "ref": "tomtat/4.1/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = 'python.org'\n\ndef f():\n    s = s + ' is great!'\n\nf()\nprint(s)",
+      "options": [
+        "Báo lỗi UnboundLocalError",
+        "python.org",
+        "python.org is great!",
+        "Báo lỗi NameError"
+      ],
+      "answer": "A",
+      "reason": "Có lệnh gán s trong hàm nên s là biến cục bộ của hàm; vế phải s + ' is great!' dùng s cục bộ khi chưa gán nên báo UnboundLocalError. Muốn sửa biến ngoài phải khai báo global s.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: UnboundLocalError"
+      }
+    },
+    {
+      "ref": "tomtat/4.1/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = 'python.org'\n\ndef f():\n    global s\n    s = s + ' is great!'\n\nf()\nprint(s)",
+      "options": [
+        "python.org",
+        "is great!",
+        "python.org is great!",
+        "Báo lỗi UnboundLocalError"
+      ],
+      "answer": "C",
+      "reason": "global s cho phép hàm dùng và sửa biến toàn cục s.",
+      "verify": {
+        "kind": "output",
+        "expect": "python.org is great!"
+      }
+    },
+    {
+      "ref": "tomtat/4.1/6",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def changeme(mylist):\n    mylist.append([1, 2, 3, 4])\n\nmylist = [10, 20, 30]\nchangeme(mylist)\nprint(mylist)",
+      "options": [
+        "[10, 20, 30]",
+        "[10, 20, 30, [1, 2, 3, 4]]",
+        "[[1, 2, 3, 4]]",
+        "[10, 20, 30, 1, 2, 3, 4]"
+      ],
+      "answer": "B",
+      "reason": "List truyền vào hàm là cùng một đối tượng, nên append trong hàm sửa thật list bên ngoài; append thêm cả list làm một phần tử.",
+      "verify": {
+        "kind": "output",
+        "expect": "[10, 20, 30, [1, 2, 3, 4]]"
+      }
+    },
+    {
+      "ref": "tomtat/4.2/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def f(a, b=2, c=3):\n    return a + b * c\n\nprint(f(1), f(1, c=10))",
+      "options": [
+        "Báo lỗi TypeError",
+        "9 30",
+        "7 13",
+        "7 21"
+      ],
+      "answer": "D",
+      "reason": "f(1): a = 1, b = 2, c = 3 nên 1 + 2 × 3 = 7. f(1, c=10) truyền c theo tên, b vẫn mặc định 2: 1 + 2 × 10 = 21.",
+      "verify": {
+        "kind": "output",
+        "expect": "7 21"
+      }
+    },
+    {
+      "ref": "tomtat/4.2/2",
+      "content": "Khai báo hàm nào sau đây báo lỗi cú pháp?",
+      "options": [
+        "def f(a, b=1): pass",
+        "def f(a=1, b): pass",
+        "def f(*args): pass",
+        "def f(a, **kwargs): pass"
+      ],
+      "answer": "B",
+      "reason": "Tham số có giá trị mặc định phải đứng SAU các tham số thường; def f(a=1, b) là lỗi cú pháp.",
+      "verify": {
+        "kind": "runOptions",
+        "wrap": "try:\n    exec('{option}')\n    print('ok')\nexcept SyntaxError:\n    print('SyntaxError')",
+        "cases": [
+          {
+            "want": "SyntaxError"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/4.2/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def my_function(*kids):\n    print(type(kids).__name__, kids[2])\n\nmy_function('Emil', 'Tobias', 'Linus')",
+      "options": [
+        "list Linus",
+        "dict Linus",
+        "tuple Tobias",
+        "tuple Linus"
+      ],
+      "answer": "D",
+      "reason": "*args gom các đối số truyền theo vị trí thành một tuple; kids[2] là phần tử thứ ba 'Linus'.",
+      "verify": {
+        "kind": "output",
+        "expect": "tuple Linus"
+      }
+    },
+    {
+      "ref": "tomtat/4.2/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def my_function(**kid):\n    print(type(kid).__name__, kid['lname'])\n\nmy_function(fname='Tobias', lname='Refsnes')",
+      "options": [
+        "tuple Refsnes",
+        "dict Tobias",
+        "dict Refsnes",
+        "list Refsnes"
+      ],
+      "answer": "C",
+      "reason": "**kwargs gom các đối số truyền theo tên thành một dictionary (tên → giá trị).",
+      "verify": {
+        "kind": "output",
+        "expect": "dict Refsnes"
+      }
+    },
+    {
+      "ref": "tomtat/4.2/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "x = lambda a, b: a ** 2 + b\nprint(x(2, 3))",
+      "options": [
+        "7",
+        "10",
+        "11",
+        "Báo lỗi SyntaxError"
+      ],
+      "answer": "A",
+      "reason": "lambda tham_số: biểu_thức là hàm ẩn danh; x(2, 3) = 2² + 3 = 7.",
+      "verify": {
+        "kind": "output",
+        "expect": "7"
+      }
+    },
+    {
+      "ref": "tomtat/4.2/6",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(list(filter(lambda x: x > 1, [1, 2, 3])), list(map(lambda x: x * 2, [1, 2, 3])))",
+      "options": [
+        "[False, True, True] [2, 4, 6]",
+        "[2, 3] [2, 4, 6]",
+        "[2, 3] [1, 2, 3, 1, 2, 3]",
+        "[1] [2, 4, 6]"
+      ],
+      "answer": "B",
+      "reason": "filter giữ lại các phần tử làm hàm trả về True (2, 3); map áp hàm cho từng phần tử (nhân 2).",
+      "verify": {
+        "kind": "output",
+        "expect": "[2, 3] [2, 4, 6]"
+      }
+    },
+    {
+      "ref": "tomtat/4.3/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def fib(n):\n    if n <= 2:\n        return 1\n    return fib(n - 1) + fib(n - 2)\n\nprint([fib(i) for i in range(1, 8)])",
+      "options": [
+        "[0, 1, 1, 2, 3, 5, 8]",
+        "[1, 2, 3, 5, 8, 13, 21]",
+        "[1, 1, 2, 3, 5, 8]",
+        "[1, 1, 2, 3, 5, 8, 13]"
+      ],
+      "answer": "D",
+      "reason": "Dãy Fibonacci với F1 = F2 = 1 (điểm dừng n <= 2), Fn = Fn-1 + Fn-2; range(1, 8) lấy 7 số đầu.",
+      "verify": {
+        "kind": "output",
+        "expect": "[1, 1, 2, 3, 5, 8, 13]"
+      }
+    },
+    {
+      "ref": "tomtat/4.3/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def f(n):\n    return f(n + 1)\n\nf(1)",
+      "options": [
+        "Báo lỗi RecursionError",
+        "Chạy mãi không dừng",
+        "Báo lỗi OverflowError",
+        "None"
+      ],
+      "answer": "A",
+      "reason": "Hàm đệ quy không có điểm dừng: Python giới hạn độ sâu đệ quy (khoảng 1000 lần) rồi báo RecursionError, không chạy mãi.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: RecursionError"
+      }
+    },
+    {
+      "ref": "tomtat/4.4/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(round(2.5), round(3.5), round(11 / 3, 2))",
+      "options": [
+        "3 4 3.67",
+        "2 3 3.66",
+        "2 4 3.67",
+        "3 4 3.66"
+      ],
+      "answer": "C",
+      "reason": "round() làm tròn số .5 về số CHẴN gần nhất: round(2.5) = 2, round(3.5) = 4. round(11 / 3, 2) = 3.67.",
+      "verify": {
+        "kind": "output",
+        "expect": "2 4 3.67"
+      }
+    },
+    {
+      "ref": "tomtat/4.4/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import math\nprint(math.pow(5, 2), 5 ** 2, math.fabs(-2), abs(-2))",
+      "options": [
+        "25 25 2 2",
+        "25.0 25 2.0 2",
+        "25.0 25.0 2.0 2.0",
+        "25 25.0 2 2.0"
+      ],
+      "answer": "B",
+      "reason": "Các hàm của math như pow, fabs luôn trả về số thực (25.0, 2.0); toán tử ** và hàm abs giữ kiểu số nguyên.",
+      "verify": {
+        "kind": "output",
+        "expect": "25.0 25 2.0 2"
+      }
+    },
+    {
+      "ref": "tomtat/4.4/3",
+      "content": "random.randint(1, 10) có thể trả về những số nào?",
+      "options": [
+        "Các số nguyên từ 1 đến 9 (không gồm 10)",
+        "Các số nguyên từ 0 đến 10",
+        "Các số thực trong khoảng [1, 10)",
+        "Các số nguyên từ 1 đến 10 (gồm cả 10)"
+      ],
+      "answer": "D",
+      "reason": "randint(a, b) lấy số nguyên ngẫu nhiên trong [a, b], gồm cả b. Khác với randrange(a, b) không lấy b.",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://docs.python.org/3/library/random.html#random.randint"
+        ]
+      }
+    }
+  ]
+}

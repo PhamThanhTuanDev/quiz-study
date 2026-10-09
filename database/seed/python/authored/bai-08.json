@@ -1,0 +1,227 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 4.5–4.6: truy xuất chuỗi và phương thức chuỗi.",
+  "chapter": 8,
+  "questions": [
+    {
+      "ref": "tomtat/4.5/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = 'Hello World!'\nprint(s[2:4], s[:5], s[6:])",
+      "options": [
+        "ll Hello  World!",
+        "llo Hello World!",
+        "ll Hello World!",
+        "el Hell World!"
+      ],
+      "answer": "C",
+      "reason": "Cắt chuỗi giống list: s[2:4] lấy chỉ số 2, 3 ('ll'); s[:5] là 5 ký tự đầu; s[6:] từ chỉ số 6 tới hết.",
+      "verify": {
+        "kind": "output",
+        "expect": "ll Hello World!"
+      }
+    },
+    {
+      "ref": "tomtat/4.5/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = 'Hello World!'\nprint(s[::-1])",
+      "options": [
+        "!dlroW olleH",
+        "Hello World!",
+        "World! Hello",
+        "H"
+      ],
+      "answer": "A",
+      "reason": "Bước -1 duyệt từ cuối về đầu nên đảo ngược chuỗi.",
+      "verify": {
+        "kind": "output",
+        "expect": "!dlroW olleH"
+      }
+    },
+    {
+      "ref": "tomtat/4.5/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = 'Hello'\ns[0] = 'J'\nprint(s)",
+      "options": [
+        "Jello",
+        "Hello",
+        "Báo lỗi IndexError",
+        "Báo lỗi TypeError"
+      ],
+      "answer": "D",
+      "reason": "Chuỗi là bất biến: không gán được từng ký tự (TypeError). Muốn đổi phải tạo chuỗi mới, ví dụ 'J' + s[1:].",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: TypeError"
+      }
+    },
+    {
+      "ref": "tomtat/4.5/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(len('a\\nb'), ord('A'), chr(97))",
+      "options": [
+        "4 65 a",
+        "3 97 A",
+        "3 65 a",
+        "2 65 a"
+      ],
+      "answer": "C",
+      "reason": "\\n (xuống dòng) tính là MỘT ký tự nên 'a\\nb' dài 3. ord('A') = 65 là mã ký tự; chr(97) là ký tự có mã 97: 'a'.",
+      "verify": {
+        "kind": "output",
+        "expect": "3 65 a"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print('Bao, Khang, Huyen'.split(','))",
+      "options": [
+        "['Bao', 'Khang', 'Huyen']",
+        "['Bao', ' Khang', ' Huyen']",
+        "['Bao,', 'Khang,', 'Huyen']",
+        "['Bao, Khang, Huyen']"
+      ],
+      "answer": "B",
+      "reason": "split(',') chỉ tách tại dấu phẩy, khoảng trắng sau dấu phẩy vẫn còn ở đầu các phần sau.",
+      "verify": {
+        "kind": "output",
+        "expect": "['Bao', ' Khang', ' Huyen']"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print('Geek1 Geek2 Geek3'.split(' ', 1))",
+      "options": [
+        "['Geek1', 'Geek2 Geek3']",
+        "['Geek1 Geek2', 'Geek3']",
+        "['Geek1', 'Geek2', 'Geek3']",
+        "['Geek1']"
+      ],
+      "answer": "A",
+      "reason": "Tham số thứ hai của split là số lần tách tối đa: chỉ tách 1 lần tại khoảng trắng đầu tiên.",
+      "verify": {
+        "kind": "output",
+        "expect": "['Geek1', 'Geek2 Geek3']"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(','.join(['a', 'b', 'c']), ' '.join('Py'))",
+      "options": [
+        "a,b,c P y",
+        "['a,b,c'] Py",
+        "a, b, c P y",
+        "abc P y"
+      ],
+      "answer": "A",
+      "reason": "chuỗi.join(dãy) nối các phần tử, chèn chuỗi đó vào giữa. Chuỗi 'Py' cũng là dãy ký tự nên ' '.join('Py') = 'P y'.",
+      "verify": {
+        "kind": "output",
+        "expect": "a,b,c P y"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = 'Hello World!'\nprint(s.find('hello'), s.find('o'), s.rfind('o'))",
+      "options": [
+        "0 4 7",
+        "-1 4 7",
+        "-1 4 4",
+        "Báo lỗi ValueError"
+      ],
+      "answer": "B",
+      "reason": "find phân biệt hoa thường: không có 'hello' nên trả -1. find('o') là vị trí đầu tiên (4); rfind('o') là vị trí cuối cùng (7).",
+      "verify": {
+        "kind": "output",
+        "expect": "-1 4 7"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = 'Hello World!'\nprint(s.index('z'))",
+      "options": [
+        "-1",
+        "None",
+        "Báo lỗi ValueError",
+        "Báo lỗi IndexError"
+      ],
+      "answer": "C",
+      "reason": "index() báo ValueError khi không tìm thấy chuỗi con (khác find() trả về -1).",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: ValueError"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/6",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "a = 'hello World!'\nprint(a.capitalize(), a.title())",
+      "options": [
+        "Hello world! Hello world!",
+        "Hello World! Hello World!",
+        "HELLO WORLD! Hello World!",
+        "Hello world! Hello World!"
+      ],
+      "answer": "D",
+      "reason": "capitalize() viết hoa chữ đầu câu và hạ các chữ còn lại; title() viết hoa chữ đầu MỖI từ.",
+      "verify": {
+        "kind": "output",
+        "expect": "Hello world! Hello World!"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/7",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print('FIT'.center(9, '*'), '7'.zfill(3))",
+      "options": [
+        "***FIT*** 007",
+        "FIT****** 700",
+        "***FIT*** 7",
+        "**FIT** 007"
+      ],
+      "answer": "A",
+      "reason": "center(9, '*') căn giữa trong độ rộng 9, chèn * hai bên; zfill(3) thêm số 0 bên trái cho đủ 3 ký tự.",
+      "verify": {
+        "kind": "output",
+        "expect": "***FIT*** 007"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/8",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print('%x %o' % (255, 8))",
+      "options": [
+        "255 8",
+        "FF 8",
+        "ff 10",
+        "0xff 0o10"
+      ],
+      "answer": "C",
+      "reason": "%x định dạng thập lục phân chữ thường (255 = ff), %o định dạng bát phân (8 = 10), không kèm tiền tố 0x / 0o.",
+      "verify": {
+        "kind": "output",
+        "expect": "ff 10"
+      }
+    },
+    {
+      "ref": "tomtat/4.6/9",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print('FIT-UTE'.isalnum(), 'FIT2'.isalnum(), '0912218'.isdigit())",
+      "options": [
+        "True True True",
+        "True True False",
+        "False False True",
+        "False True True"
+      ],
+      "answer": "D",
+      "reason": "isalnum() chỉ True khi mọi ký tự là chữ hoặc số: 'FIT-UTE' có dấu - nên False. isdigit() True khi mọi ký tự là chữ số.",
+      "verify": {
+        "kind": "output",
+        "expect": "False True True"
+      }
+    }
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 3.4–3.6: Tuple, Set, Dictionary.",
+  "chapter": 6,
+  "questions": [
+    {
+      "ref": "tomtat/3.4/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(type((50)), type((50,)))",
+      "options": [
+        "<class 'tuple'> <class 'tuple'>",
+        "<class 'int'> <class 'int'>",
+        "<class 'tuple'> <class 'int'>",
+        "<class 'int'> <class 'tuple'>"
+      ],
+      "answer": "D",
+      "reason": "(50) chỉ là số 50 trong ngoặc; tuple một phần tử bắt buộc có dấu phẩy: (50,).",
+      "verify": {
+        "kind": "output",
+        "expect": "<class 'int'> <class 'tuple'>"
+      }
+    },
+    {
+      "ref": "tomtat/3.4/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(tuple(50))",
+      "options": [
+        "Báo lỗi TypeError",
+        "(50)",
+        "(50,)",
+        "(5, 0)"
+      ],
+      "answer": "A",
+      "reason": "tuple() cần một đối tượng duyệt được (list, chuỗi…); số nguyên không duyệt được nên báo TypeError.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: TypeError"
+      }
+    },
+    {
+      "ref": "tomtat/3.4/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "t = (1, 2, 3)\nt[0] = 9\nprint(t)",
+      "options": [
+        "(9, 2, 3)",
+        "Báo lỗi TypeError",
+        "(1, 2, 3)",
+        "Báo lỗi IndexError"
+      ],
+      "answer": "B",
+      "reason": "Tuple không thay đổi được: gán t[0] = 9 báo TypeError. Muốn sửa phải đổi sang list, sửa, rồi đổi lại tuple.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: TypeError"
+      }
+    },
+    {
+      "ref": "tomtat/3.4/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "friends = ('Tí', 'Tèo', 'Tũn', 'Tĩn')\n(Ti, Teo, *AnhEm) = friends\nprint(AnhEm)",
+      "options": [
+        "('Tũn', 'Tĩn')",
+        "['Tũn', 'Tĩn']",
+        "Tũn",
+        "Báo lỗi ValueError"
+      ],
+      "answer": "B",
+      "reason": "Khi giải nén (unpacking), biến có dấu * nhận phần còn lại dưới dạng LIST, kể cả khi giải nén từ tuple.",
+      "verify": {
+        "kind": "output",
+        "expect": "['Tũn', 'Tĩn']"
+      }
+    },
+    {
+      "ref": "tomtat/3.4/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "t = (1, 2, 3, 2, 5, 4, 2)\nprint(t.count(2), t.index(2))",
+      "options": [
+        "2 2",
+        "1 3",
+        "3 6",
+        "3 1"
+      ],
+      "answer": "D",
+      "reason": "count(2) đếm số lần 2 xuất hiện (3 lần); index(2) trả về vị trí xuất hiện đầu tiên (chỉ số 1).",
+      "verify": {
+        "kind": "output",
+        "expect": "3 1"
+      }
+    },
+    {
+      "ref": "tomtat/3.4/6",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "*a, *b = (-1, -2, 3, 4)\nprint(a, b)",
+      "options": [
+        "[-1, -2] [3, 4]",
+        "[-1, -2, 3] [4]",
+        "Báo lỗi SyntaxError",
+        "[] [-1, -2, 3, 4]"
+      ],
+      "answer": "C",
+      "reason": "Mỗi phép gán giải nén chỉ được có MỘT biến có dấu *; hai dấu * là lỗi cú pháp vì không biết chia phần tử thế nào.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: SyntaxError"
+      }
+    },
+    {
+      "ref": "tomtat/3.5/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(type({}), type(set()))",
+      "options": [
+        "<class 'dict'> <class 'set'>",
+        "<class 'set'> <class 'set'>",
+        "<class 'set'> <class 'dict'>",
+        "<class 'dict'> <class 'dict'>"
+      ],
+      "answer": "A",
+      "reason": "{} là dictionary rỗng; set rỗng phải tạo bằng set().",
+      "verify": {
+        "kind": "output",
+        "expect": "<class 'dict'> <class 'set'>"
+      }
+    },
+    {
+      "ref": "tomtat/3.5/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print({1, True, 2})",
+      "options": [
+        "{1, True, 2}",
+        "{True, 2}",
+        "{1, 2}",
+        "{1, 1, 2}"
+      ],
+      "answer": "C",
+      "reason": "Trong set, True và 1 được coi là cùng giá trị (True == 1) nên chỉ giữ phần tử đầu là 1.",
+      "verify": {
+        "kind": "output",
+        "expect": "{1, 2}"
+      }
+    },
+    {
+      "ref": "tomtat/3.5/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = {1, 2, 3}\ns.discard(7)\nprint(s)\ns.remove(7)\nprint(s)",
+      "options": [
+        "{1, 2, 3}\n{1, 2, 3}",
+        "Báo lỗi KeyError ngay ở discard(7)",
+        "{1, 2, 3}\nset()",
+        "{1, 2, 3} rồi báo lỗi KeyError ở remove(7)"
+      ],
+      "answer": "D",
+      "reason": "discard() xoá phần tử không có thì không báo lỗi; remove() xoá phần tử không có thì báo KeyError. Dòng print đầu đã chạy trước khi lỗi.",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          {
+            "replace": {
+              "s.remove(7)\nprint(s)": "try:\n    s.remove(7)\nexcept KeyError as e:\n    print('KeyError', e)"
+            },
+            "expect": "{1, 2, 3}\nKeyError 7"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/3.5/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "x = {'a', 'b', 'c'}\ny = {'c', 'd'}\nprint(sorted(x ^ y), x & y)",
+      "options": [
+        "['a', 'b', 'd'] {'c'}",
+        "['a', 'b', 'c', 'd'] {'c'}",
+        "['a', 'b'] {'c', 'd'}",
+        "['c'] {'a', 'b', 'd'}"
+      ],
+      "answer": "A",
+      "reason": "x ^ y (hiệu đối xứng) lấy phần tử chỉ thuộc một trong hai tập: a, b, d. x & y (giao) lấy phần tử chung: c.",
+      "verify": {
+        "kind": "output",
+        "expect": "['a', 'b', 'd'] {'c'}"
+      }
+    },
+    {
+      "ref": "tomtat/3.5/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "s = {1, 2, 3}\nprint(s[0])",
+      "options": [
+        "1",
+        "Báo lỗi TypeError",
+        "{1}",
+        "Báo lỗi IndexError"
+      ],
+      "answer": "B",
+      "reason": "Set không có thứ tự, không có chỉ mục nên không truy cập bằng [0] được (TypeError). Muốn lấy phần tử thì duyệt bằng vòng lặp.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: TypeError"
+      }
+    },
+    {
+      "ref": "tomtat/3.6/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "d = {'name': 'Tran', 'age': 37}\nprint(d.get('xyz'), d.get('xyz', 0))",
+      "options": [
+        "Báo lỗi KeyError",
+        "None 0",
+        "0 0",
+        "None None"
+      ],
+      "answer": "B",
+      "reason": "get() không báo lỗi khi thiếu khoá: trả về None, hoặc giá trị mặc định nếu truyền vào (ở đây là 0).",
+      "verify": {
+        "kind": "output",
+        "expect": "None 0"
+      }
+    },
+    {
+      "ref": "tomtat/3.6/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "d = {'name': 'Tran', 'age': 37}\nprint('name' in d, 'Tran' in d)",
+      "options": [
+        "True False",
+        "False True",
+        "True True",
+        "False False"
+      ],
+      "answer": "A",
+      "reason": "Toán tử in với dictionary kiểm tra KHOÁ, không kiểm tra giá trị: 'name' là khoá nên True, 'Tran' chỉ là giá trị nên False.",
+      "verify": {
+        "kind": "output",
+        "expect": "True False"
+      }
+    },
+    {
+      "ref": "tomtat/3.6/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print({'a': 1, 'a': 2})",
+      "options": [
+        "{'a': 1, 'a': 2}",
+        "{'a': 1}",
+        "Báo lỗi KeyError",
+        "{'a': 2}"
+      ],
+      "answer": "D",
+      "reason": "Khoá trong dictionary không trùng: khai báo khoá trùng thì giá trị viết SAU ghi đè giá trị trước.",
+      "verify": {
+        "kind": "output",
+        "expect": "{'a': 2}"
+      }
+    },
+    {
+      "ref": "tomtat/3.6/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "d = {[1, 2]: 'x'}\nprint(d)",
+      "options": [
+        "{[1, 2]: 'x'}",
+        "{1: 'x', 2: 'x'}",
+        "Báo lỗi TypeError",
+        "Báo lỗi KeyError"
+      ],
+      "answer": "C",
+      "reason": "Khoá của dictionary phải là kiểu bất biến (số, chuỗi, tuple…); list thay đổi được nên báo TypeError: unhashable type: 'list'.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: TypeError"
+      }
+    },
+    {
+      "ref": "tomtat/3.6/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "d = {'name': 'Tran', 'age': 37, 'country': 'Vietnam'}\nprint(d.popitem())\nprint(d)",
+      "options": [
+        "('name', 'Tran')\n{'age': 37, 'country': 'Vietnam'}",
+        "('country', 'Vietnam')\n{'name': 'Tran', 'age': 37}",
+        "Vietnam\n{'name': 'Tran', 'age': 37}",
+        "Báo lỗi TypeError"
+      ],
+      "answer": "B",
+      "reason": "popitem() xoá và trả về cặp (khoá, giá trị) được thêm vào CUỐI cùng.",
+      "verify": {
+        "kind": "output",
+        "expect": "('country', 'Vietnam')\n{'name': 'Tran', 'age': 37}"
+      }
+    }
+  ]
+}

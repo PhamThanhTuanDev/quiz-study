@@ -111,3 +111,5 @@ database/seed/*/generated/
 # Không đưa tài liệu nguồn vào Git (quyết định của chủ dự án, xem Q-02 trong docs/decisions.md).
 # Các file PDF vẫn nằm ở thư mục gốc trên máy và là nguồn chỉ đọc.
 *.pdf
+# Tài liệu Word chủ dự án cung cấp ở thư mục gốc (ví dụ file tóm tắt môn, D-049): cũng là nguồn chỉ đọc.
+/*.docx

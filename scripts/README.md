@@ -82,4 +82,20 @@ powershell -ExecutionPolicy Bypass -File scripts\import-subject.ps1 -Slug python
 
   `note` bắt buộc, được ghi vào `explanation` ("Đã sửa so với tài liệu: …") để người học thấy. `stem` / `code` thay lần xuất hiện đầu tiên; `allOptions` thay trong mọi phương án; `setCode` chỉ dùng khi tài liệu không có code. Chuỗi cũ không còn trong tài liệu thì script dừng báo lỗi. Kiểm chứng (`verify`) chạy trên nội dung đã sửa.
 
+### Câu tự soạn (D-049)
+
+Câu Claude soạn từ tài liệu không phải slide PDF (ví dụ file tóm tắt môn .docx) nằm trong `database/seed/python/authored/bai-NN.json` (có commit), ghi đủ nội dung vì không có vị trí PDF để lấy lại. `build_python_import.py` đọc cả thư mục này; nguồn khai báo ở `authoredSources` trong `subject.json`.
+
+```json
+{
+  "ref": "tomtat/2.5/2", "content": "Kết quả khi chạy đoạn code sau là gì?", "code": "print(-9 // 2, -9 % 2)",
+  "options": ["-5 1", "-4 1", "-4 -1", "-5 -1"], "answer": "A",
+  "reason": "// làm tròn xuống: -4.5 thành -5 …",
+  "verify": { "kind": "output", "expect": "-5 1" }
+}
+```
+
+- `reason` hiện cho người học trong phần giải thích.
+- Kiểm chứng `output`: chạy code của đề (thêm `setup` / `stdin` nếu cần), kết quả phải bằng `expect`, và chỉ phương án đáp án khớp: in ra giống hệt, hoặc nêu đúng tên lỗi (`expect` dạng `"ERROR: ValueError"`, phương án "Báo lỗi ValueError").
+
 Nguyên tắc xử lý dữ liệu nguồn: [.claude/rules/source-material.md](../.claude/rules/source-material.md).

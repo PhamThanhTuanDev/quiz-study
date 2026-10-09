@@ -1,0 +1,248 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 2.10–2.12: if/elif/else, so sánh số thực, try/except/else/finally/raise.",
+  "chapter": 3,
+  "questions": [
+    {
+      "ref": "tomtat/2.10/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "diem = 7.5\nif diem >= 8:\n    print('Giỏi')\nelif diem >= 7:\n    print('Khá')\nelif diem >= 5:\n    print('TB')\nelse:\n    print('Yếu')",
+      "options": [
+        "Khá",
+        "Giỏi",
+        "Khá\nTB",
+        "TB"
+      ],
+      "answer": "A",
+      "reason": "if – elif dừng ở điều kiện đúng đầu tiên: 7.5 >= 8 sai, 7.5 >= 7 đúng nên in Khá và bỏ qua các nhánh còn lại (dù 7.5 >= 5 cũng đúng).",
+      "verify": {
+        "kind": "output",
+        "expect": "Khá"
+      }
+    },
+    {
+      "ref": "tomtat/2.10/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print('False') if -3 else print('True')",
+      "options": [
+        "True",
+        "Không in gì",
+        "False",
+        "Báo lỗi SyntaxError"
+      ],
+      "answer": "C",
+      "reason": "Biểu thức điều kiện một dòng: A if đk else B. -3 khác 0 nên là True, chạy vế trước if là print('False').",
+      "verify": {
+        "kind": "output",
+        "expect": "False"
+      }
+    },
+    {
+      "ref": "tomtat/2.10/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "a, b = 12, 5\nprint('True') if b // a else print('False')",
+      "options": [
+        "True",
+        "False",
+        "0",
+        "Báo lỗi ZeroDivisionError"
+      ],
+      "answer": "B",
+      "reason": "b // a = 5 // 12 = 0, mà 0 là False nên chạy vế sau else: print('False').",
+      "verify": {
+        "kind": "output",
+        "expect": "False"
+      }
+    },
+    {
+      "ref": "tomtat/2.10/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "x, a, b = 0, 5, 5\nif a > 0:\n    if b < 0:\n        x = x + 5\n    elif a > 5:\n        x = x + 4\n    else:\n        x = x + 3\nelse:\n    x = x + 2\nprint(x)",
+      "options": [
+        "5",
+        "3",
+        "2",
+        "4"
+      ],
+      "answer": "B",
+      "reason": "a > 0 đúng nên vào if ngoài. Bên trong: b < 0 sai, a > 5 sai (5 không lớn hơn 5) nên chạy else: x = 0 + 3 = 3.",
+      "verify": {
+        "kind": "output",
+        "expect": "3"
+      }
+    },
+    {
+      "ref": "tomtat/2.10/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "a = 0\nif a == 0:\n    pass\nelse:\n    print('x')\nprint('xong')",
+      "options": [
+        "x\nxong",
+        "Báo lỗi SyntaxError",
+        "Không in gì",
+        "xong"
+      ],
+      "answer": "D",
+      "reason": "pass là lệnh giữ chỗ, không làm gì (khối lệnh không được để trống). a == 0 đúng nên không in 'x', chỉ in 'xong'.",
+      "verify": {
+        "kind": "output",
+        "expect": "xong"
+      }
+    },
+    {
+      "ref": "tomtat/2.11/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(1.1 + 2.2, 1.1 + 2.2 == 3.3)",
+      "options": [
+        "3.3000000000000003 False",
+        "3.3 False",
+        "3.3 True",
+        "3.3000000000000003 True"
+      ],
+      "answer": "A",
+      "reason": "Số thực lưu dạng nhị phân nên có sai số: 1.1 + 2.2 = 3.3000000000000003, khác 3.3. Vì vậy không so sánh == trực tiếp hai số thực.",
+      "verify": {
+        "kind": "output",
+        "expect": "3.3000000000000003 False"
+      }
+    },
+    {
+      "ref": "tomtat/2.11/2",
+      "content": "Cách nào đúng để kiểm tra 1.1 + 2.2 có bằng 3.3 hay không (in True)?",
+      "options": [
+        "print(1.1 + 2.2 == 3.3)",
+        "print(1.1 + 2.2 is 3.3)",
+        "print(abs((1.1 + 2.2) - 3.3) < 1e-9)",
+        "print(int(1.1 + 2.2) == 3.3)"
+      ],
+      "answer": "C",
+      "reason": "So sánh số thực: xét hiệu tuyệt đối nhỏ hơn một sai số rất nhỏ (ví dụ 1e-9). So sánh == bị sai số làm sai; is so sánh đối tượng; int() cắt còn 3.",
+      "verify": {
+        "kind": "runOptions",
+        "wrap": "{option}",
+        "cases": [
+          {
+            "want": "True"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/2.11/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import decimal\nprint(decimal.Decimal('1.1') + decimal.Decimal('2.2'))",
+      "options": [
+        "3.3000000000000003",
+        "Báo lỗi TypeError",
+        "Decimal('3.3')",
+        "3.3"
+      ],
+      "answer": "D",
+      "reason": "Module decimal tính chính xác số thập phân khi truyền vào dạng chuỗi: 1.1 + 2.2 = 3.3. print in giá trị 3.3 (không kèm chữ Decimal).",
+      "verify": {
+        "kind": "output",
+        "expect": "3.3"
+      }
+    },
+    {
+      "ref": "tomtat/2.12/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "try:\n    x = 1 / 1\n    print(x)\nexcept ZeroDivisionError:\n    print('Cannot divide by 0!')\nelse:\n    print('Nothing wrong.')",
+      "options": [
+        "1.0\nNothing wrong.",
+        "1\nNothing wrong.",
+        "Cannot divide by 0!",
+        "1.0"
+      ],
+      "answer": "A",
+      "reason": "Không có lỗi nên bỏ qua except và chạy khối else. 1 / 1 là phép chia nên ra 1.0.",
+      "verify": {
+        "kind": "output",
+        "expect": "1.0\nNothing wrong."
+      }
+    },
+    {
+      "ref": "tomtat/2.12/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "try:\n    print('throw')\nexcept:\n    print('except')\nfinally:\n    print('finally')",
+      "options": [
+        "throw",
+        "throw\nexcept\nfinally",
+        "throw\nfinally",
+        "except\nfinally"
+      ],
+      "answer": "C",
+      "reason": "Khối try không lỗi nên không chạy except; finally luôn chạy dù có lỗi hay không.",
+      "verify": {
+        "kind": "output",
+        "expect": "throw\nfinally"
+      }
+    },
+    {
+      "ref": "tomtat/2.12/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "try:\n    numb = 1 / 0\nexcept TypeError:\n    print('Type Error')\nexcept ZeroDivisionError:\n    print('Zero Division Error')",
+      "options": [
+        "Type Error",
+        "Zero Division Error",
+        "Type Error\nZero Division Error",
+        "Báo lỗi ZeroDivisionError"
+      ],
+      "answer": "B",
+      "reason": "Có nhiều except thì chỉ chạy khối except khớp loại lỗi xảy ra: 1 / 0 gây ZeroDivisionError nên in 'Zero Division Error'; chương trình không dừng.",
+      "verify": {
+        "kind": "output",
+        "expect": "Zero Division Error"
+      }
+    },
+    {
+      "ref": "tomtat/2.12/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "b = 0\nif b == 0:\n    raise Exception('Sorry, cannot divide by 0!')\nprint('Done')",
+      "options": [
+        "Done",
+        "Báo lỗi Exception: Sorry, cannot divide by 0!",
+        "Sorry, cannot divide by 0!\nDone",
+        "Không in gì, chương trình chạy tiếp"
+      ],
+      "answer": "B",
+      "reason": "raise tự ném ra lỗi. Không có try – except bắt lỗi nên chương trình dừng với thông báo lỗi, không chạy tới print('Done').",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: Exception"
+      }
+    },
+    {
+      "ref": "tomtat/2.12/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "def f():\n    try:\n        print('Monday')\n    finally:\n        print('Tuesday')\n\nf()",
+      "options": [
+        "Monday",
+        "Báo lỗi SyntaxError",
+        "Tuesday",
+        "Monday\nTuesday"
+      ],
+      "answer": "D",
+      "reason": "try – finally dùng được trong hàm: chạy khối try (in Monday) rồi luôn chạy finally (in Tuesday). Có try – finally mà không cần except.",
+      "verify": {
+        "kind": "output",
+        "expect": "Monday\nTuesday"
+      }
+    },
+    {
+      "ref": "tomtat/2.12/6",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "try:\n    int('abc')\nexcept Exception as e:\n    print('Lỗi:', type(e).__name__)",
+      "options": [
+        "Lỗi: TypeError",
+        "Lỗi: NameError",
+        "Lỗi: ValueError",
+        "abc"
+      ],
+      "answer": "C",
+      "reason": "int('abc') không đổi được chuỗi chữ sang số nên gây ValueError; except Exception as e bắt lỗi và e là đối tượng lỗi đó.",
+      "verify": {
+        "kind": "output",
+        "expect": "Lỗi: ValueError"
+      }
+    }
+  ]
+}

@@ -10,6 +10,9 @@ rồi với mỗi câu thực hiện phần "verify":
               trùng kết quả (bỏ qua khoảng trắng, dấu phẩy, dấu nháy), phương án "Lỗi", số dòng của errorLine.
               Câu phát biểu lý thuyết (setup chỉ minh hoạ) không đối chiếu được; dòng tổng kết đếm riêng.
   runOptions  chạy code của từng phương án; đúng phương án "answer" (và chỉ nó) cho kết quả "want".
+  output      câu "đoạn code cho kết quả gì" (câu tự soạn, D-049): chạy code của đề (có thể thêm setup / stdin),
+              kết quả phải bằng "expect", và đúng phương án đáp án (chỉ nó) khớp kết quả: in ra giống hệt, hoặc
+              khi code báo lỗi thì phương án có tên lỗi (ví dụ "Báo lỗi ZeroDivisionError").
   fill        thay từng bộ giá trị vào các dấu … của code; bộ đúng cho kết quả "want" ở mọi trường hợp,
               mỗi bộ sai phải khác "want" ở ít nhất một trường hợp (sai kết quả hoặc báo lỗi).
   docs        câu lý thuyết: phải có link tài liệu chính thức ("refs").
@@ -189,11 +192,24 @@ def check(q: Question) -> tuple[list[str], bool]:
                 matching.append(LETTERS[i])
         return matching_problems(matching, answer), True
 
+    if kind == "output":
+        got = run_python(program(q, spec), spec.get("stdin", ""))
+        problems = [] if got == spec["expect"] else [f"chạy ra {got!r}, ghi là {spec['expect']!r}"]
+        matching = [LETTERS[i] for i, option in enumerate(q.options) if output_matches(option, got)]
+        return problems + matching_problems(matching, answer), True
+
     if kind == "docs":
         return ([] if spec.get("refs") else ["kiểm chứng kiểu docs phải có refs"]), False
     if kind == "reasoning":
         return ([] if spec.get("source") else ["kiểm chứng kiểu reasoning phải có source"]), False
     return [f"kiểu kiểm chứng không hợp lệ: {kind!r}"], False
+
+
+def output_matches(option: str, got: str) -> bool:
+    """Phương án khớp kết quả chạy: in ra giống hệt (đã bỏ khoảng trắng cuối dòng), hoặc nêu đúng tên lỗi."""
+    if got.startswith("ERROR: "):
+        return got.removeprefix("ERROR: ") in option
+    return "\n".join(line.rstrip() for line in option.strip().splitlines()) == got
 
 
 def matching_problems(matching: list[str], answer: str | None) -> list[str]:
@@ -222,7 +238,7 @@ def main() -> int:
         if problems:
             failed += 1
             print(f"✗ {q.ref} ({q.label}): " + "; ".join(problems))
-    ran = sum(1 for q in targets if q.verify.get("kind") in ("run", "runOptions", "fill"))
+    ran = sum(1 for q in targets if q.verify.get("kind") in ("run", "runOptions", "fill", "output"))
     print(f"{'OK' if not failed else 'LỖI'}: kiểm chứng {len(targets)} câu ({ran} câu chạy code thật, trong đó "
           f"{tied} câu chữ cái đáp án được đối chiếu tự động với kết quả chạy), {failed} câu không đạt.")
     return 1 if failed else 0

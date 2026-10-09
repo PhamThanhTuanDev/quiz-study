@@ -5,9 +5,10 @@
 
 ## Tiến độ hiện tại
 
-> Cập nhật: 2026-10-06 (trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
+> Cập nhật: 2026-10-09 (trên **máy 2**: Windows 11, xem [architecture.md §10](architecture.md#10-môi-trường-phát-triển)).
 > **Phase 6 đã xong và được duyệt** (2026-10-01), kèm phím tắt khi làm bài (Enter kiểm tra, ← → chuyển câu). Theo D-039, **làm Phase 10 (PWA / mobile) trước Phase 7–9**: kế hoạch đã duyệt cả 5 đề xuất (D-040, D-041); tiến độ ở mục "Tiến độ 10". **Phase 10 đã làm xong cả 4 bước, chờ chủ dự án duyệt** (2026-10-03). Sau khi duyệt: quay lại Phase 7–9 theo D-039.
 > **2026-10-02:** thêm Bài 11 NumPy cho môn Python (D-042). Theo yêu cầu chủ dự án (D-043), Claude tự sửa các câu lỗi đề cho đúng (có ghi vết, người học thấy "Đã sửa so với tài liệu"). Xem mục Phase 4B.
+> **2026-10-09:** thêm 175 câu Claude tự soạn từ file tóm tắt môn (D-049), xếp vào 13 bài: môn Python 603 câu, kiểm chứng 603/603.
 > **2026-10-06 (theo yêu cầu chủ dự án):** chế độ **"Học"** (nút cạnh "Luyện tập", xem câu hỏi kèm đáp án đúng tô xanh) và bỏ vuốt chuyển câu (D-044); thêm Bài 12 Matplotlib, Bài 13 Pandas (D-045): môn Python 13 bài, 428 câu, cả 428 `PUBLISHED`; phương án câu điền khuyết bỏ ngoặc vuông bọc ngoài, nhiều chỗ trống thì đánh số (D-046). Đã đẩy lên GitHub theo yêu cầu.
 
 ### Phase 1: ✅ xong, chủ dự án đã duyệt (2026-09-30)

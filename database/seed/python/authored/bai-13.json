@@ -1,0 +1,193 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 9.1–9.5: Pandas (Series, DataFrame, loc / iloc, lọc, thống kê, nhóm, dữ liệu thiếu và trùng).",
+  "chapter": 13,
+  "questions": [
+    {
+      "ref": "tomtat/9.1/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndata = {'a': -1.3, 'b': 11.7, 'd': 2.0}\nser = pd.Series(data, index=['a', 'c', 'b', 'd'])\nprint(ser['c'], len(ser))",
+      "options": [
+        "Báo lỗi KeyError",
+        "0 4",
+        "nan 3",
+        "nan 4"
+      ],
+      "answer": "D",
+      "reason": "Tạo Series từ dictionary kèm index: lấy giá trị theo từng nhãn của index; nhãn 'c' không có trong dictionary nên là NaN. Series có 4 nhãn.",
+      "verify": {
+        "kind": "output",
+        "expect": "nan 4"
+      }
+    },
+    {
+      "ref": "tomtat/9.1/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\nser = pd.Series([-1.3, None, 11.7, 2.0, None, 10], index=['a', 'c', 'b', 'd', 'e', 'f'])\nprint(len(ser[:'d']), len(ser.iloc[:2]))",
+      "options": [
+        "3 2",
+        "4 2",
+        "4 3",
+        "3 3"
+      ],
+      "answer": "B",
+      "reason": "Cắt theo NHÃN (ser[:'d']) lấy cả nhãn cuối 'd': a, c, b, d là 4 phần tử. Cắt theo VỊ TRÍ (iloc[:2]) không lấy vị trí cuối: 2 phần tử.",
+      "verify": {
+        "kind": "output",
+        "expect": "4 2"
+      }
+    },
+    {
+      "ref": "tomtat/9.1/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ns = pd.Series([1, 2, 2, 3])\nprint(s.value_counts().to_dict(), s.mode()[0])",
+      "options": [
+        "{1: 1, 2: 2, 3: 1} 2",
+        "{2: 2, 1: 1, 3: 1} 3",
+        "{2: 2, 1: 1, 3: 1} 2",
+        "{1: 1, 2: 1, 3: 1} 2"
+      ],
+      "answer": "C",
+      "reason": "value_counts() đếm số lần xuất hiện, sắp giảm dần theo số lần (2 xuất hiện 2 lần đứng đầu); mode() là giá trị xuất hiện nhiều nhất: 2.",
+      "verify": {
+        "kind": "output",
+        "expect": "{2: 2, 1: 1, 3: 1} 2"
+      }
+    },
+    {
+      "ref": "tomtat/9.3/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndf = pd.DataFrame({'ten': ['An', 'Binh', 'Chi', 'Dung'],\n                   'diem': [8.5, 6.0, 9.0, 4.5]})\nprint(len(df.loc[0:1]), len(df.iloc[0:1]))",
+      "options": [
+        "2 1",
+        "2 2",
+        "1 1",
+        "1 2"
+      ],
+      "answer": "A",
+      "reason": "loc cắt theo NHÃN, lấy cả nhãn cuối: dòng 0 và 1 (2 dòng). iloc cắt theo VỊ TRÍ, không lấy vị trí cuối: chỉ dòng 0 (1 dòng).",
+      "verify": {
+        "kind": "output",
+        "expect": "2 1"
+      }
+    },
+    {
+      "ref": "tomtat/9.3/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndf = pd.DataFrame({'lop': ['A', 'B', 'A', 'B'],\n                   'diem': [8.5, 6.0, 9.0, 4.5]})\nprint(df[df['diem'] > 5 and df['lop'] == 'A'])",
+      "options": [
+        "Một dòng: A 8.5",
+        "Hai dòng: A 8.5 và A 9.0",
+        "Báo lỗi KeyError",
+        "Báo lỗi ValueError"
+      ],
+      "answer": "D",
+      "reason": "Không dùng and / or với Series (Python không biết cả Series là True hay False): báo ValueError. Phải dùng & / | và đặt mỗi điều kiện trong ngoặc: df[(df['diem'] > 5) & (df['lop'] == 'A')].",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: ValueError"
+      }
+    },
+    {
+      "ref": "tomtat/9.3/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndf = pd.DataFrame({'ten': ['An', 'Binh', 'Chi', 'Dung'],\n                   'lop': ['A', 'B', 'A', 'B'],\n                   'diem': [8.5, 6.0, 9.0, 4.5]})\nprint(df[(df['lop'] == 'A') & (df['diem'] > 8.6)]['ten'].tolist())",
+      "options": [
+        "['An', 'Chi']",
+        "['An']",
+        "['Chi']",
+        "[]"
+      ],
+      "answer": "C",
+      "reason": "Lọc nhiều điều kiện dùng & (và), mỗi điều kiện trong ngoặc: lớp A có An (8.5) và Chi (9.0), chỉ Chi có điểm lớn hơn 8.6.",
+      "verify": {
+        "kind": "output",
+        "expect": "['Chi']"
+      }
+    },
+    {
+      "ref": "tomtat/9.4/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\nc = pd.Series([8.5, 6.0, 9.0, 4.5])\nprint(c.mean(), c.median())",
+      "options": [
+        "7.0 7.25",
+        "7.25 7.0",
+        "7.0 7.0",
+        "28.0 7.25"
+      ],
+      "answer": "A",
+      "reason": "mean() là trung bình cộng: 28 / 4 = 7.0. median() là giá trị ở giữa sau khi sắp xếp (4.5, 6.0, 8.5, 9.0): trung bình hai số giữa (6.0 + 8.5) / 2 = 7.25.",
+      "verify": {
+        "kind": "output",
+        "expect": "7.0 7.25"
+      }
+    },
+    {
+      "ref": "tomtat/9.4/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndiem = pd.Series([8.5, 6.0, 9.0, 4.5])\nxl = pd.cut(diem, bins=[0, 5, 8, 10], labels=['yeu', 'kha', 'gioi'])\nprint(xl.tolist())",
+      "options": [
+        "['kha', 'kha', 'gioi', 'yeu']",
+        "['gioi', 'kha', 'gioi', 'yeu']",
+        "['gioi', 'yeu', 'gioi', 'yeu']",
+        "['gioi', 'kha', 'gioi', 'kha']"
+      ],
+      "answer": "B",
+      "reason": "pd.cut chia theo ngưỡng tự đặt, các khoảng (0, 5], (5, 8], (8, 10]: 8.5 → gioi, 6.0 → kha, 9.0 → gioi, 4.5 → yeu.",
+      "verify": {
+        "kind": "output",
+        "expect": "['gioi', 'kha', 'gioi', 'yeu']"
+      }
+    },
+    {
+      "ref": "tomtat/9.4/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndf = pd.DataFrame({'lop': ['A', 'B', 'A', 'B'],\n                   'diem': [8.5, 6.0, 9.0, 4.5]})\nprint(df.groupby('lop')['diem'].mean().to_dict())",
+      "options": [
+        "{'A': 17.5, 'B': 10.5}",
+        "{'A': 8.75, 'B': 5.25}",
+        "{'A': 9.0, 'B': 6.0}",
+        "{'lop': 7.0}"
+      ],
+      "answer": "B",
+      "reason": "groupby('lop') chia theo lớp rồi tính trung bình điểm từng nhóm: A = (8.5 + 9.0) / 2 = 8.75, B = (6.0 + 4.5) / 2 = 5.25.",
+      "verify": {
+        "kind": "output",
+        "expect": "{'A': 8.75, 'B': 5.25}"
+      }
+    },
+    {
+      "ref": "tomtat/9.5/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndf = pd.DataFrame({'a': [1, None, 3, 3], 'b': [4, 5, None, None]})\nprint(df.isnull().sum().tolist(), len(df.dropna()), len(df))",
+      "options": [
+        "[1, 2] 1 1",
+        "[1, 2] 4 4",
+        "[2, 1] 2 4",
+        "[1, 2] 1 4"
+      ],
+      "answer": "D",
+      "reason": "isnull().sum() đếm ô rỗng mỗi cột: a có 1, b có 2. dropna() trả về bảng MỚI chỉ còn dòng không có ô rỗng (1 dòng); df gốc vẫn 4 dòng vì không có inplace=True.",
+      "verify": {
+        "kind": "output",
+        "expect": "[1, 2] 1 4"
+      }
+    },
+    {
+      "ref": "tomtat/9.5/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import pandas as pd\ndf = pd.DataFrame({'a': [1, None, 3, 3], 'b': [4, 5, None, None]})\nprint(df.duplicated().tolist())",
+      "options": [
+        "[False, False, False, True]",
+        "[False, False, True, True]",
+        "[False, False, False, False]",
+        "[True, False, False, True]"
+      ],
+      "answer": "A",
+      "reason": "duplicated() đánh dấu True cho dòng trùng với một dòng đã có phía trên: dòng 3 (3, NaN) trùng dòng 2; NaN cũng được coi là trùng nhau.",
+      "verify": {
+        "kind": "output",
+        "expect": "[False, False, False, True]"
+      }
+    }
+  ]
+}

@@ -263,6 +263,14 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Giao diện: component `AnswerContent` hiện mỗi giá trị một ô viền, chữ monospace (áp dụng cả câu một chỗ trống, cho thống nhất); thứ tự chỗ trống chỉ đọc cho trình đọc màn hình. Dùng ở luyện tập, thi thử, trang Học.
 - `build_python_import.py` xuất `blanks` cho 94 câu điền khuyết (376 phương án). Câu điền khuyết không được sửa phương án bằng `edits.options` / `allOptions` (script báo lỗi), vì phương án dựng từ `fill`: sửa thẳng trong `fill` để ô và chữ luôn khớp nhau.
 
+### D-049 · Câu trắc nghiệm Claude tự soạn từ file tóm tắt môn · Đã chốt (chủ dự án, 2026-10-09)
+- Chủ dự án cung cấp `TomTat_Python_IPPA233277.docx` (tóm tắt kiến thức cả môn dạng "code → kết quả → giải thích", có đánh dấu các bẫy trắc nghiệm) và yêu cầu tạo thêm câu trắc nghiệm từ file này. Chủ dự án chọn: khoảng 150 câu, xếp vào đúng các bài hiện có, đưa câu tự soạn lên GitHub; file .docx gốc là nguồn chỉ đọc, không đưa lên (`.gitignore`: `/*.docx`).
+- Định dạng mới `database/seed/python/authored/bai-NN.json` (commit): mỗi câu ghi đủ đề, code, 4 phương án, đáp án, lý do, kiểm chứng (không có vị trí PDF để lấy lại nội dung). `ref` dạng `tomtat/<mục>/<số>`; nhãn nguồn "Tóm tắt mục 2.5 – Câu 1"; `source_page` để trống. Nguồn khai báo ở `authoredSources` trong `subject.json`.
+- Lý do (`reason`) của câu tự soạn được hiện cho người học trong phần giải thích, vì là lời giải thích tự viết.
+- Kiểm chứng kiểu mới `output`: chạy code của đề, kết quả phải đúng `expect`, và chỉ phương án đáp án khớp kết quả (in ra giống hệt, hoặc nêu đúng tên lỗi khi code báo lỗi). Phương án sai lấy từ các nhầm lẫn hay gặp mà file tóm tắt ghi ở ô "⚠".
+- Phần tự luận lập trình hướng đối tượng của file tóm tắt không làm trắc nghiệm. Chữ cái đáp án được cân bằng (A 44, B 44, C 43, D 44) vì trang Học hiện phương án theo thứ tự gốc.
+- Kết quả: 175 câu (Bài 1: 5, Bài 2: 36, Bài 3: 14, Bài 4: 15, Bài 5: 15, Bài 6: 16, Bài 7: 17, Bài 8: 13, Bài 9: 5, Bài 10: 11, Bài 11: 13, Bài 12: 4, Bài 13: 11); 164 câu chạy code thật (154 câu kiểu `output`), 11 câu lý thuyết đối chiếu tài liệu chính thức; ghi sai thử 6 câu đều bị bắt. Môn Python: 603 câu, kiểm chứng 603/603.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

@@ -1,0 +1,100 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 1: Giới thiệu Python. Câu lý thuyết đối chiếu tài liệu chính thức; câu có code chạy thật.",
+  "chapter": 1,
+  "questions": [
+    {
+      "ref": "tomtat/1/1",
+      "content": "Python là ngôn ngữ lập trình thuộc loại nào?",
+      "options": [
+        "Bậc thấp, biên dịch thẳng ra mã máy",
+        "Hợp ngữ (assembly)",
+        "Ngôn ngữ đánh dấu như HTML",
+        "Bậc cao, thông dịch (interpreter)"
+      ],
+      "answer": "D",
+      "reason": "Python là ngôn ngữ bậc cao, thông dịch: file .py được dịch sang bytecode rồi máy ảo Python chạy, không biên dịch thẳng ra mã máy.",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://docs.python.org/3/faq/general.html#what-is-python",
+          "https://docs.python.org/3/glossary.html#term-bytecode"
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/1/2",
+      "content": "Ai là người tạo ra ngôn ngữ Python?",
+      "options": [
+        "James Gosling",
+        "Guido van Rossum",
+        "Dennis Ritchie",
+        "Bjarne Stroustrup"
+      ],
+      "answer": "B",
+      "reason": "Guido van Rossum tạo ra Python (giới thiệu năm 1991). James Gosling tạo Java, Dennis Ritchie tạo C, Bjarne Stroustrup tạo C++.",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://docs.python.org/3/faq/general.html#why-was-python-created-in-the-first-place"
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/1/3",
+      "content": "Trong Python 3, lệnh nào in chữ Hi ra màn hình?",
+      "options": [
+        "print('Hi')",
+        "echo('Hi')",
+        "printf('Hi')",
+        "print 'Hi'"
+      ],
+      "answer": "A",
+      "reason": "Từ Python 3, print là hàm nên phải có ngoặc: print('Hi'). Cách viết print 'Hi' chỉ dùng ở Python 2 (Python 3 báo lỗi cú pháp); Python không có echo hay printf.",
+      "verify": {
+        "kind": "runOptions",
+        "wrap": "{option}",
+        "cases": [
+          {
+            "want": "Hi"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/1/4",
+      "content": "File mã nguồn Python có phần mở rộng là gì?",
+      "options": [
+        ".pt",
+        ".pyc",
+        ".py",
+        ".python"
+      ],
+      "answer": "C",
+      "reason": "Mã nguồn Python lưu trong file .py. File .pyc là bytecode Python tự tạo khi nạp module, không phải file mã nguồn bạn viết.",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://docs.python.org/3/tutorial/modules.html#compiled-python-files"
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/1/5",
+      "content": "Python có hai chế độ chạy chương trình nào?",
+      "options": [
+        "Chế độ tương tác (interactive) và chế độ script",
+        "Chế độ biên dịch và chế độ liên kết",
+        "Chế độ 32 bit và chế độ 64 bit",
+        "Chế độ đồ hoạ và chế độ dòng lệnh"
+      ],
+      "answer": "A",
+      "reason": "Chế độ tương tác (gõ từng lệnh trong IDLE / dấu nhắc >>>) và chế độ script (viết file .py rồi chạy python ten_file.py).",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://docs.python.org/3/tutorial/interpreter.html"
+        ]
+      }
+    }
+  ]
+}

@@ -12,6 +12,7 @@
 > - **P3**: giải quyết theo P2 (Claude xác định đáp án đúng).
 > - **G5** (D-031): tên môn "Giáo dục quốc phòng và an ninh", slug `gdqp`.
 > - **P5–P14** (D-033, D-034): câu trùng giữ một; câu lỗi đề để `NEEDS_REVIEW`; P7, P8, P9, P11, P14 theo D-034; mã học phần `IPPA233277`, chia 10 bài theo buổi học.
+> - **Câu tự soạn** (D-049, 2026-10-09): 175 câu Claude soạn từ file tóm tắt môn `TomTat_Python_IPPA233277.docx` (nguồn chỉ đọc, không đưa lên Git), xếp vào 13 bài; môn Python tổng cộng 603 câu.
 > - **Kết quả trích xuất Python** (D-036, D-042, D-043, D-045): 428 câu, cả 428 `PUBLISHED`. Bài 11 (NumPy, 2 file w10-w11 bổ sung ngày 2026-10-02) có 65 câu; Bài 12 (Matplotlib, 2 file w12-w13) 29 câu và Bài 13 (Pandas, 2 file w14) 39 câu, bổ sung ngày 2026-10-06. Các câu lỗi đề (gồm P6, P10) được Claude sửa cho đúng theo D-043; từng chỗ sửa ghi trong bản đồ và hiện trong `review.md` dạng "Đã sửa so với tài liệu".
 > - Còn mở: G4.
 >

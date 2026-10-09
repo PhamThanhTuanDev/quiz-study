@@ -23,6 +23,9 @@
     { "number": 12, "code": "Bài 12", "title": "Biểu diễn dữ liệu với Matplotlib" },
     { "number": 13, "code": "Bài 13", "title": "Thư viện Pandas" }
   ],
+  "authoredSources": [
+    { "key": "tomtat", "label": "Tóm tắt", "file": "TomTat_Python_IPPA233277.docx" }
+  ],
   "sources": [
     { "key": "w01-lt", "label": "w01 LT", "chapter": 1, "expectedQuestions": 4, "file": "[IPPA233277] w01-c01_gioi-thieu (done).pdf" },
     { "key": "w021-lt", "label": "w02.1 LT", "chapter": 2, "expectedQuestions": 8, "file": "[IPPA233277] w02.1-c02_cac-khai-niem-co-ban (done).pdf" },

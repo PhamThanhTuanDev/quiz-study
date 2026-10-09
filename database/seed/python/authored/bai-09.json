@@ -1,0 +1,97 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 5: module, package, import.",
+  "chapter": 9,
+  "questions": [
+    {
+      "ref": "tomtat/5.1/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "from math import sqrt as can\nprint(can(4))",
+      "options": [
+        "2",
+        "2.0",
+        "Báo lỗi NameError",
+        "16"
+      ],
+      "answer": "B",
+      "reason": "from math import sqrt as can đặt bí danh can cho hàm sqrt, gọi trực tiếp không cần tên module; sqrt trả về số thực 2.0.",
+      "verify": {
+        "kind": "output",
+        "expect": "2.0"
+      }
+    },
+    {
+      "ref": "tomtat/5.1/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import sqrt from math\nprint(sqrt(4))",
+      "options": [
+        "Báo lỗi SyntaxError",
+        "Báo lỗi ModuleNotFoundError",
+        "2.0",
+        "Báo lỗi NameError"
+      ],
+      "answer": "A",
+      "reason": "Sai thứ tự từ khoá: cú pháp đúng là from math import sqrt. Cách viết import … from … là lỗi cú pháp.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: SyntaxError"
+      }
+    },
+    {
+      "ref": "tomtat/5.1/3",
+      "content": "Khi chạy trực tiếp một file Python (python ten_file.py), biến __name__ trong file đó có giá trị gì?",
+      "options": [
+        "'ten_file'",
+        "None",
+        "'__file__'",
+        "'__main__'"
+      ],
+      "answer": "D",
+      "reason": "File chạy trực tiếp có __name__ = '__main__'; khi được import thì __name__ là tên module. Vì vậy hay viết if __name__ == '__main__': main().",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          {
+            "setup": "print(repr(__name__))",
+            "expect": "'__main__'"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/5/1",
+      "content": "Package trong Python là gì?",
+      "options": [
+        "Một file .py chứa hàm và lớp",
+        "Một thư mục chứa nhiều module và file __init__.py",
+        "Một hàm có sẵn của Python",
+        "Một file nén .zip chứa mã nguồn"
+      ],
+      "answer": "B",
+      "reason": "Module là một file .py; package là thư mục gom nhiều module, có file __init__.py (chạy đầu tiên khi import package).",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://docs.python.org/3/tutorial/modules.html#packages"
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/5/2",
+      "content": "Khi import module, thư mục __pycache__ chứa gì và để làm gì?",
+      "options": [
+        "Bản sao mã nguồn .py để dự phòng",
+        "File nhật ký lỗi khi chạy chương trình",
+        "File bytecode .pyc, giúp lần sau NẠP module nhanh hơn",
+        "Dữ liệu người dùng nhập vào"
+      ],
+      "answer": "C",
+      "reason": "Python lưu bytecode đã dịch (.pyc) vào __pycache__ để lần sau không phải dịch lại, giúp nạp module nhanh hơn; chương trình không vì thế mà chạy nhanh hơn.",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://docs.python.org/3/tutorial/modules.html#compiled-python-files"
+        ]
+      }
+    }
+  ]
+}

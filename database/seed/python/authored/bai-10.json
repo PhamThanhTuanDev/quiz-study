@@ -1,0 +1,200 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 6.1–6.4: lớp, thuộc tính lớp / đối tượng, private, kế thừa, đa hình, magic method, lớp trừu tượng.",
+  "chapter": 10,
+  "questions": [
+    {
+      "ref": "tomtat/6.1/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class Counter:\n    count = 0\n\n    def __init__(self):\n        Counter.count += 1\n\na = Counter()\nb = Counter()\nprint(Counter.count)",
+      "options": [
+        "0",
+        "2",
+        "1",
+        "Báo lỗi AttributeError"
+      ],
+      "answer": "B",
+      "reason": "count là thuộc tính LỚP, mọi đối tượng dùng chung; mỗi lần tạo đối tượng, __init__ tăng nó thêm 1, tạo 2 đối tượng nên là 2.",
+      "verify": {
+        "kind": "output",
+        "expect": "2"
+      }
+    },
+    {
+      "ref": "tomtat/6.1/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class A:\n    def hi():\n        return 'hi'\n\nprint(A().hi())",
+      "options": [
+        "hi",
+        "None",
+        "Báo lỗi TypeError",
+        "Báo lỗi SyntaxError"
+      ],
+      "answer": "C",
+      "reason": "Gọi phương thức qua đối tượng thì Python tự truyền đối tượng vào tham số đầu (self). hi() không khai báo self nên nhận thừa 1 đối số: TypeError.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: TypeError"
+      }
+    },
+    {
+      "ref": "tomtat/6.2/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class A:\n    def __init__(self):\n        self.__b = 1\n\nobj = A()\nprint(obj._A__b)\nprint(obj.__b)",
+      "options": [
+        "1 rồi báo lỗi AttributeError",
+        "Báo lỗi AttributeError ngay dòng print đầu",
+        "1\n1",
+        "None\n1"
+      ],
+      "answer": "A",
+      "reason": "Thuộc tính __b là private: Python đổi tên thành _A__b (name mangling) nên obj._A__b đọc được (in 1), còn obj.__b báo AttributeError.",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          {
+            "replace": {
+              "print(obj.__b)": "try:\n    print(obj.__b)\nexcept AttributeError:\n    print('AttributeError')"
+            },
+            "expect": "1\nAttributeError"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/6.2/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class Person:\n    def __init__(self):\n        self.__age = 20\n\n    def showAge(self):\n        print(self.__age)\n\n    def setAge(self, age):\n        self.__age = age\n\nd = Person()\nd.__age = 99\nd.showAge()\nd.setAge(99)\nd.showAge()",
+      "options": [
+        "99\n99",
+        "20\n20",
+        "Báo lỗi AttributeError",
+        "20\n99"
+      ],
+      "answer": "D",
+      "reason": "Bên ngoài lớp, d.__age = 99 chỉ tạo một thuộc tính MỚI tên __age, không đổi thuộc tính private (_Person__age) nên vẫn in 20. Phải qua setter setAge thì mới đổi thành 99.",
+      "verify": {
+        "kind": "output",
+        "expect": "20\n99"
+      }
+    },
+    {
+      "ref": "tomtat/6.2/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class Employee:\n    def __init__(self, name):\n        self.name = name\n\n    @property\n    def name(self):\n        return self._name\n\n    @name.setter\n    def name(self, value):\n        self._name = value.upper()\n\ne = Employee('john')\ne.name = 'John Doe'\nprint(e.name)",
+      "options": [
+        "John Doe",
+        "john",
+        "JOHN",
+        "JOHN DOE"
+      ],
+      "answer": "D",
+      "reason": "@property biến name thành thuộc tính có getter / setter: mỗi lần gán (kể cả trong __init__) đều qua setter, đổi chữ hoa. Lần gán sau cùng là 'John Doe' nên in JOHN DOE.",
+      "verify": {
+        "kind": "output",
+        "expect": "JOHN DOE"
+      }
+    },
+    {
+      "ref": "tomtat/6.3/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class Dog:\n    def walk(self):\n        return '*walking*'\n\n    def speak(self):\n        return 'Woof!'\n\nclass JRT(Dog):\n    def speak(self):\n        return 'Arff!'\n\nbobo = JRT()\nprint(bobo.walk(), bobo.speak())",
+      "options": [
+        "*walking* Woof!",
+        "*walking* Arff!",
+        "Báo lỗi AttributeError",
+        "Arff! Arff!"
+      ],
+      "answer": "B",
+      "reason": "Lớp con JRT kế thừa walk() từ Dog, còn speak() bị GHI ĐÈ bằng bản của lớp con.",
+      "verify": {
+        "kind": "output",
+        "expect": "*walking* Arff!"
+      }
+    },
+    {
+      "ref": "tomtat/6.3/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class A:\n    def __str__(self):\n        return 'A'\n\nclass B(A):\n    def __init__(self):\n        super().__init__()\n\nclass C(B):\n    def __init__(self):\n        super().__init__()\n\nprint(A(), B(), C())",
+      "options": [
+        "A B C",
+        "A",
+        "A A A",
+        "Báo lỗi TypeError"
+      ],
+      "answer": "C",
+      "reason": "B và C không định nghĩa lại __str__ nên dùng __str__ kế thừa từ A: cả ba đều in A.",
+      "verify": {
+        "kind": "output",
+        "expect": "A A A"
+      }
+    },
+    {
+      "ref": "tomtat/6.3/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class A:\n    pass\n\nclass B(A):\n    pass\n\nb = B()\nprint(isinstance(b, A), issubclass(B, A), issubclass(A, B))",
+      "options": [
+        "True True False",
+        "False True False",
+        "True True True",
+        "True False False"
+      ],
+      "answer": "A",
+      "reason": "Đối tượng của lớp con cũng là thể hiện của lớp cha; B là lớp con của A, còn A không phải lớp con của B.",
+      "verify": {
+        "kind": "output",
+        "expect": "True True False"
+      }
+    },
+    {
+      "ref": "tomtat/6.4/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class Point:\n    def __init__(self, x=0, y=0):\n        self.x, self.y = x, y\n\n    def __sub__(self, o):\n        return Point(self.x + o.x, self.y + o.y)\n\nr = Point(3, 4) - Point(1, 2)\nprint(r.x, r.y)",
+      "options": [
+        "2 2",
+        "4 6",
+        "-2 -2",
+        "Báo lỗi TypeError"
+      ],
+      "answer": "B",
+      "reason": "Dấu - gọi phương thức __sub__; phải đọc code bên trong: ở đây __sub__ lại CỘNG toạ độ nên ra (3 + 1, 4 + 2).",
+      "verify": {
+        "kind": "output",
+        "expect": "4 6"
+      }
+    },
+    {
+      "ref": "tomtat/6.4/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "class A:\n    def __init__(self, x=2, y=3):\n        self.x, self.y = x, y\n\n    def __eq__(self, o):\n        return self.x * self.y == o.x * o.y\n\nprint(A(1, 2) == A(2, 1), A() == A(1, 6))",
+      "options": [
+        "False False",
+        "True False",
+        "True True",
+        "False True"
+      ],
+      "answer": "C",
+      "reason": "Dấu == gọi __eq__, ở đây so sánh tích x × y: 1 × 2 = 2 × 1 và 2 × 3 = 1 × 6, nên cả hai đều True.",
+      "verify": {
+        "kind": "output",
+        "expect": "True True"
+      }
+    },
+    {
+      "ref": "tomtat/6.4/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "from abc import ABC, abstractmethod\n\nclass Animal(ABC):\n    @abstractmethod\n    def sound(self):\n        pass\n\nclass Cat(Animal):\n    pass\n\nc = Cat()\nprint('ok')",
+      "options": [
+        "Báo lỗi TypeError",
+        "None",
+        "ok",
+        "Báo lỗi AttributeError"
+      ],
+      "answer": "A",
+      "reason": "Lớp trừu tượng không tạo đối tượng được; lớp con Cat chưa cài đặt phương thức trừu tượng sound() nên cũng vẫn là trừu tượng: Cat() báo TypeError.",
+      "verify": {
+        "kind": "output",
+        "expect": "ERROR: TypeError"
+      }
+    }
+  ]
+}

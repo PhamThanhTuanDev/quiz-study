@@ -1,0 +1,85 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 8: Matplotlib (chuỗi định dạng, subplot, đọc ảnh, marker). Code matplotlib chạy ở chế độ Agg (D-045).",
+  "chapter": 12,
+  "questions": [
+    {
+      "ref": "tomtat/8/1",
+      "content": "Trong lệnh plt.plot(x, y, 'r--o'), chuỗi 'r--o' có nghĩa là gì?",
+      "options": [
+        "Đường liền màu xanh, điểm hình vuông",
+        "Đường gạch màu đỏ, điểm hình tròn",
+        "Đường chấm màu đỏ, không có điểm",
+        "Biểu đồ cột màu đỏ"
+      ],
+      "answer": "B",
+      "reason": "Chuỗi định dạng gồm màu + kiểu đường + marker: 'r' màu đỏ, '--' đường gạch, 'o' điểm hình tròn.",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          {
+            "setup": "import matplotlib.pyplot as plt\nline = plt.plot([1, 2], [3, 4], 'r--o')[0]\nprint(line.get_color(), line.get_linestyle(), line.get_marker())",
+            "expect": "r -- o"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/8/2",
+      "content": "Lệnh nào tương đương với plt.subplot(2, 2, 1)?",
+      "options": [
+        "plt.subplot(122)",
+        "plt.subplot(212)",
+        "plt.subplot(221)",
+        "plt.subplot(4, 1)"
+      ],
+      "answer": "C",
+      "reason": "Số 3 chữ số 221 nghĩa là lưới 2 dòng, 2 cột, ô thứ 1, giống subplot(2, 2, 1).",
+      "verify": {
+        "kind": "runOptions",
+        "wrap": "import matplotlib.pyplot as plt\nax = {option}\nprint(ax.get_subplotspec().get_geometry())",
+        "cases": [
+          {
+            "want": "(2, 2, 0, 0)"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/8/3",
+      "content": "Hàm nào của matplotlib.pyplot đọc một file ảnh thành mảng dữ liệu?",
+      "options": [
+        "plt.imread()",
+        "plt.imsave()",
+        "plt.imshow()",
+        "plt.savefig()"
+      ],
+      "answer": "A",
+      "reason": "imread đọc ảnh thành mảng; imshow hiển thị ảnh; imsave lưu mảng thành file ảnh; savefig lưu cả biểu đồ thành file.",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imread.html",
+          "https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html"
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/8/4",
+      "content": "Trong Matplotlib, ký hiệu marker 's' vẽ điểm có hình gì?",
+      "options": [
+        "Hình tròn",
+        "Hình tam giác",
+        "Hình sao",
+        "Hình vuông"
+      ],
+      "answer": "D",
+      "reason": "Một số marker hay gặp: 'o' tròn, 's' vuông (square), '*' sao, '^' tam giác, 'D' kim cương, 'x' chữ x.",
+      "verify": {
+        "kind": "docs",
+        "refs": [
+          "https://matplotlib.org/stable/api/markers_api.html"
+        ]
+      }
+    }
+  ]
+}

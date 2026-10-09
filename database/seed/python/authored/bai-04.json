@@ -1,0 +1,266 @@
+{
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 2.13–2.14: range(), for, while, break, continue, else của vòng lặp.",
+  "chapter": 4,
+  "questions": [
+    {
+      "ref": "tomtat/2.13/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(list(range(1, 10, 2)))",
+      "options": [
+        "[1, 3, 5, 7, 9]",
+        "[1, 3, 5, 7, 9, 11]",
+        "[2, 4, 6, 8]",
+        "[1, 3, 5, 7]"
+      ],
+      "answer": "A",
+      "reason": "range(start, stop, step): bắt đầu 1, bước 2, dừng trước 10 (không lấy stop).",
+      "verify": {
+        "kind": "output",
+        "expect": "[1, 3, 5, 7, 9]"
+      }
+    },
+    {
+      "ref": "tomtat/2.13/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(list(range(5, 1)))",
+      "options": [
+        "[5, 4, 3, 2]",
+        "[5, 4, 3, 2, 1]",
+        "[]",
+        "Báo lỗi ValueError"
+      ],
+      "answer": "C",
+      "reason": "Bước mặc định là +1 (đếm lên) mà start 5 lớn hơn stop 1 nên không có số nào: list rỗng, không báo lỗi. Muốn đếm lùi phải ghi bước âm: range(5, 1, -1).",
+      "verify": {
+        "kind": "output",
+        "expect": "[]"
+      }
+    },
+    {
+      "ref": "tomtat/2.13/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "print(list(range(10, 0, -2)))",
+      "options": [
+        "[10, 8, 6, 4, 2, 0]",
+        "[8, 6, 4, 2]",
+        "[0, 2, 4, 6, 8, 10]",
+        "[10, 8, 6, 4, 2]"
+      ],
+      "answer": "D",
+      "reason": "Bước -2 là đếm lùi từ 10, dừng trước 0 nên không lấy 0.",
+      "verify": {
+        "kind": "output",
+        "expect": "[10, 8, 6, 4, 2]"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "for i in range(10):\n    if i == 3:\n        break\n    print(i, end=' ')",
+      "options": [
+        "0 1 2 3",
+        "0 1 2",
+        "0 1 2 4 5 6 7 8 9",
+        "3"
+      ],
+      "answer": "B",
+      "reason": "break thoát hẳn vòng lặp ngay khi i == 3, trước lệnh print, nên chỉ in 0 1 2.",
+      "verify": {
+        "kind": "output",
+        "expect": "0 1 2"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "for i in range(5):\n    if i == 3:\n        continue\n    print(i, end=' ')",
+      "options": [
+        "0 1 2 4",
+        "0 1 2 3 4",
+        "0 1 2",
+        "3"
+      ],
+      "answer": "A",
+      "reason": "continue bỏ qua phần còn lại của lần lặp đó (không in 3) rồi sang lần lặp kế tiếp, nên vẫn in 4.",
+      "verify": {
+        "kind": "output",
+        "expect": "0 1 2 4"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "for i in range(20):\n    if i == 10:\n        break\n    print(i, end='')\nelse:\n    print('*')",
+      "options": [
+        "0123456789",
+        "0123456789*",
+        "012345678910",
+        "*"
+      ],
+      "answer": "A",
+      "reason": "else của vòng lặp chỉ chạy khi vòng lặp kết thúc bình thường. Ở đây vòng lặp bị break nên không in '*'.",
+      "verify": {
+        "kind": "output",
+        "expect": "0123456789"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "for i in range(3):\n    print(i, end='')\nelse:\n    print('*')",
+      "options": [
+        "012",
+        "*",
+        "0*1*2*",
+        "012*"
+      ],
+      "answer": "D",
+      "reason": "Vòng lặp chạy hết, không bị break, nên khối else chạy một lần sau vòng lặp: in 012 rồi *.",
+      "verify": {
+        "kind": "output",
+        "expect": "012*"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/5",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "k = 0\nwhile k < 3:\n    print(k, end=' ')\n    k += 1\nelse:\n    print('| k >= 3')",
+      "options": [
+        "0 1 2 3 | k >= 3",
+        "0 1 2",
+        "0 1 2 | k >= 3",
+        "| k >= 3"
+      ],
+      "answer": "C",
+      "reason": "while lặp khi k < 3 (in 0 1 2). Điều kiện sai thì vòng lặp kết thúc bình thường (không break) nên chạy else.",
+      "verify": {
+        "kind": "output",
+        "expect": "0 1 2 | k >= 3"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/6",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "total = 0\nfor i in range(1, 16, 2):\n    if i in (3, 11):\n        continue\n    total += i\nprint(total)",
+      "options": [
+        "64",
+        "50",
+        "36",
+        "14"
+      ],
+      "answer": "B",
+      "reason": "Các số lẻ 1, 3, 5, …, 15 có tổng 64; bỏ qua 3 và 11 (continue) nên còn 64 - 14 = 50.",
+      "verify": {
+        "kind": "output",
+        "expect": "50"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/7",
+      "content": "Đoạn code sau tính gì và in ra số nào?",
+      "code": "m, n = 12, 18\nwhile m != n:\n    if m > n:\n        m = m - n\n    else:\n        n = n - m\nprint(m)",
+      "options": [
+        "Bội chung nhỏ nhất, in 36",
+        "Ước chung lớn nhất, in 3",
+        "Hiệu hai số, in 6",
+        "Ước chung lớn nhất, in 6"
+      ],
+      "answer": "D",
+      "reason": "Lấy số lớn trừ số nhỏ cho tới khi hai số bằng nhau là thuật toán tìm ước chung lớn nhất: (12, 18) → (12, 6) → (6, 6), in 6.",
+      "verify": {
+        "kind": "run",
+        "cases": [
+          {
+            "append": "import math\nprint(math.gcd(12, 18))",
+            "expect": "6\n6"
+          }
+        ]
+      }
+    },
+    {
+      "ref": "tomtat/2.14/8",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "n = 1205\nk = 0\nwhile n != 0:\n    n //= 10\n    k += 1\nprint(k)",
+      "options": [
+        "4",
+        "1205",
+        "3",
+        "8"
+      ],
+      "answer": "A",
+      "reason": "Mỗi lần n //= 10 bỏ đi một chữ số cuối; đếm số lần cho tới khi n = 0 là số chữ số: 1205 có 4 chữ số.",
+      "verify": {
+        "kind": "output",
+        "expect": "4"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/9",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "n = 257\nt = 0\nwhile n > 0:\n    t += n % 10\n    n //= 10\nprint(t)",
+      "options": [
+        "257",
+        "752",
+        "14",
+        "3"
+      ],
+      "answer": "C",
+      "reason": "n % 10 lấy chữ số cuối, n //= 10 bỏ chữ số cuối: cộng lần lượt 7 + 5 + 2 = 14 (tổng các chữ số).",
+      "verify": {
+        "kind": "output",
+        "expect": "14"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/10",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "for i in range(3):\n    for j in range(i + 1):\n        print('*', end='')\n    print()",
+      "options": [
+        "***\n***\n***",
+        "*\n**\n***",
+        "***\n**\n*",
+        "******"
+      ],
+      "answer": "B",
+      "reason": "Vòng ngoài i = 0, 1, 2; vòng trong in i + 1 dấu * rồi print() xuống dòng: 1, 2, 3 dấu *.",
+      "verify": {
+        "kind": "output",
+        "expect": "*\n**\n***"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/11",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "for i in range(5, 7):\n    print(str(i) * 3, end=' ')",
+      "options": [
+        "555 666",
+        "15 18",
+        "5 6 5 6 5 6",
+        "555 666 777"
+      ],
+      "answer": "A",
+      "reason": "str(i) * 3 lặp chuỗi 3 lần ('5' * 3 = '555'), không phải nhân số. range(5, 7) chỉ có 5 và 6.",
+      "verify": {
+        "kind": "output",
+        "expect": "555 666"
+      }
+    },
+    {
+      "ref": "tomtat/2.14/12",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "i = 0\nx = 0\nwhile i < 10:\n    if i % 2 == 0:\n        x += 1\n    i += 1\nprint(x)",
+      "options": [
+        "4",
+        "10",
+        "6",
+        "5"
+      ],
+      "answer": "D",
+      "reason": "Đếm số chẵn từ 0 tới 9: 0, 2, 4, 6, 8 nên x = 5.",
+      "verify": {
+        "kind": "output",
+        "expect": "5"
+      }
+    }
+  ]
+}
