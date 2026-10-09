@@ -366,4 +366,4 @@ Công việc:
 2. Làm từng bước nhỏ; viết test song song với code.
 3. Chạy build + test; review (agent/`/code-review`) cho thay đổi đáng kể.
 4. Cập nhật tài liệu (`docs/`, README) và [decisions.md](decisions.md) nếu có quyết định mới.
-5. Báo cáo kết quả. Commit khi bạn đồng ý. **Không push** khi chưa được yêu cầu.
+5. Báo cáo kết quả. Commit và push lên GitHub khi build/test đạt (chủ dự án đồng ý không cần hỏi trước, 2026-10-09).

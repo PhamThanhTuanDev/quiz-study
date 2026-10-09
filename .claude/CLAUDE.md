@@ -30,7 +30,7 @@
 8. **Gặp lỗi thì tìm nguyên nhân gốc**, không sửa tạm: không tắt/skip test, không nuốt exception, không dùng `any` hay `@SuppressWarnings` để che lỗi.
 9. **Code dễ đọc, dễ bảo trì.** Tên rõ nghĩa, hàm ngắn, một trách nhiệm; comment giải thích "tại sao", không lặp lại "cái gì".
 10. **Bảo mật:** không commit `.env`, mật khẩu, API key, secret, mật khẩu database. Cấu hình nhạy cảm lấy từ biến môi trường.
-11. **Git:** commit nhỏ, message dạng `feat: ...`, `fix: ...`, `docs: ...`. **Không push** lên GitHub khi chưa được yêu cầu.
+11. **Git:** commit nhỏ, message dạng `feat: ...`, `fix: ...`, `docs: ...`. **Xong việc (build/test đạt) thì push lên GitHub luôn, không cần hỏi** (chủ dự án yêu cầu, 2026-10-09). Trước khi push kiểm tra không lọt `.env`, secret hay file tài liệu nguồn (`.pdf`, `.docx`); test thất bại thì không push.
 
 ## Frontend (chi tiết: `.claude/rules/frontend.md`)
 
