@@ -279,8 +279,15 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 ### D-051 · Lưới số câu ở trang Học · Đã chốt (chủ dự án, 2026-10-19)
 - Trang Học hiện cả bài (có bài 50 câu) nên khó tìm câu; chủ dự án yêu cầu lưới số câu giống trang luyện tập / thi thử, bấm số thì cuộn tới câu đó.
 - Dùng lại `QuestionNavigator` (không viết component mới): nhận thêm câu chỉ có `questionId` + `order`, và `showState={false}` để trình đọc màn hình chỉ đọc "Câu 5" (trang Học không có trả lời).
-- Điện thoại: lưới nằm ngay dưới tiêu đề, trên danh sách câu (quay lại lưới bằng nút "Lên đầu trang", D-050). Màn hình lớn (`lg`): lưới ở cột phải, dính theo khi cuộn, giống trang làm bài.
+- Màn hình lớn (`lg`): lưới ở cột phải, dính theo khi cuộn, giống trang làm bài. Điện thoại: ban đầu lưới nằm dưới tiêu đề, nay thay bằng ngăn kéo (D-052).
 - Bấm số: cuộn tới câu (mượt, trừ khi bật "giảm chuyển động"), chuyển focus vào câu để người dùng bàn phím đọc tiếp. Ô của câu đang đọc được viền đậm, tự cập nhật khi cuộn (`useActiveIndex`, dùng IntersectionObserver có sẵn của trình duyệt). Không thêm dependency.
+
+### D-052 · Danh sách câu dạng ngăn kéo trên điện thoại · Đã chốt (chủ dự án, 2026-10-19)
+- Lưới số câu ở đầu trang Học (D-051) bất tiện trên điện thoại: đang ở giữa bài muốn chọn câu khác phải cuộn ngược lên. Chủ dự án yêu cầu đổi thành nút nổi.
+- `QuestionDrawer` (chỉ dưới `lg`): nút tròn ngay trên nút "Lên đầu trang". Bấm thì danh sách **một cột** trượt từ phải sang (rộng `min(16rem, 80vw)`), khối câu hỏi bị đẩy sang trái đúng bằng chừng đó; danh sách cuộn được, mỗi dòng "Câu N" kèm vài chữ đầu của đề, câu đang đọc được tô và đưa ra giữa.
+- Chọn câu: đóng ngăn kéo, cuộn tới câu, focus vào câu; nút hiện lại. Đóng bằng nút ×, Esc hoặc chạm ra ngoài (focus trở về nút). Khi đóng, ngăn kéo `inert` (không bấm được, trình đọc màn hình bỏ qua).
+- Hiệu ứng trượt / mờ 300ms; tắt khi hệ điều hành bật "giảm chuyển động".
+- Hai nút nổi (danh sách câu, "Lên đầu trang") mờ còn 60% khi người dùng đứng yên, hiện rõ khi đang cuộn (và 1,2 giây sau), rê chuột hoặc focus (`useIsScrolling`). Không thêm dependency.
 
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
