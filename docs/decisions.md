@@ -276,6 +276,12 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Component `BackToTop` đặt trong `MainLayout` nên mọi trang đều có. Nút tròn nổi ở góc dưới bên phải, chỉ hiện khi đã cuộn quá 600px, cách mép dưới thêm `safe-area-inset-bottom` cho iPhone.
 - Cuộn mượt, trừ khi hệ điều hành bật "giảm chuyển động" thì nhảy thẳng lên. Có `aria-label` cho trình đọc màn hình. Không thêm dependency.
 
+### D-051 · Lưới số câu ở trang Học · Đã chốt (chủ dự án, 2026-10-19)
+- Trang Học hiện cả bài (có bài 50 câu) nên khó tìm câu; chủ dự án yêu cầu lưới số câu giống trang luyện tập / thi thử, bấm số thì cuộn tới câu đó.
+- Dùng lại `QuestionNavigator` (không viết component mới): nhận thêm câu chỉ có `questionId` + `order`, và `showState={false}` để trình đọc màn hình chỉ đọc "Câu 5" (trang Học không có trả lời).
+- Điện thoại: lưới nằm ngay dưới tiêu đề, trên danh sách câu (quay lại lưới bằng nút "Lên đầu trang", D-050). Màn hình lớn (`lg`): lưới ở cột phải, dính theo khi cuộn, giống trang làm bài.
+- Bấm số: cuộn tới câu (mượt, trừ khi bật "giảm chuyển động"), chuyển focus vào câu để người dùng bàn phím đọc tiếp. Ô của câu đang đọc được viền đậm, tự cập nhật khi cuộn (`useActiveIndex`, dùng IntersectionObserver có sẵn của trình duyệt). Không thêm dependency.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

@@ -1,9 +1,12 @@
-import { useCallback, useId } from 'react'
+import { type Ref, useCallback, useId, useRef } from 'react'
 import { Link, useParams } from 'react-router'
 import AnswerContent from '../components/AnswerContent'
 import AsyncContent from '../components/AsyncContent'
 import CodeBlock from '../components/CodeBlock'
 import EmptyState from '../components/EmptyState'
+import QuestionNavigator from '../components/QuestionNavigator'
+import { scrollBehavior } from '../components/scrollBehavior'
+import { useActiveIndex } from '../hooks/useActiveIndex'
 import { useAsync } from '../hooks/useAsync'
 import { getStudyChapter } from '../services/studyService'
 import type { StudyAnswer, StudyChapter, StudyQuestion } from '../types/study'
@@ -31,6 +34,18 @@ export default function StudyPage() {
 
 function StudyContent({ chapter }: { chapter: StudyChapter }) {
   const total = chapter.questions.length
+  const cardRefs = useRef<(HTMLElement | null)[]>([])
+  const { activeIndex, setActiveIndex } = useActiveIndex(cardRefs, total)
+
+  // Bấm số câu ở lưới (D-051): cuộn tới câu đó và chuyển focus vào câu, để người dùng bàn phím đọc tiếp từ đó.
+  const goTo = (index: number) => {
+    const card = cardRefs.current[index]
+    if (!card) return
+    setActiveIndex(index)
+    card.scrollIntoView?.({ behavior: scrollBehavior(), block: 'start' })
+    card.focus({ preventScroll: true })
+  }
+
   return (
     <div className="space-y-6">
       <title>{`Học: ${chapter.chapterTitle} · Quiz Study`}</title>
@@ -50,22 +65,50 @@ function StudyContent({ chapter }: { chapter: StudyChapter }) {
       {total === 0 ? (
         <EmptyState title="Bài này chưa có câu hỏi nào" />
       ) : (
-        <ol className="space-y-4">
-          {chapter.questions.map((question) => (
-            <li key={question.questionId}>
-              <StudyQuestionCard question={question} total={total} />
-            </li>
-          ))}
-        </ol>
+        // Điện thoại: lưới số câu nằm trên danh sách. Màn hình lớn: lưới ở cột phải, dính theo khi cuộn.
+        <div className="space-y-6 lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-start lg:gap-8 lg:space-y-0">
+          <aside
+            aria-label="Các câu hỏi"
+            className="lg:sticky lg:top-6 lg:col-start-2 lg:row-start-1 lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto lg:p-1"
+          >
+            <QuestionNavigator questions={chapter.questions} currentIndex={activeIndex} onSelect={goTo} showState={false} />
+          </aside>
+
+          <ol className="space-y-4 lg:col-start-1 lg:row-start-1">
+            {chapter.questions.map((question, index) => (
+              <li key={question.questionId}>
+                <StudyQuestionCard
+                  ref={(element) => {
+                    cardRefs.current[index] = element
+                  }}
+                  question={question}
+                  total={total}
+                />
+              </li>
+            ))}
+          </ol>
+        </div>
       )}
     </div>
   )
 }
 
-function StudyQuestionCard({ question, total }: { question: StudyQuestion; total: number }) {
+interface StudyQuestionCardProps {
+  question: StudyQuestion
+  total: number
+  ref: Ref<HTMLElement>
+}
+
+function StudyQuestionCard({ question, total, ref }: StudyQuestionCardProps) {
   const headingId = useId()
   return (
-    <article aria-labelledby={headingId} className="space-y-4 rounded-xl border border-line bg-surface p-4 shadow-sm sm:p-6">
+    // tabIndex={-1}: nhận focus khi được chọn từ lưới số câu. scroll-mt: chừa khoảng trống phía trên khi cuộn tới.
+    <article
+      ref={ref}
+      aria-labelledby={headingId}
+      tabIndex={-1}
+      className="scroll-mt-4 space-y-4 rounded-xl border border-line bg-surface p-4 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:p-6"
+    >
       <h2 id={headingId} className="text-sm font-semibold text-primary">
         Câu {question.order}/{total}
       </h2>

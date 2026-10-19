@@ -1,5 +1,5 @@
-import { screen, within } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent, screen, within } from '@testing-library/react'
+import { afterEach, describe, expect, it, onTestFinished, vi } from 'vitest'
 import { mockApi, problem } from '../test/mockApi'
 import { renderRoute } from '../test/renderRoute'
 import type { StudyChapter } from '../types/study'
@@ -77,6 +77,32 @@ describe('StudyPage', () => {
     const second = await screen.findByRole('article', { name: 'Câu 2/2' })
     expect(second).toHaveTextContent('Đã sửa so với tài liệu: thêm phương án sai thứ hai.')
     expect(screen.getByRole('link', { name: '← Nhập môn lập trình Python' })).toHaveAttribute('href', '/subjects/python')
+  })
+
+  it('lists the question numbers and jumps to the chosen question (D-051)', async () => {
+    mockApi({ [STUDY_API]: LOOPS })
+    // jsdom không có scrollIntoView: gắn tạm bản giả, gỡ ra khi xong test.
+    const scrollIntoView = vi.fn()
+    Object.defineProperty(Element.prototype, 'scrollIntoView', { value: scrollIntoView, configurable: true })
+    onTestFinished(() => {
+      Reflect.deleteProperty(Element.prototype, 'scrollIntoView')
+    })
+
+    renderRoute('/subjects/python/chapters/4/study')
+
+    const nav = await screen.findByRole('navigation', { name: 'Danh sách câu hỏi' })
+    const first = within(nav).getByRole('button', { name: 'Câu 1' })
+    const second = within(nav).getByRole('button', { name: 'Câu 2' })
+    expect(first).toHaveAttribute('aria-current', 'step')
+
+    fireEvent.click(second)
+
+    const target = screen.getByRole('article', { name: 'Câu 2/2' })
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+    expect(scrollIntoView.mock.contexts[0]).toBe(target)
+    expect(target).toHaveFocus()
+    expect(second).toHaveAttribute('aria-current', 'step')
+    expect(first).not.toHaveAttribute('aria-current')
   })
 
   it('shows "not found" without a retry button for an unknown chapter', async () => {

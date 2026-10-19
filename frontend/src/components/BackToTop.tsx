@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { scrollBehavior } from './scrollBehavior'
 
 // Cuộn quá khoảng này (≈ 1,5 màn hình điện thoại) mới hiện nút, để không che nội dung ở đầu trang.
 const SHOW_AFTER_PX = 600
@@ -16,11 +17,7 @@ export default function BackToTop() {
 
   if (!visible) return null
 
-  const scrollToTop = () => {
-    // Tôn trọng cài đặt "giảm chuyển động" của hệ điều hành: nhảy thẳng lên thay vì cuộn mượt.
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
-  }
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: scrollBehavior() })
 
   return (
     <button
