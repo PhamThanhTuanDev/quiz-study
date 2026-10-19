@@ -284,7 +284,7 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 
 ### D-052 · Danh sách câu dạng ngăn kéo trên điện thoại · Đã chốt (chủ dự án, 2026-10-19)
 - Lưới số câu ở đầu trang Học (D-051) bất tiện trên điện thoại: đang ở giữa bài muốn chọn câu khác phải cuộn ngược lên. Chủ dự án yêu cầu đổi thành nút nổi.
-- `QuestionDrawer` (chỉ dưới `lg`): nút tròn ngay trên nút "Lên đầu trang". Bấm thì danh sách **một cột** trượt từ phải sang (rộng `min(16rem, 80vw)`), khối câu hỏi bị đẩy sang trái đúng bằng chừng đó; danh sách cuộn được, mỗi dòng "Câu N" kèm vài chữ đầu của đề, câu đang đọc được tô và đưa ra giữa.
+- `QuestionDrawer` (chỉ dưới `lg`): nút tròn ở dưới cùng góc phải; nút "Lên đầu trang" nhích lên ngay phía trên nó (chủ dự án đổi chỗ, 2026-10-19). Trang không có nút danh sách thì nút "Lên đầu trang" vẫn ở dưới cùng (CSS `body:has([data-floating-menu])`). Bấm thì danh sách **một cột** trượt từ phải sang (rộng `min(16rem, 80vw)`), khối câu hỏi bị đẩy sang trái đúng bằng chừng đó; danh sách cuộn được, mỗi dòng "Câu N" kèm vài chữ đầu của đề, câu đang đọc được tô và đưa ra giữa.
 - Chọn câu: đóng ngăn kéo, cuộn tới câu, focus vào câu; nút hiện lại. Đóng bằng nút ×, Esc hoặc chạm ra ngoài (focus trở về nút). Khi đóng, ngăn kéo `inert` (không bấm được, trình đọc màn hình bỏ qua).
 - Hiệu ứng trượt / mờ 300ms; tắt khi hệ điều hành bật "giảm chuyển động".
 - Hai nút nổi (danh sách câu, "Lên đầu trang") mờ còn 60% khi người dùng đứng yên, hiện rõ khi đang cuộn (và 1,2 giây sau), rê chuột hoặc focus (`useIsScrolling`). Không thêm dependency.

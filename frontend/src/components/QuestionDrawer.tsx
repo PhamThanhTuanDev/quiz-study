@@ -24,7 +24,7 @@ export const DRAWER_PUSH = '-translate-x-[min(16rem,80vw)]'
 const SLIDE = 'transition-transform duration-300 ease-out motion-reduce:transition-none'
 
 /**
- * Danh sách câu dạng ngăn kéo cho điện thoại (D-052): nút nổi phía trên nút "Lên đầu trang";
+ * Danh sách câu dạng ngăn kéo cho điện thoại (D-052): nút nổi ở dưới cùng, ngay dưới nút "Lên đầu trang";
  * bấm thì danh sách một cột trượt ra từ bên phải, cuộn được khi nhiều câu. Màn hình lớn không dùng (có lưới bên phải).
  */
 export default function QuestionDrawer({ questions, activeIndex, open, onOpenChange, onSelect }: QuestionDrawerProps) {
@@ -60,7 +60,9 @@ export default function QuestionDrawer({ questions, activeIndex, open, onOpenCha
         aria-label="Danh sách câu"
         title="Danh sách câu"
         inert={open}
-        className={floatingButtonClassName('aboveBottom', scrolling, open ? 'pointer-events-none scale-75 opacity-0!' : '')}
+        // Đánh dấu để nút "Lên đầu trang" nhích lên phía trên nút này.
+        data-floating-menu=""
+        className={floatingButtonClassName('bottom', scrolling, open ? 'pointer-events-none scale-75 opacity-0!' : '')}
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth={2.5}>
           <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" strokeLinecap="round" strokeLinejoin="round" />

@@ -1,8 +1,15 @@
-/** Vị trí nút nổi ở góc dưới bên phải: nút "Lên đầu trang" ở dưới cùng, nút danh sách câu ngay phía trên. */
+/**
+ * Vị trí nút nổi ở góc dưới bên phải. Nút danh sách câu (trang Học, điện thoại) nằm dưới cùng;
+ * nút "Lên đầu trang" nằm ngay phía trên khi trang có nút danh sách, còn không thì xuống dưới cùng (D-052).
+ */
 export const FLOATING_SLOT = {
   bottom: 'right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:right-6 sm:bottom-6',
-  // 1rem lề + 3rem nút dưới + 0.75rem khoảng cách.
-  aboveBottom: 'right-4 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] sm:right-6 sm:bottom-[5.25rem]',
+  // Trang có nút danh sách câu (đánh dấu data-floating-menu) và màn hình nhỏ hơn lg (nút đó chỉ hiện ở đây):
+  // nhích lên 1rem lề + 3rem nút dưới + 0.75rem khoảng cách.
+  bottomOrAboveMenu:
+    'right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] sm:right-6 sm:bottom-6 ' +
+    'max-lg:[body:has([data-floating-menu])_&]:bottom-[calc(4.75rem+env(safe-area-inset-bottom))] ' +
+    'max-lg:sm:[body:has([data-floating-menu])_&]:bottom-[5.25rem]',
 } as const
 
 /**
