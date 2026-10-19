@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router'
+import BackToTop from '../components/BackToTop'
 import LetterBadge from '../components/LetterBadge'
 import OfflineBanner from '../components/OfflineBanner'
 import { NAV_ITEMS } from './navigation'
@@ -58,6 +59,8 @@ export default function MainLayout() {
       <footer className="border-t border-line">
         <p className="mx-auto max-w-5xl px-4 py-4 text-xs text-muted sm:px-6">Quiz Study</p>
       </footer>
+
+      <BackToTop />
     </div>
   )
 }

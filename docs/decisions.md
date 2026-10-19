@@ -271,6 +271,11 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Phần tự luận lập trình hướng đối tượng của file tóm tắt không làm trắc nghiệm. Chữ cái đáp án được cân bằng (A 44, B 44, C 43, D 44) vì trang Học hiện phương án theo thứ tự gốc.
 - Kết quả: 175 câu (Bài 1: 5, Bài 2: 36, Bài 3: 14, Bài 4: 15, Bài 5: 15, Bài 6: 16, Bài 7: 17, Bài 8: 13, Bài 9: 5, Bài 10: 11, Bài 11: 13, Bài 12: 4, Bài 13: 11); 164 câu chạy code thật (154 câu kiểu `output`), 11 câu lý thuyết đối chiếu tài liệu chính thức; ghi sai thử 6 câu đều bị bắt. Môn Python: 603 câu, kiểm chứng 603/603.
 
+### D-050 · Nút "Lên đầu trang" · Đã chốt (chủ dự án, 2026-10-19)
+- Trang dài (đề thi thử 40 câu, trang Học) phải cuộn nhiều; chủ dự án yêu cầu thêm nút đưa về đầu trang.
+- Component `BackToTop` đặt trong `MainLayout` nên mọi trang đều có. Nút tròn nổi ở góc dưới bên phải, chỉ hiện khi đã cuộn quá 600px, cách mép dưới thêm `safe-area-inset-bottom` cho iPhone.
+- Cuộn mượt, trừ khi hệ điều hành bật "giảm chuyển động" thì nhảy thẳng lên. Có `aria-label` cho trình đọc màn hình. Không thêm dependency.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.
