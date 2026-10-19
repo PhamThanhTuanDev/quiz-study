@@ -1,9 +1,10 @@
-import { type Ref, useCallback, useId, useRef } from 'react'
+import { type Ref, useCallback, useId, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import AnswerContent from '../components/AnswerContent'
 import AsyncContent from '../components/AsyncContent'
 import CodeBlock from '../components/CodeBlock'
 import EmptyState from '../components/EmptyState'
+import QuestionDrawer, { DRAWER_PUSH } from '../components/QuestionDrawer'
 import QuestionNavigator from '../components/QuestionNavigator'
 import { scrollBehavior } from '../components/scrollBehavior'
 import { useActiveIndex } from '../hooks/useActiveIndex'
@@ -36,11 +37,14 @@ function StudyContent({ chapter }: { chapter: StudyChapter }) {
   const total = chapter.questions.length
   const cardRefs = useRef<(HTMLElement | null)[]>([])
   const { activeIndex, setActiveIndex } = useActiveIndex(cardRefs, total)
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Bấm số câu ở lưới (D-051): cuộn tới câu đó và chuyển focus vào câu, để người dùng bàn phím đọc tiếp từ đó.
+  // Chọn câu ở lưới (D-051) hoặc ngăn kéo (D-052): đóng ngăn kéo, cuộn tới câu đó và chuyển focus vào câu,
+  // để người dùng bàn phím đọc tiếp từ đó.
   const goTo = (index: number) => {
     const card = cardRefs.current[index]
     if (!card) return
+    setDrawerOpen(false)
     setActiveIndex(index)
     card.scrollIntoView?.({ behavior: scrollBehavior(), block: 'start' })
     card.focus({ preventScroll: true })
@@ -65,16 +69,21 @@ function StudyContent({ chapter }: { chapter: StudyChapter }) {
       {total === 0 ? (
         <EmptyState title="Bài này chưa có câu hỏi nào" />
       ) : (
-        // Điện thoại: lưới số câu nằm trên danh sách. Màn hình lớn: lưới ở cột phải, dính theo khi cuộn.
-        <div className="space-y-6 lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-start lg:gap-8 lg:space-y-0">
+        // Màn hình lớn: lưới số câu ở cột phải, dính theo khi cuộn. Điện thoại: danh sách câu dạng ngăn kéo (D-052),
+        // mở ra thì đẩy khối câu hỏi sang trái.
+        <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-start lg:gap-8">
           <aside
             aria-label="Các câu hỏi"
-            className="lg:sticky lg:top-6 lg:col-start-2 lg:row-start-1 lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto lg:p-1"
+            className="hidden lg:sticky lg:top-6 lg:col-start-2 lg:row-start-1 lg:block lg:max-h-[calc(100dvh-3rem)] lg:overflow-y-auto lg:p-1"
           >
             <QuestionNavigator questions={chapter.questions} currentIndex={activeIndex} onSelect={goTo} showState={false} />
           </aside>
 
-          <ol className="space-y-4 lg:col-start-1 lg:row-start-1">
+          <ol
+            className={`space-y-4 transition-transform duration-300 ease-out motion-reduce:transition-none lg:col-start-1 lg:row-start-1 lg:translate-x-0 ${
+              drawerOpen ? DRAWER_PUSH : ''
+            }`}
+          >
             {chapter.questions.map((question, index) => (
               <li key={question.questionId}>
                 <StudyQuestionCard
@@ -87,6 +96,14 @@ function StudyContent({ chapter }: { chapter: StudyChapter }) {
               </li>
             ))}
           </ol>
+
+          <QuestionDrawer
+            questions={chapter.questions}
+            activeIndex={activeIndex}
+            open={drawerOpen}
+            onOpenChange={setDrawerOpen}
+            onSelect={goTo}
+          />
         </div>
       )}
     </div>

@@ -105,6 +105,52 @@ describe('StudyPage', () => {
     expect(first).not.toHaveAttribute('aria-current')
   })
 
+  it('on phones, opens the question list from a floating button and closes it after jumping (D-052)', async () => {
+    mockApi({ [STUDY_API]: LOOPS })
+    const scrollIntoView = vi.fn()
+    Object.defineProperty(Element.prototype, 'scrollIntoView', { value: scrollIntoView, configurable: true })
+    onTestFinished(() => {
+      Reflect.deleteProperty(Element.prototype, 'scrollIntoView')
+    })
+
+    renderRoute('/subjects/python/chapters/4/study')
+
+    const toggle = await screen.findByRole('button', { name: 'Danh sách câu' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    // Đóng: khung danh sách `inert` (không bấm được, trình đọc màn hình bỏ qua); jsdom chưa tự ẩn theo inert.
+    const panel = document.getElementById(toggle.getAttribute('aria-controls') ?? '')
+    expect(panel).toHaveAttribute('inert')
+
+    fireEvent.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(panel).not.toHaveAttribute('inert')
+    const list = screen.getByRole('navigation', { name: 'Chọn câu hỏi' })
+    const first = within(list).getByRole('button', { name: 'Câu 1' })
+    expect(first).toHaveAttribute('aria-current', 'step')
+    expect(first).toHaveFocus()
+
+    fireEvent.click(within(list).getByRole('button', { name: 'Câu 2' }))
+
+    const target = screen.getByRole('article', { name: 'Câu 2/2' })
+    expect(scrollIntoView.mock.contexts[0]).toBe(target)
+    expect(target).toHaveFocus()
+    expect(screen.getByRole('button', { name: 'Danh sách câu' })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('closes the question list with Escape and gives focus back to the button', async () => {
+    mockApi({ [STUDY_API]: LOOPS })
+
+    renderRoute('/subjects/python/chapters/4/study')
+
+    const toggle = await screen.findByRole('button', { name: 'Danh sách câu' })
+    fireEvent.click(toggle)
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Đóng danh sách câu' }), { key: 'Escape' })
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle).toHaveFocus()
+  })
+
   it('shows "not found" without a retry button for an unknown chapter', async () => {
     mockApi({ 'GET /api/v1/subjects/python/chapters/99/study': problem(404, 'Không tìm thấy bài học này.') })
 
