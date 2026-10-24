@@ -296,6 +296,14 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - API làm bài và API "Học" trả thêm `authored`. Giao diện hiện nhãn "Câu tự soạn" (màu vàng) cạnh "Câu N/M" ở trang làm bài (luyện tập, thi thử, xem lại) và trang Học. Đầu trang Học có thêm một dòng chú thích nhãn kèm số câu tự soạn của bài, khi bài có câu tự soạn. Nhãn nằm ngoài tiêu đề nên tên của câu cho trình đọc màn hình vẫn là "Câu N/M".
 - Chỉ đổi cách hiển thị: vẫn xáo trộn, chấm điểm như mọi câu; đổi nhãn của câu đã có người làm cũng được (không ảnh hưởng lựa chọn đã lưu).
 
+### D-054 · Backend PHP để chạy trên hosting cPanel · Đã chốt (chủ dự án, 2026-10-24)
+- Chủ dự án không muốn dùng Java Spring nữa (Railway hết dùng thử, cần JDK 25); muốn tải web lên File Manager của hosting cPanel đang có, dùng database MariaDB 10.5 của hosting. Giao diện giữ nguyên.
+- Chọn PHP thuần (8.1+), không framework, không Composer: hosting có sẵn PHP 8.4 + MariaDB, chỉ cần tải file lên. Code trong `backend-php/` (xem README ở đó); frontend React không đổi một dòng.
+- Giữ nguyên API `/api/v1`: đường dẫn, JSON, mã lỗi, thông điệp, luật chấm điểm, hết giờ, khoá dòng khi ghi. Thứ tự xáo phương án tái tạo đúng thuật toán Java (`String.hashCode` + `java.util.Random` + `Collections.shuffle`), nên các lượt làm đã tạo từ bản Java vẫn hiện đúng như cũ.
+- Đóng gói: `node scripts/build-hosting.mjs` → `build/quiz-study-hosting.zip` (frontend đã build + `api/`). Mật khẩu database nằm trong `api/config.php` trên hosting, không có trong Git và không có trong zip.
+- Kiểm chứng: chạy song song bản Java và PHP trên cùng database MariaDB, so 175 tình huống (khớp hết, trừ chữ của lỗi 415 khi gửi sai Content-Type); điểm khớp `BigDecimal` của Java trên 7.380 tổ hợp; E2E Playwright 8/8 trên Apache + PHP; `php backend-php/tests/run.php` (2.150 kiểm tra, dữ liệu mẫu sinh từ Java).
+- Bản Java (`backend/`) chưa xoá: công cụ import môn từ `import.json` vẫn nằm ở đó. Chuyển công cụ import sang PHP/Python là việc tiếp theo nếu muốn bỏ hẳn Java.
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

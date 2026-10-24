@@ -11,7 +11,8 @@
 ## Stack (không đổi khi chưa được đồng ý)
 
 - Frontend: React + Vite + TypeScript + Tailwind CSS + React Router (chế độ SPA).
-- Backend: Java 25 (D-024) + Spring Boot (Web, Data JPA, Security, Bean Validation), Maven.
+- Backend chạy thật trên hosting: PHP 8.1+ thuần trong `backend-php/` (D-054), giữ nguyên API `/api/v1` của bản Java. Sửa API thì sửa cả hai bản cho khớp, hoặc hỏi chủ dự án có bỏ hẳn bản Java chưa.
+- Backend cũ: Java 25 (D-024) + Spring Boot (Web, Data JPA, Security, Bean Validation), Maven; còn dùng cho công cụ import môn.
 - Database: MySQL. Test: JUnit 5, Spring Boot Test, Vitest + React Testing Library, Playwright.
 - **Cấm tự ý thêm:** Next.js, NestJS, MongoDB, Firebase, Supabase, Prisma, Redux, hoặc framework/database lớn khác.
 
@@ -56,6 +57,7 @@ Có hiệu lực từ Phase 1; cập nhật khi thay đổi.
 
 - Frontend (`frontend/`): `npm run build` · `npm run test` · `npm run lint`
   - E2E: `npm run test:e2e` (Playwright, Chrome đã cài; tự bật backend + frontend, cần MySQL và môn đã import). Chạy khi đổi luồng làm bài hoặc giao diện chính.
+- Backend PHP: `php backend-php/tests/run.php`; đóng gói hosting: `node scripts/build-hosting.mjs`.
 - Backend (`backend/`): `mvnw.cmd verify` (Windows) hoặc `./mvnw verify`. **Cần JDK 25** (`JAVA_HOME` trỏ JDK 25).
   - `verify` chạy cả `QuizStudyApplicationTests` (profile `test`), nên cần MySQL và database `quiz_study_test`. Tạo database bằng `scripts/setup-database.ps1` (chủ dự án chạy, vì cần mật khẩu root). Máy 2 đã tạo xong.
   - Test repository (`@DataJpaTest`) cũng chạy trên `quiz_study_test` thật (không Testcontainers, D-015), mỗi test tự rollback.

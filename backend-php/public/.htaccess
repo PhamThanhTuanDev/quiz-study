@@ -1,0 +1,32 @@
+# Quiz Study trên hosting (D-054): frontend React (file tĩnh) + API PHP trong thư mục api/.
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Frontend là SPA: đường dẫn như /subjects/python do React Router xử lý trên trình duyệt, không có file tương ứng,
+    # nên mở thẳng link hoặc tải lại trang phải trả index.html. Không áp dụng cho /api (API sai đường dẫn phải là
+    # lỗi JSON) và cho đường dẫn có đuôi file (file JS/CSS bị thiếu phải 404, không nhận nhầm HTML).
+    RewriteCond %{REQUEST_URI} !^/api(/|$)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !\.[^/]+$
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Manifest của PWA; mặc định server có thể trả sai kiểu nội dung.
+AddType application/manifest+json .webmanifest
+
+<IfModule mod_headers.c>
+    # Trang chính và service worker luôn kiểm tra bản mới (để app thấy có cập nhật). File trong assets/ có mã băm
+    # trong tên nên lưu đệm lâu được.
+    <FilesMatch "^(index\.html|sw\.js|registerSW\.js|manifest\.webmanifest)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+    <FilesMatch "\.(js|css)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "^(sw|registerSW|workbox-[\w-]+)\.js$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>

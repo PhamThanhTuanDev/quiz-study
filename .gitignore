@@ -115,3 +115,7 @@ database/seed/*/generated/
 *.pdf
 # Tài liệu Word chủ dự án cung cấp ở thư mục gốc (ví dụ file tóm tắt môn, D-049): cũng là nguồn chỉ đọc.
 /*.docx
+
+# ---------- Gói tải lên hosting (D-053) ----------
+build/
+backend-php/public/api/config.php

@@ -9,8 +9,9 @@ Nền tảng web học tập và luyện thi trắc nghiệm **nhiều môn**. H
 | Phần | Công nghệ |
 |---|---|
 | Frontend | React · Vite · TypeScript · Tailwind CSS · React Router |
-| Backend | Java 25 · Spring Boot (Web, Data JPA, Security, Validation) · Maven |
-| Database | MySQL |
+| Backend (hosting) | PHP 8.1+ thuần, chạy trên hosting cPanel: [backend-php/](backend-php/README.md) (D-054) |
+| Backend (cũ, dùng cho công cụ import) | Java 25 · Spring Boot (Web, Data JPA, Security, Validation) · Maven |
+| Database | MySQL / MariaDB |
 | Test | JUnit 5 · Spring Boot Test · Vitest + React Testing Library · Playwright |
 
 ```
@@ -126,7 +127,12 @@ Giải thích từng bước: [scripts/README.md](scripts/README.md).
 |---|---|---|
 | Frontend | `frontend/` | `npm run test` · `npm run lint` · `npm run build` |
 | Backend | `backend/` | `.\mvnw.cmd verify` (cần MySQL và database `quiz_study_test`) |
+| Backend PHP | thư mục gốc | `php backend-php/tests/run.php` |
 | E2E (Playwright) | `frontend/` | `npm run test:e2e`: chạy luồng chính trên khung điện thoại và máy tính bằng Chrome đã cài. Tự bật backend và frontend nếu chưa chạy; cần MySQL đang chạy và đã import ít nhất một môn. Lượt làm tạo ra lúc test là dữ liệu thử trong database dev. |
+
+## Triển khai lên hosting
+
+`node scripts/build-hosting.mjs` tạo `build/quiz-study-hosting.zip` (frontend + API PHP). Cách tải lên cPanel: [backend-php/README.md](backend-php/README.md).
 
 ## Tài liệu nguồn
 

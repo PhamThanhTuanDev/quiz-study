@@ -1,0 +1,7 @@
+# Mọi request /api/v1/... vào index.php. Thư mục lib/ và config.php (có mật khẩu database) không truy cập được từ ngoài.
+Options -Indexes -MultiViews
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(lib/|config\.php|config\.example\.php) - [F,L]
+    RewriteRule ^v1/ index.php [L,QSA]
+</IfModule>
