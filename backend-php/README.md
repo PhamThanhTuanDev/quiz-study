@@ -13,6 +13,7 @@ backend-php/
 │       ├── index.php
 │       ├── config.example.php   # chép thành config.php (không commit) rồi điền mật khẩu database
 │       └── lib/         # router, kết nối DB, môn/bài/học, lượt làm bài, xáo phương án kiểu Java
+├── migrations/          # thay đổi schema để chạy tay trong phpMyAdmin (bản PHP không có Flyway)
 └── tests/run.php        # php backend-php/tests/run.php
 ```
 
@@ -21,6 +22,12 @@ backend-php/
 - PHP 8.1 trở lên, có `pdo_mysql`, `mbstring`.
 - MariaDB 10.5+ hoặc MySQL 8, đã có các bảng (tạo bằng Flyway của bản Java, hoặc import file SQL).
 - `mod_rewrite` (LiteSpeed trên cPanel đọc được `.htaccess`).
+
+## Thay đổi database
+
+Bản PHP không tự chạy migration. Khi bản Java thêm `backend/src/main/resources/db/migration/V<n>__*.sql`, viết bản tương
+ứng trong `migrations/` (MariaDB, chạy lại an toàn, kèm dòng `flyway_schema_history` có checksum Flyway) rồi chạy một lần
+trong phpMyAdmin trước khi tải code mới lên. Đã có: `V4__add_question_authored.sql` (cột `is_authored`, D-053).
 
 ## Đóng gói và tải lên
 

@@ -302,6 +302,7 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Giữ nguyên API `/api/v1`: đường dẫn, JSON, mã lỗi, thông điệp, luật chấm điểm, hết giờ, khoá dòng khi ghi. Thứ tự xáo phương án tái tạo đúng thuật toán Java (`String.hashCode` + `java.util.Random` + `Collections.shuffle`), nên các lượt làm đã tạo từ bản Java vẫn hiện đúng như cũ.
 - Đóng gói: `node scripts/build-hosting.mjs` → `build/quiz-study-hosting.zip` (frontend đã build + `api/`). Mật khẩu database nằm trong `api/config.php` trên hosting, không có trong Git và không có trong zip.
 - Kiểm chứng: chạy song song bản Java và PHP trên cùng database MariaDB, so 175 tình huống (khớp hết, trừ chữ của lỗi 415 khi gửi sai Content-Type); điểm khớp `BigDecimal` của Java trên 7.380 tổ hợp; E2E Playwright 8/8 trên Apache + PHP; `php backend-php/tests/run.php` (2.150 kiểm tra, dữ liệu mẫu sinh từ Java).
+- Bản PHP không có Flyway: thay đổi schema chạy tay trong phpMyAdmin bằng file trong `backend-php/migrations/` (MariaDB, chạy lại an toàn, ghi luôn dòng `flyway_schema_history` đúng checksum để bản Java vẫn chạy được trên database đó). Đầu tiên: `V4__add_question_authored.sql` cho nhãn "Câu tự soạn" (D-053); đã thử: chạy 2 lần không lỗi, đánh dấu 175 câu, Flyway của bản Java báo "Successfully validated 4 migrations".
 - Bản Java (`backend/`) chưa xoá: công cụ import môn từ `import.json` vẫn nằm ở đó. Chuyển công cụ import sang PHP/Python là việc tiếp theo nếu muốn bỏ hẳn Java.
 
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
