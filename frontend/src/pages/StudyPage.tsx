@@ -2,6 +2,7 @@ import { type Ref, useCallback, useId, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import AnswerContent from '../components/AnswerContent'
 import AsyncContent from '../components/AsyncContent'
+import AuthoredBadge from '../components/AuthoredBadge'
 import CodeBlock from '../components/CodeBlock'
 import EmptyState from '../components/EmptyState'
 import QuestionDrawer, { DRAWER_PUSH } from '../components/QuestionDrawer'
@@ -35,6 +36,7 @@ export default function StudyPage() {
 
 function StudyContent({ chapter }: { chapter: StudyChapter }) {
   const total = chapter.questions.length
+  const authoredCount = chapter.questions.filter((question) => question.authored).length
   const cardRefs = useRef<(HTMLElement | null)[]>([])
   const { activeIndex, setActiveIndex } = useActiveIndex(cardRefs, total)
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -64,6 +66,13 @@ function StudyContent({ chapter }: { chapter: StudyChapter }) {
         <p className="text-sm font-semibold text-primary">Học{chapter.chapterCode && ` · ${chapter.chapterCode}`}</p>
         <h1 className="text-2xl font-bold sm:text-3xl">{chapter.chapterTitle}</h1>
         <p className="mt-1 text-muted">{total} câu · đáp án đúng được tô xanh</p>
+        {/* Chú thích nhãn trên các câu (D-053): người học biết câu nào không có trong tài liệu gốc. */}
+        {authoredCount > 0 && (
+          <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+            <AuthoredBadge />
+            <span>{authoredCount} câu soạn thêm để ôn tập, không có trong tài liệu gốc.</span>
+          </p>
+        )}
       </header>
 
       {total === 0 ? (
@@ -126,9 +135,12 @@ function StudyQuestionCard({ question, total, ref }: StudyQuestionCardProps) {
       tabIndex={-1}
       className="scroll-mt-4 space-y-4 rounded-xl border border-line bg-surface p-4 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:p-6"
     >
-      <h2 id={headingId} className="text-sm font-semibold text-primary">
-        Câu {question.order}/{total}
-      </h2>
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 id={headingId} className="text-sm font-semibold text-primary">
+          Câu {question.order}/{total}
+        </h2>
+        {question.authored && <AuthoredBadge />}
+      </div>
       <p className="text-base whitespace-pre-line sm:text-lg">{question.content}</p>
       {question.codeSnippet && <CodeBlock code={question.codeSnippet} />}
       <ul className="space-y-2" aria-label="Các phương án">

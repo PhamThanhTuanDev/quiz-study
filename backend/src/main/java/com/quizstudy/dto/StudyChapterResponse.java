@@ -12,9 +12,10 @@ public record StudyChapterResponse(String subjectSlug, String subjectName, Long 
     /**
      * @param order       số thứ tự câu trong bài, từ 1
      * @param explanation giải thích / ghi chú đã sửa so với tài liệu, có thể NULL
+     * @param authored    câu soạn thêm, không có trong tài liệu nguồn (D-053)
      */
     public record StudyQuestionResponse(Long questionId, int order, String content, String codeSnippet,
-            List<StudyAnswerResponse> answers, String explanation) {
+            List<StudyAnswerResponse> answers, String explanation, boolean authored) {
     }
 
     /** @param blanks câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); NULL với phương án thường */

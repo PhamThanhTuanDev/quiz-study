@@ -122,6 +122,19 @@ class AttemptServiceTest {
     }
 
     @Test
+    void start_tellsWhichQuestionsAreAuthored_soTheyCanBeLabelled() {
+        Question authored = published.values().iterator().next();
+        authored.setAuthored(true);
+        entityManager.flush();
+
+        AttemptResponse attempt = attemptService.start(examQuizId);
+
+        assertThat(attempt.questions())
+                .allSatisfy(question -> assertThat(question.authored())
+                        .isEqualTo(question.questionId().equals(authored.getId())));
+    }
+
+    @Test
     void start_rejectsAQuizWhoseChapterHasNoPublishedQuestion() {
         assertThatThrownBy(() -> attemptService.start(emptyQuizId))
                 .isInstanceOf(BusinessRuleException.class)

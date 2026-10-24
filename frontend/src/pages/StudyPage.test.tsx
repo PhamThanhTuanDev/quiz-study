@@ -23,6 +23,7 @@ const LOOPS: StudyChapter = {
         { id: 4, content: '0\n1\n2', correct: true, blanks: null },
       ],
       explanation: null,
+      authored: false,
     },
     {
       questionId: 12,
@@ -34,6 +35,7 @@ const LOOPS: StudyChapter = {
         { id: 6, content: 'continue', correct: false, blanks: null },
       ],
       explanation: 'Đã sửa so với tài liệu: thêm phương án sai thứ hai.',
+      authored: true,
     },
   ],
 }
@@ -77,6 +79,28 @@ describe('StudyPage', () => {
     const second = await screen.findByRole('article', { name: 'Câu 2/2' })
     expect(second).toHaveTextContent('Đã sửa so với tài liệu: thêm phương án sai thứ hai.')
     expect(screen.getByRole('link', { name: '← Nhập môn lập trình Python' })).toHaveAttribute('href', '/subjects/python')
+  })
+
+  it('labels the questions written in addition to the source documents, and explains the label (D-053)', async () => {
+    mockApi({ [STUDY_API]: LOOPS })
+
+    renderRoute('/subjects/python/chapters/4/study')
+
+    const second = await screen.findByRole('article', { name: 'Câu 2/2' })
+    expect(within(second).getByText('Câu tự soạn')).toBeInTheDocument()
+    expect(within(screen.getByRole('article', { name: 'Câu 1/2' })).queryByText('Câu tự soạn')).not.toBeInTheDocument()
+    expect(screen.getByText('1 câu soạn thêm để ôn tập, không có trong tài liệu gốc.')).toBeInTheDocument()
+  })
+
+  it('does not explain the label when no question of the chapter is authored', async () => {
+    const fromDocuments = { ...LOOPS, questions: LOOPS.questions.map((question) => ({ ...question, authored: false })) }
+    mockApi({ [STUDY_API]: fromDocuments })
+
+    renderRoute('/subjects/python/chapters/4/study')
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Cấu trúc lặp' })).toBeInTheDocument()
+    expect(screen.queryByText('Câu tự soạn')).not.toBeInTheDocument()
+    expect(screen.queryByText(/không có trong tài liệu gốc/)).not.toBeInTheDocument()
   })
 
   it('lists the question numbers and jumps to the chosen question (D-051)', async () => {

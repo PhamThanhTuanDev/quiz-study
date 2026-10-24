@@ -102,6 +102,8 @@ desktop.ini
 *.sql.gz
 dump*.sql
 backup*.sql
+# Bản dump để import lên hosting: có nội dung câu hỏi từ tài liệu nguồn (D-030).
+*hosting*.sql
 
 # ---------- Dữ liệu câu hỏi sinh ra từ PDF (D-030) ----------
 # Chứa nội dung câu hỏi; tạo lại bằng script trong scripts/. Chỉ commit subject.json (cấu hình nhỏ).

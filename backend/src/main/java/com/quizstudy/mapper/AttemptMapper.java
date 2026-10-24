@@ -65,7 +65,7 @@ public final class AttemptMapper {
         Long selectedAnswerId = answer.isAnswered() ? answer.getSelectedAnswer().getId() : null;
         return new AttemptQuestionResponse(question.getId(), answer.getQuestionOrder(), question.getContent(),
                 question.getCodeSnippet(), options, selectedAnswerId,
-                mayRevealAnswer(attempt, answer) ? toFeedback(answer, question) : null);
+                mayRevealAnswer(attempt, answer) ? toFeedback(answer, question) : null, question.isAuthored());
     }
 
     /** Luyện tập: câu đã trả lời (đã khoá). Thi thử: bài đã nộp hoặc hết giờ (xem lại mọi câu). */

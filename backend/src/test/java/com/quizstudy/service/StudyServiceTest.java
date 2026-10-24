@@ -62,6 +62,7 @@ class StudyServiceTest {
         Question second = question(chapter, "range(3) có mấy số?", "2", "3");
         second.setCodeSnippet("print(len(range(3)))");
         second.setExplanation("Đã sửa so với tài liệu: thêm lệnh print.");
+        second.setAuthored(true);
         when(subjectRepository.findBySlugAndPublishedTrue("python")).thenReturn(Optional.of(python));
         when(chapterRepository.findByIdAndSubjectId(40L, 7L)).thenReturn(Optional.of(chapter));
         when(questionRepository.findByChapterIdAndStatusOrderByIdAsc(40L, QuestionStatus.PUBLISHED))
@@ -75,11 +76,12 @@ class StudyServiceTest {
         assertThat(study.chapterTitle()).isEqualTo("Cấu trúc lặp");
         assertThat(study.questions())
                 .extracting(StudyQuestionResponse::order, StudyQuestionResponse::content,
-                        StudyQuestionResponse::codeSnippet, StudyQuestionResponse::explanation)
+                        StudyQuestionResponse::codeSnippet, StudyQuestionResponse::explanation,
+                        StudyQuestionResponse::authored)
                 .containsExactly(
-                        tuple(1, "Kết quả của 7 // 2?", null, null),
+                        tuple(1, "Kết quả của 7 // 2?", null, null, false),
                         tuple(2, "range(3) có mấy số?", "print(len(range(3)))",
-                                "Đã sửa so với tài liệu: thêm lệnh print."));
+                                "Đã sửa so với tài liệu: thêm lệnh print.", true));
         // Giữ thứ tự phương án như tài liệu (A, B…), không xáo.
         assertThat(study.questions().getFirst().answers())
                 .extracting(StudyAnswerResponse::content, StudyAnswerResponse::correct)

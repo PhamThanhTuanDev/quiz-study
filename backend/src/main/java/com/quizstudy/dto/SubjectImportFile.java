@@ -58,6 +58,8 @@ public record SubjectImportFile(
             @NotNull(message = "không được để trống") Boolean shuffleAnswers,
             @NotNull(message = "không được để trống") QuestionStatus status,
             @Size(max = 500, message = "tối đa 500 ký tự") String reviewNote,
+            // Không bắt buộc, thiếu là false: true với câu soạn thêm, không có trong tài liệu nguồn (D-053).
+            Boolean authored,
             // Bắt buộc: file + nhãn nguồn là khoá để import lại khớp câu cũ với câu mới.
             @NotNull(message = "không được để trống") @Valid SourceData source,
             @NotNull(message = "không được để trống") List<@NotNull @Valid AnswerData> answers) {

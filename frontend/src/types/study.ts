@@ -16,6 +16,8 @@ export interface StudyQuestion {
   answers: StudyAnswer[]
   /** Giải thích / ghi chú "Đã sửa so với tài liệu"; có thể không có. */
   explanation: string | null
+  /** Câu soạn thêm, không có trong tài liệu nguồn (D-053): hiện nhãn "Câu tự soạn". */
+  authored: boolean
 }
 
 /** Chế độ "Học" của một bài (khớp StudyChapterResponse ở backend, D-044). */

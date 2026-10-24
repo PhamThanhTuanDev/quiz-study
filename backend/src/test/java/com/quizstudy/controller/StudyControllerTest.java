@@ -37,12 +37,13 @@ class StudyControllerTest {
                 List.of(new StudyQuestionResponse(9L, 1, "Kết quả của 7 // 2?", null,
                         List.of(new StudyAnswerResponse(1L, "3.5", false, null),
                                 new StudyAnswerResponse(2L, "3", true, List.of("3"))),
-                        null))));
+                        null, true))));
 
         mockMvc.perform(get("/api/v1/subjects/python/chapters/40/study"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.chapterTitle").value("Cấu trúc lặp"))
                 .andExpect(jsonPath("$.questions[0].order").value(1))
+                .andExpect(jsonPath("$.questions[0].authored").value(true))
                 .andExpect(jsonPath("$.questions[0].answers[0].correct").value(false))
                 .andExpect(jsonPath("$.questions[0].answers[1].content").value("3"))
                 .andExpect(jsonPath("$.questions[0].answers[1].correct").value(true))

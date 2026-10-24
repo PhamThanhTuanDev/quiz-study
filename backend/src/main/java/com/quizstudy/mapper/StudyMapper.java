@@ -27,7 +27,7 @@ public final class StudyMapper {
     private static StudyQuestionResponse toQuestion(Question question, int order) {
         List<StudyAnswerResponse> answers = question.getAnswers().stream().map(StudyMapper::toAnswer).toList();
         return new StudyQuestionResponse(question.getId(), order, question.getContent(), question.getCodeSnippet(),
-                answers, question.getExplanation());
+                answers, question.getExplanation(), question.isAuthored());
     }
 
     private static StudyAnswerResponse toAnswer(Answer answer) {

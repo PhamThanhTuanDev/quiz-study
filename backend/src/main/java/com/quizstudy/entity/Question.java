@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -45,6 +46,10 @@ public class Question extends BaseEntity {
 
     /** Lý do cần duyệt, ví dụ "Tài liệu không có đáp án". */
     private String reviewNote;
+
+    /** TRUE: câu soạn thêm, không có trong tài liệu nguồn (D-053); giao diện hiện nhãn "Câu tự soạn". */
+    @Column(name = "is_authored")
+    private boolean authored;
 
     private String sourceFile;
 
@@ -156,6 +161,14 @@ public class Question extends BaseEntity {
 
     public void setReviewNote(String reviewNote) {
         this.reviewNote = reviewNote;
+    }
+
+    public boolean isAuthored() {
+        return authored;
+    }
+
+    public void setAuthored(boolean authored) {
+        this.authored = authored;
     }
 
     public String getSourceFile() {

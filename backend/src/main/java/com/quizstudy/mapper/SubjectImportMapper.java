@@ -56,6 +56,7 @@ public final class SubjectImportMapper {
         question.setShuffleAnswers(data.shuffleAnswers());
         question.setStatus(data.status());
         question.setReviewNote(data.reviewNote());
+        question.setAuthored(Boolean.TRUE.equals(data.authored()));
         question.setSourceFile(data.source().file());
         question.setSourcePage(data.source().page());
         question.setSourceLabel(data.source().label());

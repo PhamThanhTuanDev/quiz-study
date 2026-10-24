@@ -603,6 +603,8 @@ def question_json(q: Question) -> dict:
         "shuffleAnswers": q.shuffle,
         "status": q.status,
         "reviewNote": q.review_note,
+        # Câu tự soạn (D-049) không có trong tài liệu nguồn: giao diện hiện nhãn "Câu tự soạn" (D-053).
+        "authored": q.kind == "authored",
         "source": {"file": q.source["file"], "page": q.page, "label": q.label},
         "answers": [answer_json(q, i) for i in range(len(q.options))],
     }

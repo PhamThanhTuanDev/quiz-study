@@ -44,6 +44,8 @@ export interface AttemptQuestion {
   answers: AnswerOption[]
   selectedAnswerId: number | null
   feedback: AnswerFeedback | null
+  /** Câu soạn thêm, không có trong tài liệu nguồn (D-053): hiện nhãn "Câu tự soạn". */
+  authored: boolean
 }
 
 /** Kết quả thi thử, thang 10. Số câu sai = tổng − đúng − bỏ trống. */

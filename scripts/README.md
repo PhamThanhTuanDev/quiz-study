@@ -96,6 +96,7 @@ Câu Claude soạn từ tài liệu không phải slide PDF (ví dụ file tóm 
 ```
 
 - `reason` hiện cho người học trong phần giải thích.
+- Trong `import.json`, câu tự soạn có `"authored": true`, nên giao diện hiện nhãn "Câu tự soạn" (D-053).
 - Kiểm chứng `output`: chạy code của đề (thêm `setup` / `stdin` nếu cần), kết quả phải bằng `expect`, và chỉ phương án đáp án khớp: in ra giống hệt, hoặc nêu đúng tên lỗi (`expect` dạng `"ERROR: ValueError"`, phương án "Báo lỗi ValueError").
 
 Nguyên tắc xử lý dữ liệu nguồn: [.claude/rules/source-material.md](../.claude/rules/source-material.md).

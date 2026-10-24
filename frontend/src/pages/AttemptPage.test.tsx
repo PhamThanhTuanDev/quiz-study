@@ -17,6 +17,7 @@ function question(questionId: number, order: number, extra: Partial<AttemptQuest
     ],
     selectedAnswerId: null,
     feedback: null,
+    authored: false,
     ...extra,
   }
 }
@@ -70,6 +71,22 @@ describe('AttemptPage – luyện tập', () => {
     await waitFor(() =>
       expect(getRecentAttempts()).toMatchObject([{ id: 'luot-1', quizTitle: 'Luyện tập: Hàm', status: 'IN_PROGRESS' }]),
     )
+  })
+
+  it('labels a question written in addition to the source documents (D-053)', async () => {
+    mockApi({
+      'GET /api/v1/attempts/luot-1': attempt({ questions: [question(1, 1), question(2, 2, { authored: true })] }),
+    })
+
+    renderRoute('/attempts/luot-1')
+
+    expect(await screen.findByRole('heading', { name: 'Câu 1/2' })).toBeInTheDocument()
+    expect(screen.queryByText('Câu tự soạn')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Câu sau →' }))
+
+    expect(await screen.findByRole('heading', { name: 'Câu 2/2' })).toBeInTheDocument()
+    expect(screen.getByText('Câu tự soạn')).toBeInTheDocument()
   })
 
   it('checks the picked answer, shows the correct one, and locks the question', async () => {

@@ -24,9 +24,11 @@ public record AttemptResponse(String id, Long quizId, String quizTitle, QuizMode
      * Một câu trong lượt làm. Phương án đã được xáo theo lượt (cố định khi tải lại), không kèm đúng/sai.
      *
      * @param feedback luyện tập: sau khi câu đã được trả lời (D-037); thi thử: sau khi nộp / hết giờ (D-038)
+     * @param authored câu soạn thêm, không có trong tài liệu nguồn (D-053)
      */
     public record AttemptQuestionResponse(Long questionId, int order, String content, String codeSnippet,
-            List<AnswerOptionResponse> answers, Long selectedAnswerId, AnswerFeedbackResponse feedback) {
+            List<AnswerOptionResponse> answers, Long selectedAnswerId, AnswerFeedbackResponse feedback,
+            boolean authored) {
     }
 
     /** @param blanks câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); NULL với phương án thường */

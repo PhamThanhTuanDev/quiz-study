@@ -3,6 +3,7 @@ import { useFocusOnChange } from '../hooks/useFocusOnChange'
 import { useHotkey } from '../hooks/useHotkey'
 import type { AnswerOption, AttemptQuestion, AnswerFeedback, QuizMode } from '../types/quiz'
 import AnswerContent from './AnswerContent'
+import AuthoredBadge from './AuthoredBadge'
 import Button from './Button'
 import CodeBlock from './CodeBlock'
 import ShortcutHint from './ShortcutHint'
@@ -55,9 +56,12 @@ export default function QuestionView({ question, total, mode, locked, checking, 
 
   return (
     <article className="space-y-4">
-      <h2 ref={headingRef} tabIndex={-1} className="text-sm font-semibold text-primary focus:outline-none">
-        Câu {question.order}/{total}
-      </h2>
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 ref={headingRef} tabIndex={-1} className="text-sm font-semibold text-primary focus:outline-none">
+          Câu {question.order}/{total}
+        </h2>
+        {question.authored && <AuthoredBadge />}
+      </div>
       <p className="text-base whitespace-pre-line sm:text-lg">{question.content}</p>
       {question.codeSnippet && <CodeBlock code={question.codeSnippet} />}
 

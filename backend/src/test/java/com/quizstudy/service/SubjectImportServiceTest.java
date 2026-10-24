@@ -96,7 +96,7 @@ class SubjectImportServiceTest {
 
     @Test
     void importSubject_reportsMissingFields_withTheirPositionInTheFile() {
-        QuestionData blank = new QuestionData(SINGLE_CHOICE, " ", null, null, null, PUBLISHED, null, null,
+        QuestionData blank = new QuestionData(SINGLE_CHOICE, " ", null, null, null, PUBLISHED, null, null, null,
                 List.of(answer("A", true), answer("B", false)));
 
         assertThatThrownBy(() -> importService.importSubject(fileWith("Tên môn", blank), false))
@@ -109,7 +109,7 @@ class SubjectImportServiceTest {
 
     @Test
     void importSubject_requiresTheCorrectFlag_onEveryAnswer() {
-        QuestionData question = new QuestionData(SINGLE_CHOICE, "Câu hỏi", null, null, true, DRAFT, null,
+        QuestionData question = new QuestionData(SINGLE_CHOICE, "Câu hỏi", null, null, true, DRAFT, null, null,
                 source("Nhãn câu hỏi"), List.of(new AnswerData("A", null, null, null), answer("B", false)));
 
         assertThatThrownBy(() -> importService.importSubject(fileWith("Tên môn", question), false))
@@ -142,6 +142,26 @@ class SubjectImportServiceTest {
 
         assertThat(onlyQuestion().getAnswers()).extracting(Answer::getBlanks)
                 .containsExactly(List.of("while", "=="), null);
+    }
+
+    @Test
+    void importSubject_marksAuthoredQuestions_andUpdatesTheMarkOnReimport_evenWhenSomeoneHasAnswered() {
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề tài liệu", PUBLISHED, answer("A", true), answer("B", false)),
+                question("Câu 2", "Đề tự soạn", PUBLISHED, true, answer("A", true), answer("B", false))), false);
+        flushAndClear();
+
+        assertThat(questionWithContent("Đề tài liệu").isAuthored()).as("thiếu trường authored là false").isFalse();
+        assertThat(questionWithContent("Đề tự soạn").isAuthored()).isTrue();
+
+        markAsUsed(questionWithContent("Đề tự soạn"));
+        importService.importSubject(fileWith("Môn",
+                question("Câu 1", "Đề tài liệu", PUBLISHED, true, answer("A", true), answer("B", false)),
+                question("Câu 2", "Đề tự soạn", PUBLISHED, false, answer("A", true), answer("B", false))), true);
+        flushAndClear();
+
+        assertThat(questionWithContent("Đề tài liệu").isAuthored()).isTrue();
+        assertThat(questionWithContent("Đề tự soạn").isAuthored()).isFalse();
     }
 
     @Test
@@ -460,7 +480,13 @@ class SubjectImportServiceTest {
     }
 
     private static QuestionData question(String label, String content, QuestionStatus status, AnswerData... answers) {
-        return new QuestionData(SINGLE_CHOICE, content, null, null, true, status, null, source(label),
+        return question(label, content, status, null, answers);
+    }
+
+    /** @param authored câu soạn thêm (D-053); null là không ghi trường này trong file */
+    private static QuestionData question(String label, String content, QuestionStatus status, Boolean authored,
+            AnswerData... answers) {
+        return new QuestionData(SINGLE_CHOICE, content, null, null, true, status, null, authored, source(label),
                 List.of(answers));
     }
 
