@@ -289,6 +289,13 @@ Thay cho cách làm ở D-022. Người học chỉ chọn đáp án, không ph�
 - Hiệu ứng trượt / mờ 300ms; tắt khi hệ điều hành bật "giảm chuyển động".
 - Hai nút nổi (danh sách câu, "Lên đầu trang") mờ còn 60% khi người dùng đứng yên, hiện rõ khi đang cuộn (và 1,2 giây sau), rê chuột hoặc focus (`useIsScrolling`). Không thêm dependency.
 
+### D-053 · Nhãn "Câu tự soạn" cho câu không có trong tài liệu · Đã chốt (chủ dự án, 2026-10-24)
+- Chủ dự án muốn người học phân biệt được 175 câu tự soạn (D-049) với câu lấy từ tài liệu.
+- Cột mới `questions.is_authored` (BOOLEAN, mặc định FALSE; `V4__add_question_authored.sql`); file import có trường `authored` (không bắt buộc, thiếu là false). Cột chung cho mọi môn, không gắn với môn hay file nào.
+- Câu đã import trước V4 được đánh dấu ngay trong migration theo quy tắc "không có số trang" (câu trích từ tài liệu đều có trang, chỉ câu tự soạn không có; đã đếm trên dữ liệu: 175 câu không có trang, đều thuộc file tóm tắt). Nhờ vậy database đang chạy (máy dev, hosting) tự được đánh dấu khi chạy bản mới, không phải import lại (import lại bằng file dump sẽ xoá các lượt làm bài đã có). Từ đây về sau dùng trường `authored` trong file import, không dựa vào số trang.
+- API làm bài và API "Học" trả thêm `authored`. Giao diện hiện nhãn "Câu tự soạn" (màu vàng) cạnh "Câu N/M" ở trang làm bài (luyện tập, thi thử, xem lại) và trang Học. Đầu trang Học có thêm một dòng chú thích nhãn kèm số câu tự soạn của bài, khi bài có câu tự soạn. Nhãn nằm ngoài tiêu đề nên tên của câu cho trình đọc màn hình vẫn là "Câu N/M".
+- Chỉ đổi cách hiển thị: vẫn xáo trộn, chấm điểm như mọi câu; đổi nhãn của câu đã có người làm cũng được (không ảnh hưởng lựa chọn đã lưu).
+
 ### D-027 · Thời gian lưu theo UTC · Đã chốt (thuộc kế hoạch Phase 2 đã duyệt)
 - Entity dùng kiểu `Instant`; Hibernate tự điền `created_at` / `updated_at` (`@CreationTimestamp`, `@UpdateTimestamp`); `hibernate.jdbc.time_zone = UTC`.
 - Connector/J được đặt `connectionTimeZone=UTC` và `forceConnectionTimeZoneToSession=true`, nên phiên MySQL cũng dùng UTC: giá trị mặc định `CURRENT_TIMESTAMP(6)` trong bảng khớp với giá trị Hibernate ghi. Hai thuộc tính này nằm trong `spring.datasource.hikari.data-source-properties` (`application.yml`), không nằm trong URL, để profile `test` (có URL riêng) cũng được áp dụng.

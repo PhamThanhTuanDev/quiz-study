@@ -57,6 +57,7 @@ flowchart TD
 | Phương án điền khuyết | `AnswerContent`: mỗi chỗ trống (`blanks` từ API) một ô viền, chữ monospace (D-048) |
 | Đoạn code | `CodeBlock` tô màu cú pháp kiểu VS Code Dark+ bằng `codeHighlight.ts` (tự viết, không thêm thư viện, D-047); giữ nguyên thụt lề, cuộn ngang trên điện thoại |
 | Chế độ học | Trang `StudyPage` (D-044): cả bài trên một trang, đáp án đúng tô xanh, không chọn / không chấm; API riêng `/subjects/{slug}/chapters/{id}/study` |
+| Câu tự soạn | `AuthoredBadge`: nhãn "Câu tự soạn" cạnh "Câu N/M" khi API trả `authored = true` (câu không có trong tài liệu nguồn, D-053) |
 | Lint | Oxlint, mặc định của template `create-vite` (D-023) |
 | Thiết kế | Hướng "bàn học yên tĩnh" (D-028). Token màu trong `src/index.css`, component dùng class ngữ nghĩa (`bg-primary`, `text-muted`…) |
 | Tải dữ liệu | Hook `useAsync(load)` trả `loading` / `success` / `error` + `reload`; component `AsyncContent` hiển thị đúng trạng thái và giữ focus khi bấm "Thử lại". Chỉ thông điệp của `ApiError` (tiếng Việt) được hiện cho người dùng |

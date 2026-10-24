@@ -1,6 +1,6 @@
 # Thiết kế cơ sở dữ liệu
 
-> Trạng thái: đã duyệt. Bổ sung 2026-10-06: cột `answers.blanks` (`V3__add_answer_blanks.sql`, D-048). **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. **Phase 5 đã tạo các bảng làm bài** (`quizzes`, `quiz_results`, `user_answers`) bằng `V2__create_quiz_tables.sql`; `users` ở Phase 7 (khi đó thêm khoá ngoại `quizzes.created_by`, `quiz_results.user_id`).
+> Trạng thái: đã duyệt. Bổ sung 2026-10-06: cột `answers.blanks` (`V3__add_answer_blanks.sql`, D-048). Bổ sung 2026-10-24: cột `questions.is_authored` (`V4__add_question_authored.sql`, D-053). **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. **Phase 5 đã tạo các bảng làm bài** (`quizzes`, `quiz_results`, `user_answers`) bằng `V2__create_quiz_tables.sql`; `users` ở Phase 7 (khi đó thêm khoá ngoại `quizzes.created_by`, `quiz_results.user_id`).
 > DBMS: MySQL 8.0 (máy hiện có MySQL Server 8.0.46).
 
 ## 1. Mục tiêu thiết kế
@@ -81,6 +81,7 @@ erDiagram
         boolean shuffle_answers
         varchar status
         varchar review_note
+        boolean is_authored
         varchar source_file
         int source_page
         varchar source_label
@@ -188,6 +189,7 @@ Index: `(subject_id, display_order)`. Môn không chia chương thì tạo một
 | `shuffle_answers` | BOOLEAN | NOT NULL, mặc định TRUE | FALSE cho câu có "Tất cả đều đúng", "Cả 3 đáp án trên"… |
 | `status` | VARCHAR(20) | NOT NULL | `DRAFT` · `NEEDS_REVIEW` · `PUBLISHED` · `ARCHIVED`. Chỉ `PUBLISHED` được dùng trong bài thi |
 | `review_note` | VARCHAR(500) | NULL | Lý do cần duyệt, ví dụ "Tài liệu không có đáp án", "Chỉ tô đỏ một phần phương án A" |
+| `is_authored` | BOOLEAN | NOT NULL, mặc định FALSE | TRUE: câu soạn thêm, không có trong tài liệu nguồn (ví dụ câu tự soạn từ file tóm tắt, D-049); giao diện hiện nhãn "Câu tự soạn" (D-053) |
 | `source_file` | VARCHAR(255) | NULL | Tên file PDF gốc |
 | `source_page` | INT | NULL | Trang trong PDF |
 | `source_label` | VARCHAR(100) | NULL | Số câu gốc, ví dụ "Bài 10 – Câu 19 (lần 2)" |
@@ -343,6 +345,7 @@ Quy tắc khi import (kiểm tra **toàn bộ** file trước, có lỗi thì kh
 - Mọi trường bắt buộc phải có; độ dài không vượt cột trong database. `shuffleAnswers` bắt buộc ghi rõ.
 - Mỗi câu có ít nhất 2 phương án; câu `SINGLE_CHOICE` có tối đa 1 phương án đúng; câu `PUBLISHED` có **đúng 1** phương án đúng.
 - Thứ tự phương án giữ đúng thứ tự trong file (1 = A, 2 = B…).
+- Câu soạn thêm, không có trong tài liệu nguồn, ghi `"authored": true` (không bắt buộc, thiếu là false; D-053). Đổi được cả với câu đã có người làm.
 - Phương án của câu điền khuyết có thể ghi thêm `"blanks": ["if", "==", ":"]` (không bắt buộc, mỗi giá trị không được trống; D-048). `content` vẫn ghi đủ chữ của phương án.
 - `source.file` và `source.label` bắt buộc và không trùng trong một môn: đây là khoá để import lại khớp câu cũ với câu mới.
 - Slug đã có trong database: dừng, trừ khi chạy với `-Replace` để **cập nhật** môn đó (Phase 5, an toàn với bài làm đã có):
