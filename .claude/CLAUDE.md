@@ -11,9 +11,8 @@
 ## Stack (không đổi khi chưa được đồng ý)
 
 - Frontend: React + Vite + TypeScript + Tailwind CSS + React Router (chế độ SPA).
-- Backend chạy thật trên hosting: PHP 8.1+ thuần trong `backend-php/` (D-054), giữ nguyên API `/api/v1` của bản Java. Sửa API thì sửa cả hai bản cho khớp, hoặc hỏi chủ dự án có bỏ hẳn bản Java chưa.
-- Backend cũ: Java 25 (D-024) + Spring Boot (Web, Data JPA, Security, Bean Validation), Maven; còn dùng cho công cụ import môn.
-- Database: MySQL. Test: JUnit 5, Spring Boot Test, Vitest + React Testing Library, Playwright.
+- Backend: PHP 8.1+ thuần trong `backend-php/` (D-054), không framework, không Composer; chạy trên hosting cPanel. Bản Java/Spring Boot cũ **đã bỏ** (D-056): migration và import môn chạy qua API quản trị của bản PHP (`scripts/admin.mjs`).
+- Database: MySQL 8 trên máy, MariaDB 10.5 trên hosting. Test: `backend-php/tests/run.php`, Vitest + React Testing Library, Playwright.
 - **Cấm tự ý thêm:** Next.js, NestJS, MongoDB, Firebase, Supabase, Prisma, Redux, hoặc framework/database lớn khác.
 
 ## Nguyên tắc bắt buộc
@@ -42,8 +41,8 @@
 
 ## Backend (chi tiết: `.claude/rules/backend.md`)
 
-- **Controller → Service → Repository → Entity.** Controller mỏng, nghiệp vụ nằm ở Service.
-- API trả **DTO**, không trả Entity. Validate input bằng Bean Validation. Xử lý lỗi tập trung (`@RestControllerAdvice`, Problem Details).
+- Route mỏng (`lib/router.php`) → hàm nghiệp vụ theo nhóm (`content.php`, `attempts.php`, `import.php`…). SQL luôn bind tham số.
+- JSON trả về khớp kiểu trong `frontend/src/types/`. Lỗi trả Problem Details tiếng Việt, xử lý tập trung ở `handle_request`.
 - API làm bài **không bao giờ** trả `is_correct` trước khi nộp; chấm điểm ở server.
 
 ## Database (chi tiết: `.claude/rules/database.md`, `docs/database-design.md`)
@@ -56,24 +55,22 @@
 Có hiệu lực từ Phase 1; cập nhật khi thay đổi.
 
 - Frontend (`frontend/`): `npm run build` · `npm run test` · `npm run lint`
-  - E2E: `npm run test:e2e` (Playwright, Chrome đã cài; tự bật backend + frontend, cần MySQL và môn đã import). Chạy khi đổi luồng làm bài hoặc giao diện chính.
-- Backend PHP: `php backend-php/tests/run.php`; đóng gói hosting: `node scripts/build-hosting.mjs`.
-- Backend (`backend/`): `mvnw.cmd verify` (Windows) hoặc `./mvnw verify`. **Cần JDK 25** (`JAVA_HOME` trỏ JDK 25).
-  - `verify` chạy cả `QuizStudyApplicationTests` (profile `test`), nên cần MySQL và database `quiz_study_test`. Tạo database bằng `scripts/setup-database.ps1` (chủ dự án chạy, vì cần mật khẩu root). Máy 2 đã tạo xong.
-  - Test repository (`@DataJpaTest`) cũng chạy trên `quiz_study_test` thật (không Testcontainers, D-015), mỗi test tự rollback.
-  - Test không cần database: `mvnw.cmd test "-Dtest=HealthServiceTest,HealthControllerTest,GlobalExceptionHandlerTest"`.
-- Script trích xuất (`scripts/`, Python trong `scripts\.venv`): `scripts\.venv\Scripts\python scripts\extract_gdqp.py`. Script tự kiểm tra (số câu, đáp án, ghép lại phải bằng đúng toàn văn PDF) và dừng nếu sai. Import: `scripts\import-subject.ps1 -Slug <slug> [-Replace]`. Chi tiết: `scripts/README.md`.
+  - E2E: `npm run test:e2e` (Playwright, Chrome đã cài; tự bật backend PHP + frontend, cần PHP trong PATH, MySQL và môn đã import). Chạy khi đổi luồng làm bài hoặc giao diện chính.
+- Backend PHP: `php backend-php/tests/run.php`. Chạy trên máy: `php -S 127.0.0.1:8080 backend-php/dev-router.php` (đọc `.env`). Đóng gói hosting: `node scripts/build-hosting.mjs`.
+- Database (D-056): `node scripts/admin.mjs migrate` · `node scripts/admin.mjs import <slug> [--replace]`. Mặc định gửi tới server trên máy; hosting: đặt `QUIZ_ADMIN_URL` và `QUIZ_ADMIN_TOKEN` (xem `.env.example`). Tạo database và user `quiz_app` trên máy: `scripts/setup-database.ps1` (chủ dự án chạy, vì cần mật khẩu root).
+- Script trích xuất (`scripts/`, Python trong `scripts\.venv`): `scripts\.venv\Scripts\python scripts\extract_gdqp.py`. Script tự kiểm tra (số câu, đáp án, ghép lại phải bằng đúng toàn văn PDF) và dừng nếu sai. Chi tiết: `scripts/README.md`.
 - Dữ liệu môn Python (khi sửa `database/seed/python/` hoặc script `*_python_*`): `scripts\.venv\Scripts\python scripts\build_python_import.py` rồi `scripts\.venv\Scripts\python scripts\verify_python_answers.py` (đặt `$env:PYTHONIOENCODING='utf-8'` trước). Chi tiết: `scripts/README.md`.
 - Chỉ sửa tài liệu thì không cần build, nhưng kiểm tra link/đường dẫn trong tài liệu.
 
 ## Skill và agent (ECC, chi tiết: `docs/skills.md`)
 
-- Skill trong `.claude/skills/` (Spring Boot, JPA, MySQL, React, Vite, TDD, E2E, security, git…). Dùng khi đúng chủ đề.
+- Skill trong `.claude/skills/` (MySQL, React, Vite, TDD, E2E, security, git…; các skill Spring Boot / JPA / Java không còn dùng từ D-056). Dùng khi đúng chủ đề.
 - Agent trong `.claude/agents/` (planner, architect, code-reviewer, java-reviewer, typescript-reviewer, build-error-resolver, java-build-resolver, security-reviewer, tdd-guide, code-simplifier). **Chỉ gọi khi thật sự cần**: plan cho feature lớn, review trước khi báo hoàn thành một phần đáng kể, hoặc khi chủ dự án yêu cầu. Không gọi hàng loạt agent song song.
 
 ## Môi trường
 
 - Vị trí project: `D:\Learn\quiz-study` (D-018). Không đặt project trong thư mục được Google Drive/OneDrive đồng bộ. Bản cũ ở `G:\My Drive\HCMUTE\quiz-study` chỉ có Phase 0, **không dùng**.
-- Máy gốc: Windows 10; Node 26, Java 21 (**phải cài JDK 25** trước khi build backend, D-024), Maven 3.9, MySQL 8.0 (service `MySQL80`, cổng 3306; `mysql.exe` chưa có trong PATH), Git. Chưa có Docker và `gh`.
+- Cần trên máy: Node, PHP 8.1+ (có `pdo_mysql`, `mbstring`; chạy backend trên máy và E2E), MySQL 8, Python (`scripts\.venv`). Java/Maven không cần nữa (D-056).
+- Máy gốc: Windows 10; Node 26, Java 21, Maven 3.9, MySQL 8.0 (service `MySQL80`, cổng 3306; `mysql.exe` chưa có trong PATH), Git. Chưa có Docker và `gh`.
 - Máy 2 (Windows 11, kiểm tra ngày 2026-09-30): Node 24.20, `JAVA_HOME` (cấp User) = `C:\Program Files\Java\jdk-25.0.4`, MySQL 8.0.46 (`MySQL80`, cổng 3306; `mysql.exe` chưa có trong PATH; database và user `quiz_app` đã tạo; môn GDQP và Python đã import), `scripts\.venv` đã tạo (có PyMuPDF, NumPy, Matplotlib, Pandas), Maven 3.9.16, Git, Docker 29.8, Python 3.14 (dùng lệnh `py`). Chưa có `gh`.
-- Khi chạy trên máy khác: kiểm tra lại các công cụ trên (`node -v`, `java -version`, `mvn -v`, MySQL) trước khi làm tiếp. Không mặc định máy mới giống máy gốc.
+- Khi chạy trên máy khác: kiểm tra lại các công cụ trên (`node -v`, `php -v`, MySQL) trước khi làm tiếp. Không mặc định máy mới giống máy gốc.

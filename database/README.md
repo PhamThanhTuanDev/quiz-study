@@ -1,12 +1,12 @@
 # database/
 
-Tài nguyên hỗ trợ cho MySQL, **không** phải nơi đặt migration chính thức. Migration nằm trong backend (`backend/src/main/resources/db/migration/`, Flyway) để chạy cùng ứng dụng.
+Tài nguyên hỗ trợ cho MySQL, **không** phải nơi đặt migration chính thức. Migration nằm trong backend PHP (`backend-php/public/api/migrations/`), chạy bằng `node scripts/admin.mjs migrate` (D-056).
 
 ## Nội dung
 
 | Thư mục/file | Nội dung | Commit? |
 |---|---|---|
-| `init/01-create-database.sql` | Tạo database `quiz_study`, `quiz_study_test` và user `quiz_app`@`localhost` (chỉ có quyền trên hai database này). Mật khẩu là placeholder; chạy qua [scripts/setup-database.ps1](../scripts/setup-database.ps1) | Có |
+| `init/01-create-database.sql` | Tạo database `quiz_study`, `quiz_study_test` (dùng cho test của bản Java cũ, nay không cần) và user `quiz_app`@`localhost` (chỉ có quyền trên hai database này). Mật khẩu là placeholder; chạy qua [scripts/setup-database.ps1](../scripts/setup-database.ps1) | Có |
 | `seed/<slug>/subject.json` | Cấu hình trích xuất một môn: tên môn, tên bài, số câu mong đợi, quyết định về đáp án (ví dụ G1, G2 của GDQP) | Có |
 | `seed/<slug>/generated/` | Kết quả trích xuất: `import.json` (để import) và `review.md` (để duyệt). Chứa nội dung câu hỏi nên **không commit** (D-030); tạo lại bằng script trong `scripts/` | Không |
 

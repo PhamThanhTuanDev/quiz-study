@@ -10,7 +10,7 @@
 frontend/
 ├── index.html
 ├── package.json
-├── vite.config.ts        # plugin React + Tailwind; proxy /api -> http://localhost:8080
+├── vite.config.ts        # plugin React + Tailwind; proxy /api -> http://127.0.0.1:8080 (backend PHP)
 ├── tsconfig*.json        # strict: true
 └── src/
     ├── components/       # UI tái sử dụng (không gọi API trực tiếp)

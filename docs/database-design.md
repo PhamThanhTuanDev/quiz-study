@@ -1,7 +1,7 @@
 # Thiết kế cơ sở dữ liệu
 
-> Trạng thái: đã duyệt. Bổ sung 2026-10-06: cột `answers.blanks` (`V3__add_answer_blanks.sql`, D-048). Bổ sung 2026-10-24: cột `questions.is_authored` (`V4__add_question_authored.sql`, D-053). **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `backend/src/main/resources/db/migration/V1__create_content_tables.sql`. **Phase 5 đã tạo các bảng làm bài** (`quizzes`, `quiz_results`, `user_answers`) bằng `V2__create_quiz_tables.sql`; `users` ở Phase 7 (khi đó thêm khoá ngoại `quizzes.created_by`, `quiz_results.user_id`).
-> DBMS: MySQL 8.0 (máy hiện có MySQL Server 8.0.46).
+> Trạng thái: đã duyệt. Bổ sung 2026-10-06: cột `answers.blanks` (`V3__add_answer_blanks.sql`, D-048). Bổ sung 2026-10-24: cột `questions.is_authored` (`V4__add_question_authored.sql`, D-053). Bổ sung 2026-10-25: cột `questions.category`, `answers.media_id`, bảng `quiz_sections`, `media` (`V5__exam_sections_and_media.sql`, D-055). Migration nằm ở `backend-php/public/api/migrations/` (D-056). **Phase 2 đã tạo 4 bảng nội dung** (`subjects`, `chapters`, `questions`, `answers`) bằng migration `V1__create_content_tables.sql`. **Phase 5 đã tạo các bảng làm bài** (`quizzes`, `quiz_results`, `user_answers`) bằng `V2__create_quiz_tables.sql`; `users` ở Phase 7 (khi đó thêm khoá ngoại `quizzes.created_by`, `quiz_results.user_id`).
+> DBMS: MySQL 8.0 trên máy dev (MySQL Server 8.0.46), MariaDB 10.5 trên hosting.
 
 ## 1. Mục tiêu thiết kế
 
@@ -39,6 +39,8 @@ erDiagram
     quiz_results ||--|{ user_answers : "gồm các câu"
     questions ||--o{ user_answers : "được hỏi"
     answers |o--o{ user_answers : "được chọn"
+    quizzes ||--o{ quiz_sections : "chia phần"
+    media |o--o{ answers : "ảnh của phương án"
 
     users {
         bigint id PK
@@ -75,6 +77,7 @@ erDiagram
         bigint id PK
         bigint chapter_id FK
         varchar question_type
+        varchar category
         text content
         text code_snippet
         text explanation
@@ -94,6 +97,7 @@ erDiagram
         int display_order
         text content
         json blanks
+        bigint media_id FK
         boolean is_correct
         datetime created_at
         datetime updated_at
@@ -111,6 +115,20 @@ erDiagram
         boolean is_published
         datetime created_at
         datetime updated_at
+    }
+    quiz_sections {
+        bigint id PK
+        bigint quiz_id FK
+        int position
+        varchar title
+        varchar category
+        int question_count
+    }
+    media {
+        bigint id PK
+        char sha256 UK
+        varchar content_type
+        mediumblob data
     }
     quiz_results {
         bigint id PK
@@ -183,6 +201,7 @@ Index: `(subject_id, display_order)`. Môn không chia chương thì tạo một
 | `id` | BIGINT | **PK** | |
 | `chapter_id` | BIGINT | NOT NULL, **FK → chapters.id** (ON DELETE RESTRICT) | Biết môn qua chương |
 | `question_type` | VARCHAR(30) | NOT NULL | Hiện chỉ có `SINGLE_CHOICE`. Câu điền khuyết của tài liệu được chuyển thành trắc nghiệm A–D (D-026). Dạng khác (`MULTIPLE_CHOICE`…) thêm khi có môn cần, xem mục 8 |
+| `category` | VARCHAR(50) | NULL | Loại câu trong môn, dùng để rút câu cho từng phần của đề thi thử (D-055), ví dụ Python: `khai-niem`, `packages`, `ket-qua`, `bieu-do`, `dien-code`, `tim-loi`. Là dữ liệu của môn (file import khai báo), không phải enum. NULL: chưa xếp loại |
 | `content` | TEXT | NOT NULL | Nội dung đề, giữ nguyên chữ của tài liệu |
 | `code_snippet` | TEXT | NULL | Đoạn code kèm đề (Python). Hiển thị dạng `<pre>` giữ thụt lề |
 | `explanation` | TEXT | NULL | Giải thích (tài liệu hiện chưa có; để trống, **không tự viết**) |
@@ -195,9 +214,9 @@ Index: `(subject_id, display_order)`. Môn không chia chương thì tạo một
 | `source_label` | VARCHAR(100) | NULL | Số câu gốc, ví dụ "Bài 10 – Câu 19 (lần 2)" |
 | `created_at`, `updated_at` | DATETIME(6) | NOT NULL | |
 
-Index: `(chapter_id, status)`.
+Index: `(chapter_id, status)`, `(category, status)`.
 
-Quy tắc toàn vẹn (kiểm tra ở tầng Service, vì MySQL khó ràng buộc trực tiếp):
+Quy tắc toàn vẹn (kiểm tra khi import, hàm `validate_import`, vì MySQL khó ràng buộc trực tiếp):
 - `SINGLE_CHOICE` phải có ≥ 2 phương án và **đúng 1** phương án `is_correct = TRUE`.
 - Câu `PUBLISHED` phải qua kiểm tra trên. Câu không đạt thì giữ ở `DRAFT` / `NEEDS_REVIEW`.
 
@@ -210,10 +229,11 @@ Quy tắc toàn vẹn (kiểm tra ở tầng Service, vì MySQL khó ràng buộ
 | `display_order` | INT | NOT NULL | Thứ tự gốc (1 = A, 2 = B…). Nhãn A/B/C được **tính khi hiển thị**, không lưu, vì thứ tự có thể bị xáo trộn và nguồn có chỗ trùng nhãn (P8) |
 | `content` | TEXT | NOT NULL | Chữ đầy đủ của phương án (kể cả câu điền khuyết) |
 | `blanks` | JSON | NULL | Câu điền khuyết: giá trị từng chỗ trống theo thứ tự, ví dụ `["if", "==", ":"]` (D-048, migration `V3__add_answer_blanks.sql`); giao diện hiện mỗi chỗ trống một ô. NULL với phương án thường |
+| `media_id` | BIGINT | NULL, **FK → media.id** (ON DELETE RESTRICT) | Phương án là hình (ví dụ biểu đồ Matplotlib, D-055). `content` vẫn bắt buộc: mô tả hình (alt cho trình đọc màn hình, khoá so sánh khi import lại) |
 | `is_correct` | BOOLEAN | NOT NULL, mặc định FALSE | **Không bao giờ** trả về client trước khi nộp bài |
 | `created_at`, `updated_at` | DATETIME(6) | NOT NULL | |
 
-Ràng buộc: UNIQUE `(question_id, display_order)`. Số phương án không cố định (nguồn có câu 2 phương án, có câu tới 8), nên không dùng các cột cố định A/B/C/D.
+Ràng buộc: UNIQUE `(question_id, display_order)`. Index `media_id`. Số phương án không cố định (nguồn có câu 2 phương án, có câu tới 8), nên không dùng các cột cố định A/B/C/D.
 
 ### 4.6 `quizzes`: đề / bộ luyện tập
 Định nghĩa một đề: lấy câu từ đâu, bao nhiêu câu, bao lâu.
@@ -232,7 +252,7 @@ Ràng buộc: UNIQUE `(question_id, display_order)`. Số phương án không c�
 | `is_published` | BOOLEAN | NOT NULL, mặc định FALSE | |
 | `created_at`, `updated_at` | DATETIME(6) | NOT NULL | |
 
-MVP: khi import, tạo sẵn một đề luyện tập cho mỗi chương và một đề cho cả môn. Đề cố định (mọi người cùng bộ câu) để dành cho sau (xem mục 8).
+MVP: khi import, tạo sẵn một đề luyện tập cho mỗi chương và một đề cho cả môn. Đề cả môn có thể chia phần (`quiz_sections`, D-055); khi đó `question_count` là tổng số câu các phần. Đề cố định (mọi người cùng bộ câu) để dành cho sau (xem mục 8).
 
 ### 4.7 `quiz_results`: một lượt làm bài
 Mỗi lần người học bấm "Bắt đầu" sinh ra một dòng. Khi nộp bài, dòng này được cập nhật điểm.
@@ -268,6 +288,34 @@ Index: `(user_id, started_at)` cho trang lịch sử; `(quiz_id, score)` cho x�
 
 Ràng buộc: UNIQUE `(quiz_result_id, question_id)` và UNIQUE `(quiz_result_id, question_order)`.
 
+### 4.9 `quiz_sections`: các phần của đề (D-055)
+Đề thi thử theo cấu trúc đề thật, ví dụ Python: 20 câu khái niệm, 6 câu NumPy/Matplotlib/Pandas, 10 câu kết quả in ra… Mỗi lượt rút ngẫu nhiên đủ số câu của từng phần (câu `PUBLISHED` có `category` của phần, trong phạm vi đề), các phần nối nhau theo `position`, xáo trong từng phần. Đề không có dòng nào ở đây thì rút ngẫu nhiên như trước.
+
+| Cột | Kiểu | Ràng buộc | Ghi chú |
+|---|---|---|---|
+| `id` | BIGINT | **PK** | |
+| `quiz_id` | BIGINT | NOT NULL, **FK → quizzes.id** (ON DELETE CASCADE) | |
+| `position` | INT | NOT NULL | Thứ tự phần trong đề (1, 2…) |
+| `title` | VARCHAR(255) | NOT NULL | Tên phần, hiện trên thẻ đề và cạnh "Câu N/M" khi làm bài |
+| `category` | VARCHAR(50) | NOT NULL | Loại câu của phần (`questions.category`) |
+| `question_count` | INT | NOT NULL, CHECK > 0 | Số câu rút; phần có ít câu hơn thì lấy hết |
+| `created_at`, `updated_at` | DATETIME(6) | NOT NULL | |
+
+Ràng buộc: UNIQUE `(quiz_id, position)`. Import ghi lại toàn bộ các phần mỗi lần (từ `subject.exam` của file import).
+
+### 4.10 `media`: ảnh lưu trong database (D-055)
+Hosting chỉ có database và thư mục web; lưu ảnh trong database để import một file là đủ, không phải tải ảnh lên riêng.
+
+| Cột | Kiểu | Ràng buộc | Ghi chú |
+|---|---|---|---|
+| `id` | BIGINT | **PK** | |
+| `sha256` | CHAR(64) | NOT NULL, UNIQUE | Mã băm nội dung: ảnh trùng chỉ lưu một lần; địa chỉ ảnh `/api/v1/media/{sha256}` không bao giờ đổi nội dung nên trình duyệt lưu đệm lâu dài |
+| `content_type` | VARCHAR(50) | NOT NULL | `image/png`, `image/svg+xml`, `image/webp`, `image/jpeg` |
+| `data` | MEDIUMBLOB | NOT NULL | Tối đa 1 MB mỗi ảnh (import kiểm tra) |
+| `created_at` | DATETIME(6) | NOT NULL | |
+
+Import tự xoá ảnh không còn phương án nào dùng.
+
 ## 5. Quan hệ giữa các bảng
 
 | Quan hệ | Kiểu | Giải thích |
@@ -283,6 +331,8 @@ Ràng buộc: UNIQUE `(quiz_result_id, question_id)` và UNIQUE `(quiz_result_id
 | QuizResult → UserAnswer | 1 – N | Một lượt gồm nhiều câu |
 | Question → UserAnswer | 1 – N | Một câu xuất hiện trong nhiều lượt làm |
 | Answer → UserAnswer | 0..1 – N | Phương án được chọn (có thể bỏ trống) |
+| Quiz → QuizSection | 1 – N | Đề thi thử chia phần (có thể không có phần nào) |
+| Media → Answer | 0..1 – N | Một ảnh dùng cho nhiều phương án (cùng nội dung) |
 
 ## 6. Ví dụ ánh xạ từ tài liệu nguồn
 
@@ -303,10 +353,10 @@ PDF (chỉ đọc) ──scripts/extract_<môn>.py──► database/seed/<slug>
                                             (không commit; tạo lại từ PDF bất cứ lúc nào)
        database/seed/<slug>/subject.json ──┘  (commit: tên môn, tên bài, quyết định về đáp án)
 
-import.json ──scripts/import-subject.ps1──► backend kiểm tra toàn bộ ──► ghi trong một transaction
+import.json ──node scripts/admin.mjs import <slug>──► POST /api/v1/admin/import ──► kiểm tra toàn bộ ──► ghi trong một transaction
 ```
 
-Định dạng `import.json` (khớp `SubjectImportFile` ở backend; ví dụ đầy đủ với dữ liệu giả: `backend/src/test/resources/import/sample-subject.json`):
+Định dạng `import.json` (kiểm tra ở `backend-php/public/api/lib/import.php`, hàm `validate_import`):
 
 ```json
 {
@@ -347,13 +397,16 @@ Quy tắc khi import (kiểm tra **toàn bộ** file trước, có lỗi thì kh
 - Thứ tự phương án giữ đúng thứ tự trong file (1 = A, 2 = B…).
 - Câu soạn thêm, không có trong tài liệu nguồn, ghi `"authored": true` (không bắt buộc, thiếu là false; D-053). Đổi được cả với câu đã có người làm.
 - Phương án của câu điền khuyết có thể ghi thêm `"blanks": ["if", "==", ":"]` (không bắt buộc, mỗi giá trị không được trống; D-048). `content` vẫn ghi đủ chữ của phương án.
+- Đề thi thử chia phần (D-055, không bắt buộc): `subject.exam = { "timeLimitMinutes": 60, "sections": [{ "category": "khai-niem", "title": "Khái niệm cơ bản", "questionCount": 20 }, …] }`. Loại câu không trùng giữa các phần; mỗi loại phải có ít nhất 1 câu `PUBLISHED`. Không có `exam`: đề cả môn 40 câu / 45 phút, rút ngẫu nhiên.
+- Câu có thể ghi `"category"` (chữ thường, số, gạch ngang; tối đa 50 ký tự) để thuộc một phần của đề.
+- Phương án là hình ghi thêm `"image": { "contentType": "image/png", "data": "<base64>" }` (tối đa 1 MB); `content` là mô tả hình.
 - `source.file` và `source.label` bắt buộc và không trùng trong một môn: đây là khoá để import lại khớp câu cũ với câu mới.
-- Slug đã có trong database: dừng, trừ khi chạy với `-Replace` để **cập nhật** môn đó (Phase 5, an toàn với bài làm đã có):
+- Slug đã có trong database: dừng, trừ khi chạy với `--replace` để **cập nhật** môn đó (Phase 5, an toàn với bài làm đã có):
   - Bài khớp theo `displayOrder`; câu khớp theo nguồn. Câu khớp được thì sửa tại chỗ, giữ id câu và id phương án (số phương án đổi thì ghi lại phương án, trừ khi câu đã có người làm: báo lỗi).
   - Câu đã có người làm: phương án khớp theo vị trí nên chỉ được đổi đáp án đúng, sửa ký tự in ấn (D-043), hoặc đổi cách viết khi phương án khai báo thêm `"previousContent"` (nội dung cũ, không bắt buộc, không lưu vào database; D-046) và nội dung cũ đó khớp phương án đang lưu ở cùng vị trí. Khác đi (ví dụ tài liệu đảo thứ tự phương án) thì báo lỗi.
   - Câu không còn trong file: xoá nếu chưa ai làm; đã có người làm thì chuyển `ARCHIVED`.
   - Bài không còn trong file: xoá cùng đề của bài; nếu bài còn câu hoặc đề đã có người làm thì báo lỗi.
-- Mỗi lần import tạo/cập nhật đề mặc định: mỗi bài một đề `PRACTICE`, cả môn một đề `EXAM` (số câu, thời gian: `quiz.defaults` trong `application.yml`).
+- Mỗi lần import tạo/cập nhật đề mặc định: mỗi bài một đề `PRACTICE` 20 câu, cả môn một đề `EXAM` (40 câu / 45 phút, hoặc theo `subject.exam`). Ảnh không còn phương án nào dùng bị xoá.
 
 ## 8. Chưa làm ngay, để mở rộng sau
 
@@ -362,12 +415,12 @@ Quy tắc khi import (kiểm tra **toàn bộ** file trước, có lỗi thì kh
 | Câu nhiều đáp án đúng (`MULTIPLE_CHOICE`) | Thêm bảng `user_answer_choices (user_answer_id, answer_id)` |
 | Câu điền khuyết (`FILL_IN_BLANK`) | Dùng `answers` làm danh sách đáp án chấp nhận; thêm cột `user_answers.text_answer` |
 | Đề cố định (mọi người cùng bộ câu) | Thêm bảng `quiz_questions (quiz_id, question_id, question_order)` |
-| Ảnh trong câu hỏi | Thêm cột `image_url` hoặc bảng `question_media` |
+| Ảnh trong đề câu hỏi | Đã có bảng `media` (ảnh của phương án, D-055); thêm cột `questions.media_id` khi cần |
 | Thẻ / độ khó | Thêm `tags`, `question_tags` hoặc cột `difficulty` |
 | Xếp hạng, thống kê (Phase 9) | Tính từ `quiz_results` / `user_answers`; chỉ thêm bảng tổng hợp khi thật sự chậm |
 
 ## 9. Quản lý thay đổi schema
 
-Dùng **Flyway** (D-009): mỗi thay đổi schema là một file SQL có đánh số trong `backend/src/main/resources/db/migration/` (`V1__create_content_tables.sql`, sau này `V2__create_quiz_tables.sql`…), chạy tự động khi backend khởi động, và được lưu trong Git. Hibernate chỉ để `ddl-auto=validate` (kiểm tra entity khớp schema, không tự sửa bảng).
+Mỗi thay đổi schema là một file SQL có đánh số trong `backend-php/public/api/migrations/` (`V1__create_content_tables.sql` … `V5__exam_sections_and_media.sql`), lưu trong Git và có trong gói tải lên hosting. Chạy bằng `node scripts/admin.mjs migrate` (API quản trị, D-056): chỉ chạy file có version chưa ghi trong bảng `flyway_schema_history`. Bảng này giữ đúng cấu trúc và cách tính checksum của Flyway (D-009, thời bản Java), nên database đã tạo bằng bản Java dùng tiếp được.
 
-Quy tắc: **không sửa file migration đã chạy**. Flyway lưu checksum của từng file trong bảng `flyway_schema_history`; sửa file cũ sẽ làm backend không khởi động được. Muốn đổi schema thì tạo file mới với số tiếp theo.
+Quy tắc: **không sửa file migration đã chạy**; muốn đổi schema thì tạo file mới với số tiếp theo. Migration phải chạy được trên MySQL 8 và MariaDB 10.5 (không ghi `COLLATE utf8mb4_0900_ai_ci`). Lệnh đổi cấu trúc bảng tự commit nên không rollback được: migration lỗi giữa chừng thì API báo câu lệnh lỗi, phải sửa tay rồi chạy lại.

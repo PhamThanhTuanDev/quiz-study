@@ -3,6 +3,7 @@
 > Nguồn: [affaan-m/ECC](https://github.com/affaan-m/ECC), phiên bản **2.2.2**, commit `c70874f` (2026-09-29).
 > Phạm vi cài: **chỉ project này** (`quiz-study/.claude/`). Không cài gì vào `~/.claude` (toàn máy).
 > Đã cài: **21 skill + 10 agent**. **Không** cài hooks, rules, commands, MCP của ECC.
+> Từ 2026-10-25 backend là PHP (D-056): các skill / agent Java, Spring Boot, JPA, Maven bên dưới vẫn còn trong `.claude/` nhưng không dùng nữa.
 
 ## 1. Tại sao cài chọn lọc, và cài bằng cách nào
 

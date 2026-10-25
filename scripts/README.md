@@ -13,7 +13,9 @@ Chạy mọi lệnh bên dưới từ thư mục gốc project, trong PowerShell
 | `extract_python_pages.py` | Xuất text đã đánh số dòng + ảnh của mọi trang trắc nghiệm môn Python → `database/seed/python/generated/pages/` (để lập bản đồ vị trí) |
 | `build_python_import.py` | Dựng câu hỏi môn Python từ bản đồ vị trí `database/seed/python/questions/bai-NN.json` → `generated/import.json` + `review.md` |
 | `verify_python_answers.py` | Kiểm chứng đáp án môn Python bằng cách **chạy thật** code (D-020, D-026) |
-| `import-subject.ps1` | Import một môn vào database dev từ `database/seed/<slug>/generated/import.json` |
+| `chart_render.py` | Vẽ code Matplotlib thành ảnh PNG (chế độ Agg, 80 dpi, PNG giống hệt nhau giữa các lần chạy) cho câu "kết quả biểu đồ" (D-055) |
+| `admin.mjs` | Gửi lệnh tới API quản trị của backend PHP (D-056): `migrate` (chạy migration database), `import <slug> [--replace]` (nạp `database/seed/<slug>/generated/import.json`). Server trên máy hoặc hosting, xem bên dưới |
+| `build-hosting.mjs` | Build frontend và gói cùng `backend-php/public` thành `build/quiz-study-hosting.zip` để tải lên hosting (D-054) |
 | `generate-pwa-icons.ps1` | Tạo icon PNG cho PWA (`frontend/public/icons/`) từ `frontend/public/favicon.svg` và `scripts/pwa-icons/icon-maskable.svg`, bằng Chrome headless có sẵn (D-040). Chạy lại khi đổi logo |
 
 ## Tạo database (một lần mỗi máy)
@@ -42,13 +44,23 @@ scripts\.venv\Scripts\python scripts\extract_gdqp.py
 Script tự kiểm tra (số bài, số câu từng bài, đủ phương án A–D, đúng 1 đáp án, nội dung có nguyên văn trong PDF). Sai ở đâu thì **dừng, không ghi file** và liệt kê lỗi.
 Kết quả nằm trong `database/seed/gdqp/generated/` (không commit, D-030). Đọc `review.md` để duyệt các câu đặc biệt.
 
-**3. Import vào database dev** (backend không cần đang chạy):
+**3. Import vào database** (backend PHP phải đang chạy: trên máy là `php -S 127.0.0.1:8080 backend-php/dev-router.php`):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\import-subject.ps1 -Slug gdqp
+node scripts\admin.mjs migrate            # database mới, hoặc có migration mới
+node scripts\admin.mjs import gdqp
 ```
 
-Môn đã có trong database thì thêm `-Replace` để **cập nhật** môn đó: câu khớp theo nguồn (file + nhãn) được sửa tại chỗ, câu mới được thêm, câu không còn trong file bị xoá nếu chưa ai làm, còn nếu đã có người làm thì chuyển `ARCHIVED` (không xoá). Mỗi lần import cũng tạo/cập nhật đề mặc định (mỗi bài một đề luyện tập, cả môn một đề thi thử; số câu và thời gian trong `backend/src/main/resources/application.yml`, mục `quiz.defaults`). File có lỗi, hoặc có thay đổi không làm an toàn được (ví dụ đổi số phương án của câu đã có người làm), thì không ghi gì và liệt kê mọi lỗi.
+Môn đã có trong database thì thêm `--replace` để **cập nhật** môn đó: câu khớp theo nguồn (file + nhãn) được sửa tại chỗ, câu mới được thêm, câu không còn trong file bị xoá nếu chưa ai làm, còn nếu đã có người làm thì chuyển `ARCHIVED` (không xoá). Mỗi lần import cũng tạo/cập nhật đề mặc định: mỗi bài một đề luyện tập 20 câu; cả môn một đề thi thử, mặc định 40 câu / 45 phút, hoặc theo cấu trúc `exam` của môn (D-055, xem mục Python). File có lỗi, hoặc có thay đổi không làm an toàn được (ví dụ đổi số phương án của câu đã có người làm), thì không ghi gì và liệt kê mọi lỗi.
+
+**Gửi tới hosting** thay vì server trên máy: đặt trong `.env` (hoặc `$env:...` của cửa sổ PowerShell)
+
+```
+QUIZ_ADMIN_URL=https://<tên miền>
+QUIZ_ADMIN_TOKEN=<admin_token trong api/config.php trên hosting>
+```
+
+rồi chạy đúng các lệnh trên. Bỏ hai dòng này (hoặc để trống) là quay về server trên máy.
 
 Quyết định về dữ liệu (tên môn, tên bài, đáp án của câu tô đỏ không rõ) nằm trong `database/seed/<slug>/subject.json` (có commit). Sửa file này rồi chạy lại bước 2 và 3.
 
@@ -61,7 +73,7 @@ $env:PYTHONIOENCODING = 'utf-8'
 scripts\.venv\Scripts\python scripts\extract_python_pages.py      # chỉ cần khi lập hoặc sửa bản đồ
 scripts\.venv\Scripts\python scripts\build_python_import.py       # thêm --allow-incomplete khi chưa đủ 10 bài
 scripts\.venv\Scripts\python scripts\verify_python_answers.py     # hoặc chỉ vài câu: ... w05-hw/4/15
-powershell -ExecutionPolicy Bypass -File scripts\import-subject.ps1 -Slug python -Replace
+node scripts\admin.mjs import python --replace
 ```
 
 - `build_python_import.py` dừng và không ghi file nếu có lỗi: mã dòng sai, dòng của trang trắc nghiệm chưa được dùng (hoặc dùng hai lần), số câu không khớp, câu `PUBLISHED` không có đúng 1 đáp án.
@@ -98,5 +110,17 @@ Câu Claude soạn từ tài liệu không phải slide PDF (ví dụ file tóm 
 - `reason` hiện cho người học trong phần giải thích.
 - Trong `import.json`, câu tự soạn có `"authored": true`, nên giao diện hiện nhãn "Câu tự soạn" (D-053).
 - Kiểm chứng `output`: chạy code của đề (thêm `setup` / `stdin` nếu cần), kết quả phải bằng `expect`, và chỉ phương án đáp án khớp: in ra giống hệt, hoặc nêu đúng tên lỗi (`expect` dạng `"ERROR: ValueError"`, phương án "Báo lỗi ValueError").
+
+### Đề thi thử chia phần và câu biểu đồ (D-055)
+
+- Cấu trúc đề nằm ở `subject.exam` trong `subject.json`: thời gian và các phần theo thứ tự (`category`, `title`,
+  `questionCount`). Mỗi lượt thi rút ngẫu nhiên đủ số câu của từng phần, các phần nối nhau theo thứ tự, xáo trong từng phần.
+- Mỗi câu có một loại (`category`). Ghi tay trong bản đồ / file tự soạn (`"category": "bieu-do"`), hoặc để script xếp tự
+  động: đề hỏi dòng lỗi → `tim-loi`; câu điền khuyết → `dien-code`; có code và hỏi kết quả → `ket-qua`; còn lại là câu lý
+  thuyết, lấy `theoryCategory` của bài (`khai-niem` hoặc `packages`). Loại không có trong `subject.json` thì script dừng.
+- Câu "đoạn code vẽ ra hình nào" (file tự soạn): thay `options` bằng `chartOptions`, 4 mục `{"alt": "mô tả hình", "code": …}`.
+  `code: null` là hình của chính code trong đề (đáp án); 3 hình sai, mỗi hình đổi một chi tiết. Script vẽ từng hình bằng
+  `chart_render.py` và nhúng PNG vào `import.json` (`image`); `alt` là chữ của phương án, dùng cho trình đọc màn hình.
+  Kiểm chứng `chart` (tự sinh) vẽ lại, so điểm ảnh: chỉ phương án đáp án ra hình giống code của đề.
 
 Nguyên tắc xử lý dữ liệu nguồn: [.claude/rules/source-material.md](../.claude/rules/source-material.md).
