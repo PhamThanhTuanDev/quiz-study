@@ -8,3 +8,17 @@ afterEach(() => {
   cleanup()
   window.localStorage.clear()
 })
+
+// jsdom chưa có showModal / close của <dialog> (hộp xem hình phóng to): giả lập phần test cần là mở / đóng.
+// Giữ focus trong hộp và Esc để đóng là việc của trình duyệt thật, kiểm tra bằng E2E.
+if (!('showModal' in HTMLDialogElement.prototype)) {
+  Object.assign(HTMLDialogElement.prototype, {
+    showModal(this: HTMLDialogElement) {
+      this.open = true
+    },
+    close(this: HTMLDialogElement) {
+      this.open = false
+      this.dispatchEvent(new Event('close'))
+    },
+  })
+}

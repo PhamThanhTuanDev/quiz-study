@@ -20,6 +20,7 @@ Kết quả (không commit, D-030): database/seed/python/generated/import.json v
 
 from __future__ import annotations
 
+import base64
 import json
 import re
 import statistics
@@ -29,6 +30,7 @@ from pathlib import Path
 
 import pymupdf
 
+from chart_render import ChartError, image_hash, render_png
 from python_source import GENERATED_DIR, SEED_DIR, PageLine, load_config, page_lines, quiz_page_numbers, source_path
 
 MAPS_DIR = SEED_DIR / "questions"
@@ -47,6 +49,16 @@ INDENT_TOLERANCE = 5.0
 
 # Phương án phụ thuộc vị trí: xáo trộn sẽ làm sai nghĩa (D-034 giữ quy tắc của GDQP).
 POSITION_DEPENDENT_RE = re.compile(r"tất cả|cả\s+(3|ba|2|hai|4|bốn)\b|(đáp án|phương án|ý)\s+trên", re.IGNORECASE)
+
+
+# Xếp loại câu cho đề thi thử chia phần (D-055). Câu có thể ghi "category" để chọn tay; không ghi thì xếp tự động:
+# tìm dòng lỗi → điền code → kết quả (có code, hỏi kết quả) → lý thuyết (loại lý thuyết của bài, trong subject.json).
+ERROR_LINE_RE = re.compile(r"dòng (nào|số|lệnh thứ)|lỗi ở dòng", re.IGNORECASE)
+FILL_STEM_RE = re.compile(r"^\s*(Điền|Hoàn (thành|thiện))", re.IGNORECASE)
+OUTPUT_STEM_RE = re.compile(r"kết quả|in ra|giá trị|output|xuất ra|trả về|thu được|bằng bao nhiêu", re.IGNORECASE)
+CATEGORY_ERROR_LINE = "tim-loi"
+CATEGORY_FILL = "dien-code"
+CATEGORY_OUTPUT = "ket-qua"
 
 
 # Nhóm câu cần duyệt trong review.md, để chủ dự án có thể quyết cả nhóm một lần.
@@ -91,6 +103,10 @@ class Question:
     explanation: str | None = None
     # Cách viết cũ của từng phương án (cùng vị trí với options), khi chỉ đổi cách viết (D-046); None nếu không đổi.
     previous_options: list[str] | None = None
+    # Loại câu trong đề thi thử chia phần (D-055), ví dụ "ket-qua"; ghi tay trong bản đồ hoặc xếp tự động.
+    category: str | None = None
+    # Câu "kết quả biểu đồ" (D-055): ảnh PNG của từng phương án (cùng vị trí với options); None với câu thường.
+    option_images: list[bytes] | None = None
 
 
 # ---------------------------------------------------------------- Văn bản
@@ -483,18 +499,28 @@ def build_authored_question(sources: dict[str, dict], chapter: int, entry: dict)
     if len(parts) != 3 or parts[0] not in sources or not parts[2].isdigit():
         raise MapError(f"ref '{ref}' phải có dạng <nguồn>/<mục>/<số câu>, nguồn có trong authoredSources")
     source, section, number = sources[parts[0]], parts[1], int(parts[2])
-    options = list(entry.get("options", []))
+    chart = entry.get("chartOptions")
+    verify = entry.get("verify")
+    if chart is not None:
+        # Câu "kết quả biểu đồ" (D-055): phương án là hình do code vẽ ra; chữ của phương án là mô tả hình (đọc màn
+        # hình, import lại). code = null: vẽ đúng code của đề (đáp án).
+        options = [str(option.get("alt", "")).strip() for option in chart]
+        verify = {"kind": "chart", "setup": entry.get("setup", ""), "optionCodes": [option.get("code") for option in chart]}
+    else:
+        options = list(entry.get("options", []))
     if len(options) != 4 or len(set(options)) != 4:
         raise MapError("câu tự soạn phải có đúng 4 phương án khác nhau")
     answer = entry.get("answer")
     if answer not in LETTERS[:4]:
         raise MapError("câu tự soạn phải có đáp án A–D")
     reason = str(entry.get("reason", "")).strip()
+    # Nhãn nguồn: "Tóm tắt mục 2.5 – Câu 1"; nguồn có "sectionWord": "" (ví dụ slide) thì "Ví dụ slide NumPy tr.17 – Câu 1".
+    word = source.get("sectionWord", "mục")
     question = Question(
         ref=ref, chapter=chapter, source=source, page=None, number=number,
-        label=f"{source['label']} mục {section} – Câu {number}", content=entry.get("content", ""),
+        label=f"{source['label']} {word + ' ' if word else ''}{section} – Câu {number}", content=entry.get("content", ""),
         code=entry.get("code"), options=options, answer=LETTERS.index(answer), status="PUBLISHED", review_note=None,
-        kind="authored", fill_values=None, reason=reason, verify=entry.get("verify"), duplicate_of=None,
+        kind="authored", fill_values=None, reason=reason, verify=verify, duplicate_of=None,
         explanation=reason or None,
     )
     question.shuffle = not any(POSITION_DEPENDENT_RE.search(option) for option in options)
@@ -502,8 +528,8 @@ def build_authored_question(sources: dict[str, dict], chapter: int, entry: dict)
     return question
 
 
-def build_all(allow_incomplete: bool) -> tuple[dict, list[Question], list[str], list[str]]:
-    """Trả về (config, câu hỏi, lỗi, bài chưa có bản đồ)."""
+def build_all(allow_incomplete: bool, render_charts: bool = True) -> tuple[dict, list[Question], list[str], list[str]]:
+    """Trả về (config, câu hỏi, lỗi, bài chưa có bản đồ). render_charts: vẽ ảnh phương án của câu biểu đồ."""
     config = load_config()
     sources = {s["key"]: s for s in config["sources"]}
     pages = Pages(sources)
@@ -521,6 +547,7 @@ def build_all(allow_incomplete: bool) -> tuple[dict, list[Question], list[str], 
             except (MapError, ValueError) as error:
                 errors.append(f"{data['_path'].name} · {entry.get('ref', '?')}: {error}")
                 continue
+            question.category = entry.get("category")
             questions.append(question)
             mark_used(used, question.source["key"], question.used_lines, question.ref, errors)
         for page_ref, ignored in data.get("ignore", {}).items():
@@ -538,16 +565,57 @@ def build_all(allow_incomplete: bool) -> tuple[dict, list[Question], list[str], 
             continue
         for entry in data.get("questions", []):
             try:
-                questions.append(build_authored_question(authored_sources, data["chapter"], entry))
-            except (MapError, KeyError, TypeError, ValueError) as error:
+                question = build_authored_question(authored_sources, data["chapter"], entry)
+                question.category = entry.get("category")
+                if render_charts and question.verify and question.verify.get("kind") == "chart":
+                    attach_chart_images(question)
+                questions.append(question)
+            except (MapError, KeyError, TypeError, ValueError, ChartError) as error:
                 errors.append(f"{data['_path'].name} · {entry.get('ref', '?')}: {error}")
 
+    classify_all(config, questions, errors)
     check_coverage(config, pages, mapped_chapters, used, errors)
     check_duplicates(questions, errors)
     missing = [str(c["number"]) for c in config["chapters"] if c["number"] not in mapped_chapters]
     if missing and not allow_incomplete:
         errors.append(f"các bài chưa có bản đồ vị trí: {', '.join(missing)}")
     return config, questions, errors, missing
+
+
+def attach_chart_images(q: Question) -> None:
+    """Vẽ hình của 4 phương án. Đáp án vẽ đúng code của đề; mỗi phương án sai phải ra hình khác hình đáp án."""
+    spec = q.verify
+    if not q.code:
+        raise MapError("câu biểu đồ phải có code")
+    codes = [code if code is not None else q.code for code in spec["optionCodes"]]
+    if [i for i, code in enumerate(spec["optionCodes"]) if code is None] != [q.answer]:
+        raise MapError("câu biểu đồ: đúng phương án đáp án (và chỉ nó) để code = null (vẽ code của đề)")
+    q.option_images = [render_png(code, spec.get("setup", "")) for code in codes]
+    hashes = [image_hash(png) for png in q.option_images]
+    if len(set(hashes)) != len(hashes):
+        raise MapError("câu biểu đồ: có hai phương án ra hình giống hệt nhau")
+
+
+def classify_all(config: dict, questions: list[Question], errors: list[str]) -> None:
+    """Xếp loại mọi câu (D-055); loại phải có trong cấu trúc đề (subject.exam) hoặc là loại lý thuyết của bài."""
+    theory = {c["number"]: c.get("theoryCategory") for c in config["chapters"]}
+    allowed = {s["category"] for s in config["subject"].get("exam", {}).get("sections", [])} | {t for t in theory.values() if t}
+    for q in questions:
+        if q.duplicate_of:
+            continue
+        q.category = q.category or classify(q, theory.get(q.chapter))
+        if allowed and q.category not in allowed:
+            errors.append(f"{q.ref}: loại câu '{q.category}' không có trong subject.json (exam.sections / theoryCategory)")
+
+
+def classify(q: Question, theory_category: str | None) -> str | None:
+    if ERROR_LINE_RE.search(q.content):
+        return CATEGORY_ERROR_LINE
+    if q.kind == "fill" or q.fill_values or FILL_STEM_RE.search(q.content) or "điền khuyết" in q.label:
+        return CATEGORY_FILL
+    if q.code and OUTPUT_STEM_RE.search(q.content):
+        return CATEGORY_OUTPUT
+    return theory_category
 
 
 def mark_used(used: dict, key: str, lines: list[tuple[int, str]], owner: str, errors: list[str]) -> None:
@@ -605,6 +673,7 @@ def question_json(q: Question) -> dict:
         "reviewNote": q.review_note,
         # Câu tự soạn (D-049) không có trong tài liệu nguồn: giao diện hiện nhãn "Câu tự soạn" (D-053).
         "authored": q.kind == "authored",
+        "category": q.category,
         "source": {"file": q.source["file"], "page": q.page, "label": q.label},
         "answers": [answer_json(q, i) for i in range(len(q.options))],
     }
@@ -618,6 +687,9 @@ def answer_json(q: Question, index: int) -> dict:
     if q.fill_values:
         # Giá trị từng chỗ trống (D-048): giao diện hiện mỗi chỗ trống một ô; content giữ chữ đầy đủ.
         answer["blanks"] = q.fill_values[index]
+    if q.option_images:
+        # Phương án là hình biểu đồ (D-055); content là mô tả hình.
+        answer["image"] = {"contentType": "image/png", "data": base64.b64encode(q.option_images[index]).decode("ascii")}
     return answer
 
 
@@ -649,7 +721,7 @@ def write_review(config: dict, questions: list[Question], missing: list[str], pa
         out += ["", f"## Bài {chapter['number']}: {chapter['title']}", ""]
         for q in items:
             page = f"trang {q.page}" if q.page is not None else "tự soạn"
-            out += [f"### {q.label} · {page} · {q.status}", "", q.content, ""]
+            out += [f"### {q.label} · {page} · {q.status} · loại `{q.category}`", "", q.content, ""]
             if q.code:
                 out += ["```python", q.code, "```", ""]
             for i, option in enumerate(q.options):
@@ -679,6 +751,11 @@ def main() -> int:
     kept = [q for q in questions if not q.duplicate_of]
     print(f"OK: {len(kept)} câu ({sum(q.status == 'PUBLISHED' for q in kept)} PUBLISHED, "
           f"{sum(q.status != 'PUBLISHED' for q in kept)} cần duyệt), {len(questions) - len(kept)} câu trùng bỏ qua.")
+    by_category: dict[str, int] = {}
+    for q in kept:
+        if q.status == "PUBLISHED":
+            by_category[q.category or "(chưa xếp)"] = by_category.get(q.category or "(chưa xếp)", 0) + 1
+    print("  Câu PUBLISHED theo loại: " + ", ".join(f"{k} {v}" for k, v in sorted(by_category.items())))
     if missing:
         print(f"Chưa có bản đồ: bài {', '.join(missing)}. Không ghi import.json (đang làm dở).")
     else:

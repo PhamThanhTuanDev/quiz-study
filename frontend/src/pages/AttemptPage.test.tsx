@@ -12,12 +12,13 @@ function question(questionId: number, order: number, extra: Partial<AttemptQuest
     content: `Nội dung câu ${order}`,
     codeSnippet: null,
     answers: [
-      { id: questionId * 10 + 1, content: `Phương án 1 của câu ${order}`, blanks: null },
-      { id: questionId * 10 + 2, content: `Phương án 2 của câu ${order}`, blanks: null },
+      { id: questionId * 10 + 1, content: `Phương án 1 của câu ${order}`, blanks: null, imageUrl: null },
+      { id: questionId * 10 + 2, content: `Phương án 2 của câu ${order}`, blanks: null, imageUrl: null },
     ],
     selectedAnswerId: null,
     feedback: null,
     authored: false,
+    sectionTitle: null,
     ...extra,
   }
 }
@@ -321,6 +322,63 @@ describe('AttemptPage – thi thử', () => {
     expect(await screen.findByRole('region', { name: 'Kết quả' })).toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('Đã hết giờ làm bài.')
     expect(screen.getByRole('radio', { name: /Phương án 1 của câu 1/ })).not.toBeChecked()
+  })
+})
+
+describe('AttemptPage – đề chia phần và phương án là hình (D-055)', () => {
+  const CHART = question(3, 1, {
+    content: 'Đoạn code sau vẽ ra hình nào?',
+    codeSnippet: 'plt.plot([2, 7], [1, 9])',
+    sectionTitle: 'Kết quả biểu đồ Matplotlib',
+    answers: [
+      { id: 31, content: 'Đoạn thẳng đi lên', blanks: null, imageUrl: '/api/v1/media/aaa' },
+      { id: 32, content: 'Đoạn thẳng đi xuống', blanks: null, imageUrl: '/api/v1/media/bbb' },
+    ],
+  })
+  const CHART_EXAM = { ...EXAM, questions: [CHART, question(2, 2, { sectionTitle: 'Tìm dòng bị báo lỗi' })] }
+
+  it('shows the section of the question next to its number', async () => {
+    mockApi({ 'GET /api/v1/attempts/luot-1': CHART_EXAM })
+    renderRoute('/attempts/luot-1')
+
+    expect(await screen.findByRole('heading', { name: 'Câu 1/2' })).toBeInTheDocument()
+    expect(screen.getByText('Kết quả biểu đồ Matplotlib')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Câu sau →' }))
+    expect(screen.getByText('Tìm dòng bị báo lỗi')).toBeInTheDocument()
+  })
+
+  it('shows each option as a picture described by its text, and picks it on click', async () => {
+    mockApi({
+      'GET /api/v1/attempts/luot-1': CHART_EXAM,
+      'PUT /api/v1/attempts/luot-1/answers/3': { questionId: 3, selectedAnswerId: 32, feedback: null },
+    })
+    renderRoute('/attempts/luot-1')
+
+    const picture = await screen.findByRole('img', { name: 'Đoạn thẳng đi xuống' })
+    expect(picture).toHaveAttribute('src', '/api/v1/media/bbb')
+    const option = screen.getByRole('radio', { name: /B\.\s*Đoạn thẳng đi xuống/ })
+    fireEvent.click(picture)
+    expect(option).toBeChecked()
+  })
+
+  it('enlarges a picture without picking that option, and pauses the arrow keys while it is open', async () => {
+    const fetchMock = mockApi({ 'GET /api/v1/attempts/luot-1': CHART_EXAM })
+    renderRoute('/attempts/luot-1')
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Phóng to hình phương án A' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'Hình phương án A' })
+    expect(within(dialog).getByRole('img', { name: 'Đoạn thẳng đi lên' })).toHaveAttribute('src', '/api/v1/media/aaa')
+    expect(screen.getByRole('radio', { name: /Đoạn thẳng đi lên/, hidden: true })).not.toBeChecked()
+    expect(fetchMock.mock.calls.some(([, init]) => init?.method === 'PUT')).toBe(false)
+
+    const close = within(dialog).getByRole('button', { name: 'Đóng' })
+    fireEvent.keyDown(close, { key: 'ArrowRight' })
+    expect(screen.getByRole('heading', { name: 'Câu 1/2', hidden: true })).toBeInTheDocument()
+
+    fireEvent.click(close)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 })
 

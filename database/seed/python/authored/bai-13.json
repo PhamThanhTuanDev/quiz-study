@@ -1,5 +1,5 @@
 {
-  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 9.1–9.5: Pandas (Series, DataFrame, loc / iloc, lọc, thống kê, nhóm, dữ liệu thiếu và trùng).",
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 9.1–9.5: Pandas (Series, DataFrame, loc / iloc, lọc, thống kê, nhóm, dữ liệu thiếu và trùng). Thêm (D-055): ví dụ trên slide Pandas (w14 LT trang 6–15) chuyển thành câu \"kết quả in ra\", ref vd-pandas/tr.<trang>/<số>; đáp án chạy thật.",
   "chapter": 13,
   "questions": [
     {
@@ -187,6 +187,193 @@
       "verify": {
         "kind": "output",
         "expect": "[False, False, False, True]"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.6/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\ndata = {'a' : -1.3, 'b' : 11.7, 'd' : 2.0, 'f': 10, 'g': 5}\nser = pd.Series(data, index=['a','c','b','d','e','f'])\nprint(ser['d'], ser['c'])",
+      "options": [
+        "2 nan",
+        "2.0 0.0",
+        "2.0 nan",
+        "Báo lỗi KeyError"
+      ],
+      "answer": "C",
+      "reason": "Series lấy theo index truyền vào: 'c' không có trong data nên giá trị là NaN (in nan); cả Series có NaN nên kiểu float64, 'd' in 2.0. Khoá 'g' không có trong index nên bị bỏ.",
+      "verify": {
+        "kind": "output",
+        "expect": "2.0 nan"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.6/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\ndata = {'a' : -1.3, 'b' : 11.7, 'd' : 2.0, 'f': 10, 'g': 5}\nser = pd.Series(data, index=['a','c','b','d','e','f'])\nprint(len(ser), ser.count())",
+      "options": [
+        "6 4",
+        "5 5",
+        "6 6",
+        "4 6"
+      ],
+      "answer": "A",
+      "reason": "index có 6 nhãn nên len = 6; count() chỉ đếm giá trị khác NaN ('c' và 'e' là NaN): 4.",
+      "verify": {
+        "kind": "output",
+        "expect": "6 4"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.6/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\ndata = {'a' : -1.3, 'b' : 11.7, 'd' : 2.0, 'f': 10, 'g': 5}\nser = pd.Series(data, index=['a','c','b','d','e','f'])\nprint(ser[:'d'].index.tolist(), ser[-3:].index.tolist())",
+      "options": [
+        "['a', 'c', 'b'] ['d', 'e', 'f']",
+        "['a', 'b', 'd'] ['e', 'f']",
+        "['a', 'c', 'b', 'd'] ['f']",
+        "['a', 'c', 'b', 'd'] ['d', 'e', 'f']"
+      ],
+      "answer": "D",
+      "reason": "Cắt theo nhãn ser[:'d'] lấy cả nhãn 'd' (khác cắt theo vị trí); ser[-3:] lấy 3 vị trí cuối: 'd', 'e', 'f'.",
+      "verify": {
+        "kind": "output",
+        "expect": "['a', 'c', 'b', 'd'] ['d', 'e', 'f']"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.8/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\nser = pd.Series(5, index=[1, 2, 3, 4, 5])\nprint(ser.sum(), ser.index[-1])",
+      "options": [
+        "5 5",
+        "25 5",
+        "25 4",
+        "15 5"
+      ],
+      "answer": "B",
+      "reason": "Tạo Series từ giá trị vô hướng: số 5 được lặp cho đủ 5 nhãn index, tổng là 25; nhãn cuối của index là 5.",
+      "verify": {
+        "kind": "output",
+        "expect": "25 5"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.8/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\ns = pd.Series([0, 1, 2, 3], index=['a', 'b', 'c', 'd'])\nprint(s['b'] + s.iloc[3])",
+      "options": [
+        "4",
+        "3",
+        "5",
+        "Báo lỗi KeyError"
+      ],
+      "answer": "A",
+      "reason": "s['b'] lấy theo nhãn: 1; s.iloc[3] lấy theo vị trí thứ 3 (tính từ 0): 3. Tổng 4.",
+      "verify": {
+        "kind": "output",
+        "expect": "4"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.11/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\ns = {'một': pd.Series([1., 2., 3., 5.], index=['a', 'b', 'c', 'e']),\n     'hai': pd.Series([1., 2., 3., 4.], index=['a', 'b', 'c', 'd'])}\ndf = pd.DataFrame(s)\nprint(df.shape)",
+      "options": [
+        "(4, 2)",
+        "(2, 5)",
+        "(5, 2)",
+        "(8, 2)"
+      ],
+      "answer": "C",
+      "reason": "DataFrame gộp index của các Series: a, b, c, d, e (5 hàng), mỗi Series là một cột (2 cột). Chỗ không có dữ liệu thành NaN.",
+      "verify": {
+        "kind": "output",
+        "expect": "(5, 2)"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.11/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\ns = {'một': pd.Series([1., 2., 3., 5.], index=['a', 'b', 'c', 'e']),\n     'hai': pd.Series([1., 2., 3., 4.], index=['a', 'b', 'c', 'd'])}\ndf = pd.DataFrame(s, index=['a', 'c', 'd'])\nprint(df['một'].tolist())",
+      "options": [
+        "[1.0, 3.0, 5.0]",
+        "[1.0, 2.0, 3.0]",
+        "[1.0, 3.0, 4.0]",
+        "[1.0, 3.0, nan]"
+      ],
+      "answer": "D",
+      "reason": "Chỉ lấy các hàng có index 'a', 'c', 'd'. Cột 'một' không có nhãn 'd' nên giá trị ở đó là NaN.",
+      "verify": {
+        "kind": "output",
+        "expect": "[1.0, 3.0, nan]"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.11/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\narr = np.array([[1,2,3], [4,5,6], [7,8,9]])\ndf = pd.DataFrame(arr, columns = ['a','b','c'])\nprint(df['b'].sum(), df.iloc[2, 0])",
+      "options": [
+        "12 3",
+        "15 7",
+        "15 3",
+        "6 7"
+      ],
+      "answer": "B",
+      "reason": "Cột 'b' gồm 2, 5, 8: tổng 15. iloc[2, 0] là hàng vị trí 2, cột vị trí 0: 7.",
+      "verify": {
+        "kind": "output",
+        "expect": "15 7"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.12/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\narr = np.array([[1,2,3], [4,5,6], [7,8,9]])\ndf = pd.DataFrame(arr, columns = ['a','b','c'])\nprint(df.iloc[-2:, [0, 2]].values.tolist())",
+      "options": [
+        "[[1, 3], [4, 6]]",
+        "[[4, 5], [7, 8]]",
+        "[[4, 6], [7, 9]]",
+        "[[7, 9]]"
+      ],
+      "answer": "C",
+      "reason": "iloc[-2:, [0, 2]]: 2 hàng cuối, cột vị trí 0 và 2 (theo slide trang 12): [[4, 6], [7, 9]].",
+      "verify": {
+        "kind": "output",
+        "expect": "[[4, 6], [7, 9]]"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.15/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\ndf = pd.DataFrame({'tax': [296, 242, 222, 311]})\nprint(df['tax'].min(), df['tax'].max(), df['tax'].median())",
+      "options": [
+        "222 311 269.0",
+        "222 311 267.75",
+        "222 311 242",
+        "296 311 269.0"
+      ],
+      "answer": "A",
+      "reason": "min = 222, max = 311; median là trung vị: sắp xếp 222, 242, 296, 311, số lượng chẵn nên lấy trung bình 2 số giữa (242 + 296) / 2 = 269.0.",
+      "verify": {
+        "kind": "output",
+        "expect": "222 311 269.0"
+      }
+    },
+    {
+      "ref": "vd-pandas/tr.15/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nimport pandas as pd\nprint(pd.cut([1, 5, 9], bins=[0, 3, 6, 10], labels=['low', 'normal', 'high']).tolist())",
+      "options": [
+        "['low', 'low', 'high']",
+        "['low', 'normal', 'high']",
+        "['low', 'high', 'high']",
+        "['normal', 'normal', 'high']"
+      ],
+      "answer": "B",
+      "reason": "pd.cut chia theo ngưỡng (0, 3], (3, 6], (6, 10]: 1 → 'low', 5 → 'normal', 9 → 'high'.",
+      "verify": {
+        "kind": "output",
+        "expect": "['low', 'normal', 'high']"
       }
     }
   ]

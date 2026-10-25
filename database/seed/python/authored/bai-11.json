@@ -1,5 +1,5 @@
 {
-  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 7.1–7.4: NumPy (tạo mảng, thuộc tính, cắt, view / copy, đổi hình dạng, tính toán theo trục).",
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 7.1–7.4: NumPy (tạo mảng, thuộc tính, cắt, view / copy, đổi hình dạng, tính toán theo trục). Thêm (D-055): ví dụ trên slide NumPy (w10-11 LT trang 17–22) chuyển thành câu \"kết quả in ra\", ref vd-numpy/tr.<trang>/<số>; đáp án chạy thật.",
   "chapter": 11,
   "questions": [
     {
@@ -221,6 +221,261 @@
       "verify": {
         "kind": "output",
         "expect": "[3 5 8 8 3 6]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.17/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([(1, 2), (3, 4)])\nprint(arr.ndim, arr.shape)",
+      "options": [
+        "1 (4,)",
+        "2 (2, 2)",
+        "2 (4,)",
+        "4 (2, 2)"
+      ],
+      "answer": "B",
+      "reason": "Mảng tạo từ 2 tuple, mỗi tuple 2 phần tử là mảng 2 chiều: ndim = 2, shape = (2, 2) (2 hàng, 2 cột).",
+      "verify": {
+        "kind": "output",
+        "expect": "2 (2, 2)"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.18/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nprint(np.arange(1, 10, 3))",
+      "options": [
+        "[1 4 7]",
+        "[1 4 7 10]",
+        "[1, 4, 7]",
+        "[1 2 3]"
+      ],
+      "answer": "A",
+      "reason": "np.arange(start, stop, step) lấy start ≤ giá trị < stop với bước 3: 1, 4, 7 (10 không lấy vì bằng stop). Mảng NumPy in không có dấu phẩy.",
+      "verify": {
+        "kind": "output",
+        "expect": "[1 4 7]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.18/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nprint(np.full((2, 3), 7))",
+      "options": [
+        "[[7 7]\n [7 7]\n [7 7]]",
+        "[7 7 7 7 7 7]",
+        "[[7 7 7]\n [7 7 7]]",
+        "[[7. 7. 7.]\n [7. 7. 7.]]"
+      ],
+      "answer": "C",
+      "reason": "np.full(shape, fill_value) tạo mảng shape (2, 3): 2 hàng, 3 cột, toàn số 7. fill_value là số nguyên nên mảng kiểu số nguyên (in 7, không phải 7.).",
+      "verify": {
+        "kind": "output",
+        "expect": "[[7 7 7]\n [7 7 7]]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.18/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nprint(np.eye(3)[1])",
+      "options": [
+        "[1. 0. 0.]",
+        "[0 1 0]",
+        "[1. 1. 1.]",
+        "[0. 1. 0.]"
+      ],
+      "answer": "D",
+      "reason": "np.eye(3) là ma trận đơn vị 3×3 kiểu số thực; hàng có chỉ số 1 (hàng thứ hai) là [0. 1. 0.].",
+      "verify": {
+        "kind": "output",
+        "expect": "[0. 1. 0.]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.18/4",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([[1, 2], [3, 4]])\nprint(np.diag(arr))",
+      "options": [
+        "[2 3]",
+        "[1 4]",
+        "[[1 0]\n [0 4]]",
+        "[1 2 3 4]"
+      ],
+      "answer": "B",
+      "reason": "np.diag nhận ma trận 2 chiều thì trả về đường chéo chính [1 4]; nhận mảng 1 chiều thì mới tạo ma trận đường chéo.",
+      "verify": {
+        "kind": "output",
+        "expect": "[1 4]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.19/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([10, 20, 30, 40, 50])\nprint(arr[-2:], arr[:2])",
+      "options": [
+        "[40 50] [10 20]",
+        "[40 50] [10 20 30]",
+        "[30 40 50] [10 20]",
+        "[50] [10 20]"
+      ],
+      "answer": "A",
+      "reason": "-num: lấy num phần tử cuối ([40 50]); :num lấy num phần tử đầu ([10 20]), theo slide trang 19.",
+      "verify": {
+        "kind": "output",
+        "expect": "[40 50] [10 20]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.19/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([[1, 2, 3], [4, 5, 6]])\nprint(arr[1][2], arr[1, 2], arr[0, -1])",
+      "options": [
+        "5 6 3",
+        "6 6 1",
+        "6 6 3",
+        "2 2 3"
+      ],
+      "answer": "C",
+      "reason": "array[i][j] và array[i, j] như nhau: hàng 1, cột 2 là 6. arr[0, -1] là phần tử cuối của hàng 0: 3.",
+      "verify": {
+        "kind": "output",
+        "expect": "6 6 3"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.20/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.arange(6)\nprint(arr.reshape(2, -1))",
+      "options": [
+        "[[0 1]\n [2 3]\n [4 5]]",
+        "[[0 2 4]\n [1 3 5]]",
+        "Báo lỗi ValueError",
+        "[[0 1 2]\n [3 4 5]]"
+      ],
+      "answer": "D",
+      "reason": "reshape(2, -1): NumPy tự tính chiều còn lại = 6 / 2 = 3, các phần tử điền theo hàng: [[0 1 2] [3 4 5]].",
+      "verify": {
+        "kind": "output",
+        "expect": "[[0 1 2]\n [3 4 5]]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.20/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\na = np.array([1, 2])\nb = np.array([3, 4])\nprint(np.vstack([a, b]))\nprint(np.hstack([a, b]))",
+      "options": [
+        "[[1 2]\n [3 4]]\n[1 2 3 4]",
+        "[1 2 3 4]\n[[1 2]\n [3 4]]",
+        "[[1 3]\n [2 4]]\n[1 2 3 4]",
+        "[[1 2]\n [3 4]]\n[[1 2 3 4]]"
+      ],
+      "answer": "A",
+      "reason": "vstack xếp chồng theo chiều dọc (mỗi mảng một hàng): [[1 2] [3 4]]; hstack nối theo chiều ngang: [1 2 3 4].",
+      "verify": {
+        "kind": "output",
+        "expect": "[[1 2]\n [3 4]]\n[1 2 3 4]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.20/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([1, 2, 3, 4, 5, 6])\nparts = np.split(arr, 3)\nprint(parts[1])",
+      "options": [
+        "[4 5 6]",
+        "[1 2]",
+        "[3 4]",
+        "[2]"
+      ],
+      "answer": "C",
+      "reason": "np.split(arr, 3) chia mảng 6 phần tử thành 3 phần bằng nhau: [1 2], [3 4], [5 6]; parts[1] là phần thứ hai.",
+      "verify": {
+        "kind": "output",
+        "expect": "[3 4]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.21/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nA = np.array([[1, 2], [3, 4]])\nprint(np.dot(A, A))",
+      "options": [
+        "[[ 1  4]\n [ 9 16]]",
+        "[[ 7 10]\n [15 22]]",
+        "[[2 4]\n [6 8]]",
+        "30"
+      ],
+      "answer": "B",
+      "reason": "np.dot(A, A) là nhân ma trận: [1·1+2·3, 1·2+2·4] = [7, 10] và [3·1+4·3, 3·2+4·4] = [15, 22]. Nhân từng phần tử là A * A.",
+      "verify": {
+        "kind": "output",
+        "expect": "[[ 7 10]\n [15 22]]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.21/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\nA = np.array([[1, 2], [3, 4]])\nprint(np.trace(A), round(np.linalg.det(A)))",
+      "options": [
+        "10 -2",
+        "5 2",
+        "4 -2",
+        "5 -2"
+      ],
+      "answer": "D",
+      "reason": "np.trace là tổng đường chéo chính 1 + 4 = 5; định thức 1·4 − 2·3 = −2 (det trả số thực gần −2, round làm tròn thành −2).",
+      "verify": {
+        "kind": "output",
+        "expect": "5 -2"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.22/1",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([[3, 7, 1], [9, 2, 5]])\nprint(arr.max(axis=0), arr.argmax())",
+      "options": [
+        "[9 7 5] 3",
+        "[7 9] 3",
+        "[9 7 5] (1, 0)",
+        "[9 7 5] 1"
+      ],
+      "answer": "A",
+      "reason": "max(axis=0) lấy lớn nhất theo từng cột: [9 7 5]. argmax() không chỉ trục thì tính trên mảng đã duỗi phẳng [3 7 1 9 2 5]: số 9 ở vị trí 3.",
+      "verify": {
+        "kind": "output",
+        "expect": "[9 7 5] 3"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.22/2",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([40, 10, 30, 20])\nprint(np.argsort(arr), np.argsort(-arr))",
+      "options": [
+        "[10 20 30 40] [40 30 20 10]",
+        "[3 0 2 1] [0 2 3 1]",
+        "[1 3 2 0] [0 2 3 1]",
+        "[1 3 2 0] [1 3 2 0]"
+      ],
+      "answer": "C",
+      "reason": "argsort trả về VỊ TRÍ theo giá trị tăng dần: 10 (vị trí 1), 20 (3), 30 (2), 40 (0). argsort(-arr) cho thứ tự giảm dần: [0 2 3 1].",
+      "verify": {
+        "kind": "output",
+        "expect": "[1 3 2 0] [0 2 3 1]"
+      }
+    },
+    {
+      "ref": "vd-numpy/tr.22/3",
+      "content": "Kết quả khi chạy đoạn code sau là gì?",
+      "code": "import numpy as np\narr = np.array([[1, 2], [3, 4]])\nprint(arr.sum(axis=1, keepdims=True))",
+      "options": [
+        "[3 7]",
+        "[[3]\n [7]]",
+        "[[4 6]]",
+        "10"
+      ],
+      "answer": "B",
+      "reason": "sum(axis=1) cộng theo từng hàng: 3 và 7; keepdims=True giữ số chiều (chiều bị tiêu giảm còn 1) nên kết quả có shape (2, 1).",
+      "verify": {
+        "kind": "output",
+        "expect": "[[3]\n [7]]"
       }
     }
   ]

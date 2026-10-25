@@ -1,5 +1,5 @@
 {
-  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 8: Matplotlib (chuỗi định dạng, subplot, đọc ảnh, marker). Code matplotlib chạy ở chế độ Agg (D-045).",
+  "$comment": "Câu Claude tự soạn từ file tóm tắt môn (D-049), mục 8: Matplotlib (chuỗi định dạng, subplot, đọc ảnh, marker). Code matplotlib chạy ở chế độ Agg (D-045). Thêm (D-055): ví dụ biểu đồ trên slide Matplotlib (w12-13 LT) thành câu \"kết quả biểu đồ\" (category bieu-do), ref vd-mpl/tr.<trang>/<số>. Code của đề nguyên văn slide (thêm 2 dòng import); chartOptions: 4 hình, code = null là hình của đáp án (vẽ đúng code của đề), 3 hình sai mỗi hình đổi một chi tiết.",
   "chapter": 12,
   "questions": [
     {
@@ -80,6 +80,370 @@
           "https://matplotlib.org/stable/api/markers_api.html"
         ]
       }
+    },
+    {
+      "ref": "vd-mpl/tr.9/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 7])\ny = np.array([1, 9])\nplt.plot(x,y)\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Đoạn thẳng đi lên từ điểm (2, 1) đến điểm (7, 9)",
+          "code": null
+        },
+        {
+          "alt": "Đoạn thẳng đi xuống từ điểm (2, 9) đến điểm (7, 1)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 7])\ny = np.array([9, 1])\nplt.plot(x,y)\nplt.show()"
+        },
+        {
+          "alt": "Hai điểm rời (2, 1) và (7, 9), không có đường nối",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 7])\ny = np.array([1, 9])\nplt.plot(x,y,'o')\nplt.show()"
+        },
+        {
+          "alt": "Đoạn thẳng đi lên từ điểm (1, 2) đến điểm (9, 7)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 7])\ny = np.array([1, 9])\nplt.plot(y,x)\nplt.show()"
+        }
+      ],
+      "answer": "A",
+      "reason": "plt.plot(x, y) nối các điểm (x[i], y[i]) theo thứ tự bằng đường thẳng: (2, 1) → (7, 9). Không có ký hiệu 'o' nên chỉ có đường, không đánh dấu điểm."
+    },
+    {
+      "ref": "vd-mpl/tr.9/2",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 8, 4])\ny = np.array([1, 3, 9])\nplt.plot(x,y)\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Đường gấp khúc (2, 1) → (4, 9) → (8, 3), đi từ trái sang phải",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 4, 8])\ny = np.array([1, 9, 3])\nplt.plot(x,y)\nplt.show()"
+        },
+        {
+          "alt": "Ba điểm rời (2, 1), (8, 3), (4, 9)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 8, 4])\ny = np.array([1, 3, 9])\nplt.plot(x,y,'o')\nplt.show()"
+        },
+        {
+          "alt": "Đường gấp khúc (2, 1) → (8, 3) → (4, 9), đoạn thứ hai quay ngược sang trái",
+          "code": null
+        },
+        {
+          "alt": "Tam giác khép kín với ba đỉnh (2, 1), (8, 3), (4, 9)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.array([2, 8, 4, 2])\ny = np.array([1, 3, 9, 1])\nplt.plot(x,y)\nplt.show()"
+        }
+      ],
+      "answer": "C",
+      "reason": "plt.plot nối các điểm theo đúng thứ tự trong mảng (không tự sắp xếp theo x) và không nối điểm cuối về điểm đầu: (2, 1) → (8, 3) → (4, 9)."
+    },
+    {
+      "ref": "vd-mpl/tr.10/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.arange(-4, 3, 0.1)\ny = 3*x**2 + 4*x + 9\nplt.plot(x,y)\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Parabol quay xuống (có đỉnh ở trên)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.arange(-4, 3, 0.1)\ny = -3*x**2 + 4*x + 9\nplt.plot(x,y)\nplt.show()"
+        },
+        {
+          "alt": "Parabol quay lên, thấp nhất gần x ≈ -0.67, x chạy từ -4 đến 3",
+          "code": null
+        },
+        {
+          "alt": "Đường thẳng đi lên",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.arange(-4, 3, 0.1)\ny = 3*x*2 + 4*x + 9\nplt.plot(x,y)\nplt.show()"
+        },
+        {
+          "alt": "Parabol quay lên, x chạy từ -3 đến 4",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nx = np.arange(-3, 4, 0.1)\ny = 3*x**2 + 4*x + 9\nplt.plot(x,y)\nplt.show()"
+        }
+      ],
+      "answer": "B",
+      "reason": "y = 3x² + 4x + 9 có hệ số của x² dương nên parabol quay lên; đỉnh tại x = −4 / (2·3) ≈ −0.67. np.arange(-4, 3, 0.1) cho x từ −4 đến gần 3."
+    },
+    {
+      "ref": "vd-mpl/tr.10/2",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 4*np.pi ,0.1)\nr = 0.5*theta\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Một đường tròn bán kính 0.5",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 4*np.pi ,0.1)\nr = 0.5\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nplt.show()"
+        },
+        {
+          "alt": "Đường xoắn ốc 1 vòng",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 2*np.pi ,0.1)\nr = 0.5*theta\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nplt.show()"
+        },
+        {
+          "alt": "Đường thẳng đi lên (r tăng đều theo θ)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 4*np.pi ,0.1)\nr = 0.5*theta\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(theta,r)\nplt.show()"
+        },
+        {
+          "alt": "Đường xoắn ốc 2 vòng xuất phát từ tâm",
+          "code": null
+        }
+      ],
+      "answer": "D",
+      "reason": "r = 0.5θ tăng dần theo góc nên điểm (r·cosθ, r·sinθ) xoay và ra xa tâm dần: đường xoắn ốc. θ chạy từ 0 đến 4π là 2 vòng."
+    },
+    {
+      "ref": "vd-mpl/tr.11/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nax.axis('equal')\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,12]\nax.pie(students, labels = langs,autopct='%1.2f%%')\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Biểu đồ cột gồm 5 cột",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,12]\nax.bar(langs, students)\nplt.show()"
+        },
+        {
+          "alt": "Biểu đồ tròn 5 phần, có tên ngôn ngữ và phần trăm 2 chữ số lẻ (Java 30.17%)",
+          "code": null
+        },
+        {
+          "alt": "Biểu đồ tròn 5 phần, chỉ có tên ngôn ngữ, không có phần trăm",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nax.axis('equal')\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,12]\nax.pie(students, labels = langs)\nplt.show()"
+        },
+        {
+          "alt": "Biểu đồ tròn 5 phần, phần trăm làm tròn số nguyên (Java 30%)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nax.axis('equal')\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,12]\nax.pie(students, labels = langs,autopct='%1.0f%%')\nplt.show()"
+        }
+      ],
+      "answer": "B",
+      "reason": "ax.pie vẽ biểu đồ tròn; labels ghi tên từng phần; autopct='%1.2f%%' in phần trăm với 2 chữ số lẻ, ví dụ Java = 35 / 116 = 30.17%."
+    },
+    {
+      "ref": "vd-mpl/tr.13/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,48]\nax.bar(langs,students)\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Biểu đồ cột đứng, cột PHP cao nhất",
+          "code": null
+        },
+        {
+          "alt": "Biểu đồ thanh nằm ngang",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,48]\nax.barh(langs,students)\nplt.show()"
+        },
+        {
+          "alt": "Đường gấp khúc nối 5 điểm",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,48]\nax.plot(langs,students)\nplt.show()"
+        },
+        {
+          "alt": "5 điểm rời, không có cột",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nlangs = ['C', 'C++', 'Java', 'Python', 'PHP']\nstudents = [23,17,35,29,48]\nax.scatter(langs,students)\nplt.show()"
+        }
+      ],
+      "answer": "A",
+      "reason": "ax.bar(x, height) vẽ cột đứng: mỗi ngôn ngữ một cột, chiều cao là số sinh viên; PHP (48) cao nhất. barh mới vẽ thanh nằm ngang."
+    },
+    {
+      "ref": "vd-mpl/tr.14/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ndata = [[30, 25, 50, 20],\n[40, 23, 51, 17],\n[35, 22, 45, 19]]\nX = np.arange(4)\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nax.bar(X + 0.00, data[0], color = 'b', width = 0.25)\nax.bar(X + 0.25, data[1], color = 'g', width = 0.25)\nax.bar(X + 0.50, data[2], color = 'r', width = 0.25)\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Mỗi vị trí chỉ thấy rõ một cột: 3 cột chồng khít lên nhau",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ndata = [[30, 25, 50, 20],\n[40, 23, 51, 17],\n[35, 22, 45, 19]]\nX = np.arange(4)\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nax.bar(X + 0.00, data[0], color = 'b', width = 0.25)\nax.bar(X + 0.00, data[1], color = 'g', width = 0.25)\nax.bar(X + 0.00, data[2], color = 'r', width = 0.25)\nplt.show()"
+        },
+        {
+          "alt": "Mỗi vị trí một cột gồm 3 khúc màu xếp chồng lên nhau",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ndata = [[30, 25, 50, 20],\n[40, 23, 51, 17],\n[35, 22, 45, 19]]\nX = np.arange(4)\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nax.bar(X + 0.00, data[0], color = 'b', width = 0.25)\nax.bar(X + 0.00, data[1], color = 'g', width = 0.25, bottom = data[0])\nax.bar(X + 0.00, data[2], color = 'r', width = 0.25, bottom = np.add(data[0], data[1]))\nplt.show()"
+        },
+        {
+          "alt": "4 nhóm, mỗi nhóm 3 cột xanh dương, xanh lá, đỏ đứng cạnh nhau",
+          "code": null
+        },
+        {
+          "alt": "4 nhóm thanh nằm ngang, mỗi nhóm 3 thanh",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ndata = [[30, 25, 50, 20],\n[40, 23, 51, 17],\n[35, 22, 45, 19]]\nX = np.arange(4)\nfig = plt.figure()\nax = fig.add_axes([0,0,1,1])\nax.barh(X + 0.00, data[0], color = 'b', height = 0.25)\nax.barh(X + 0.25, data[1], color = 'g', height = 0.25)\nax.barh(X + 0.50, data[2], color = 'r', height = 0.25)\nplt.show()"
+        }
+      ],
+      "answer": "C",
+      "reason": "Mỗi lệnh ax.bar vẽ 4 cột tại X + độ lệch; độ lệch 0, 0.25, 0.5 với width = 0.25 nên 3 dãy cột nằm sát nhau, tạo 4 nhóm 3 cột màu 'b', 'g', 'r'."
+    },
+    {
+      "ref": "vd-mpl/tr.16/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig,ax = plt.subplots(1,1)\na = np.array([22,87,5,43,56,73,55,54,11,20,51,5,79,31,27])\nax.hist(a, bins = [0,25,50,75,100])\nax.set_title(\"histogram of result\")\nax.set_xticks([0,25,50,75,100])\nax.set_xlabel('marks')\nax.set_ylabel('no. of students')\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Histogram 10 cột hẹp",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig,ax = plt.subplots(1,1)\na = np.array([22,87,5,43,56,73,55,54,11,20,51,5,79,31,27])\nax.hist(a, bins = 10)\nax.set_title(\"histogram of result\")\nax.set_xticks([0,25,50,75,100])\nax.set_xlabel('marks')\nax.set_ylabel('no. of students')\nplt.show()"
+        },
+        {
+          "alt": "15 cột, mỗi cột là điểm của một sinh viên",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig,ax = plt.subplots(1,1)\na = np.array([22,87,5,43,56,73,55,54,11,20,51,5,79,31,27])\nax.bar(np.arange(15)*6.5, a, width = 5)\nax.set_title(\"histogram of result\")\nax.set_xticks([0,25,50,75,100])\nax.set_xlabel('marks')\nax.set_ylabel('no. of students')\nplt.show()"
+        },
+        {
+          "alt": "Histogram 2 cột cao 8 và 7",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig,ax = plt.subplots(1,1)\na = np.array([22,87,5,43,56,73,55,54,11,20,51,5,79,31,27])\nax.hist(a, bins = [0,50,100])\nax.set_title(\"histogram of result\")\nax.set_xticks([0,25,50,75,100])\nax.set_xlabel('marks')\nax.set_ylabel('no. of students')\nplt.show()"
+        },
+        {
+          "alt": "Histogram 4 cột liền nhau cao 5, 3, 5, 2",
+          "code": null
+        }
+      ],
+      "answer": "D",
+      "reason": "hist đếm số giá trị rơi vào từng khoảng: [0, 25) có 5 số, [25, 50) có 3, [50, 75) có 5, [75, 100] có 2, nên có 4 cột cao 5, 3, 5, 2."
+    },
+    {
+      "ref": "vd-mpl/tr.17/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ngirls_grades = [89, 90, 70, 89, 100, 80, 90, 100, 80, 34]\nboys_grades = [30, 29, 49, 48, 100, 48, 38, 45, 20, 30]\ngrades_range = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]\nfig=plt.figure()\nax=fig.add_axes([0,0,1,1])\nax.scatter(grades_range, girls_grades, color='r')\nax.scatter(grades_range, boys_grades, color='b')\nax.set_xlabel('Grades Range')\nax.set_ylabel('Grades Scored')\nax.set_title('scatter plot')\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Hai nhóm điểm rời: điểm đỏ phần lớn ở trên cao, điểm xanh phần lớn ở dưới",
+          "code": null
+        },
+        {
+          "alt": "Hai nhóm điểm rời: điểm xanh phần lớn ở trên cao, điểm đỏ phần lớn ở dưới",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ngirls_grades = [89, 90, 70, 89, 100, 80, 90, 100, 80, 34]\nboys_grades = [30, 29, 49, 48, 100, 48, 38, 45, 20, 30]\ngrades_range = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]\nfig=plt.figure()\nax=fig.add_axes([0,0,1,1])\nax.scatter(grades_range, girls_grades, color='b')\nax.scatter(grades_range, boys_grades, color='r')\nax.set_xlabel('Grades Range')\nax.set_ylabel('Grades Scored')\nax.set_title('scatter plot')\nplt.show()"
+        },
+        {
+          "alt": "Hai đường gấp khúc màu đỏ và xanh",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ngirls_grades = [89, 90, 70, 89, 100, 80, 90, 100, 80, 34]\nboys_grades = [30, 29, 49, 48, 100, 48, 38, 45, 20, 30]\ngrades_range = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]\nfig=plt.figure()\nax=fig.add_axes([0,0,1,1])\nax.plot(grades_range, girls_grades, color='r')\nax.plot(grades_range, boys_grades, color='b')\nax.set_xlabel('Grades Range')\nax.set_ylabel('Grades Scored')\nax.set_title('scatter plot')\nplt.show()"
+        },
+        {
+          "alt": "Chỉ có một nhóm điểm màu đỏ",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ngirls_grades = [89, 90, 70, 89, 100, 80, 90, 100, 80, 34]\nboys_grades = [30, 29, 49, 48, 100, 48, 38, 45, 20, 30]\ngrades_range = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]\nfig=plt.figure()\nax=fig.add_axes([0,0,1,1])\nax.scatter(grades_range, girls_grades, color='r')\nax.set_xlabel('Grades Range')\nax.set_ylabel('Grades Scored')\nax.set_title('scatter plot')\nplt.show()"
+        }
+      ],
+      "answer": "A",
+      "reason": "ax.scatter vẽ các điểm rời. girls_grades (đa số 70–100) màu 'r' (đỏ), boys_grades (đa số 20–50) màu 'b' (xanh)."
+    },
+    {
+      "ref": "vd-mpl/tr.19/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nxlist = np.linspace(-3.0, 3.0, 100)\nylist = np.linspace(-3.0, 3.0, 100)\nX, Y = np.meshgrid(xlist, ylist)\nZ = np.sqrt(X**2 + Y**2)\nfig,ax=plt.subplots(1,1)\ncp = ax.contourf(X, Y, Z)\nfig.colorbar(cp) # Add a colorbar to a plot\nax.set_title('Filled Contours Plot')\n#ax.set_xlabel('x (cm)')\nax.set_ylabel('y (cm)')\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Các vòng tròn đồng tâm chỉ có đường viền, không tô màu",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nxlist = np.linspace(-3.0, 3.0, 100)\nylist = np.linspace(-3.0, 3.0, 100)\nX, Y = np.meshgrid(xlist, ylist)\nZ = np.sqrt(X**2 + Y**2)\nfig,ax=plt.subplots(1,1)\ncp = ax.contour(X, Y, Z)\nfig.colorbar(cp) # Add a colorbar to a plot\nax.set_title('Filled Contours Plot')\n#ax.set_xlabel('x (cm)')\nax.set_ylabel('y (cm)')\nplt.show()"
+        },
+        {
+          "alt": "Các vòng tròn đồng tâm được tô màu, tâm đậm và nhạt dần ra ngoài, có thanh màu",
+          "code": null
+        },
+        {
+          "alt": "Các dải màu song song chạy chéo",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nxlist = np.linspace(-3.0, 3.0, 100)\nylist = np.linspace(-3.0, 3.0, 100)\nX, Y = np.meshgrid(xlist, ylist)\nZ = X + Y\nfig,ax=plt.subplots(1,1)\ncp = ax.contourf(X, Y, Z)\nfig.colorbar(cp) # Add a colorbar to a plot\nax.set_title('Filled Contours Plot')\n#ax.set_xlabel('x (cm)')\nax.set_ylabel('y (cm)')\nplt.show()"
+        },
+        {
+          "alt": "Các dải màu hình hyperbol (dạng yên ngựa)",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nxlist = np.linspace(-3.0, 3.0, 100)\nylist = np.linspace(-3.0, 3.0, 100)\nX, Y = np.meshgrid(xlist, ylist)\nZ = X**2 - Y**2\nfig,ax=plt.subplots(1,1)\ncp = ax.contourf(X, Y, Z)\nfig.colorbar(cp) # Add a colorbar to a plot\nax.set_title('Filled Contours Plot')\n#ax.set_xlabel('x (cm)')\nax.set_ylabel('y (cm)')\nplt.show()"
+        }
+      ],
+      "answer": "B",
+      "reason": "Z = √(X² + Y²) là khoảng cách tới gốc toạ độ, nên các điểm cùng mức Z nằm trên đường tròn đồng tâm. contourf tô màu giữa các mức (contour chỉ vẽ đường viền); fig.colorbar thêm thanh màu."
+    },
+    {
+      "ref": "vd-mpl/tr.26/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 2*np.pi ,0.01)\nr = 4\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nr = 5\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nplt.legend(['r1 = 4','r2 = 5'])\nplt.axis('equal')\nplt.grid(True)\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Hai hình elip bị kéo dãn theo chiều ngang",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 2*np.pi ,0.01)\nr = 4\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nr = 5\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nplt.legend(['r1 = 4','r2 = 5'])\nplt.grid(True)\nplt.show()"
+        },
+        {
+          "alt": "Hai đường tròn bán kính 4 và 2",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 2*np.pi ,0.01)\nr = 4\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nr = 2\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nplt.legend(['r1 = 4','r2 = 5'])\nplt.axis('equal')\nplt.grid(True)\nplt.show()"
+        },
+        {
+          "alt": "Chỉ có một đường tròn",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\ntheta = np.arange(0, 2*np.pi ,0.01)\nr = 4\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.plot(x,y)\nr = 5\nx = r*np.cos(theta)\ny = r*np.sin(theta)\nplt.legend(['r1 = 4','r2 = 5'])\nplt.axis('equal')\nplt.grid(True)\nplt.show()"
+        },
+        {
+          "alt": "Hai đường tròn đồng tâm bán kính 4 và 5, có chú thích và lưới",
+          "code": null
+        }
+      ],
+      "answer": "D",
+      "reason": "Mỗi lần plt.plot vẽ một đường tròn (r·cosθ, r·sinθ), lần lượt với r = 4 và r = 5. plt.axis('equal') giữ tỉ lệ hai trục bằng nhau nên đường tròn không bị méo thành elip."
+    },
+    {
+      "ref": "vd-mpl/tr.28/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.subplot(2,2,1) # Plot a rose\na = 4; n = 4\ntheta = np.arange(0,4*np.pi,0.01)\nr = a * np.cos(n*theta)\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x, y);\nplt.subplot(2,2,2) # Plot a spiral\na = 2; theta = np.arange(0, 4*np.pi, 0.1)\nr = a*theta\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x,y);\nplt.subplot(2,2,(3,4)) # Plot a parabola\nx = np.arange(-6, 5, 0.2); y = 5*x**2 + 4*x - 1\nplt.plot(x, y);\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Hàng trên: hoa và xoắn ốc; parabol chỉ ở ô dưới bên trái",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.subplot(2,2,1) # Plot a rose\na = 4; n = 4\ntheta = np.arange(0,4*np.pi,0.01)\nr = a * np.cos(n*theta)\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x, y);\nplt.subplot(2,2,2) # Plot a spiral\na = 2; theta = np.arange(0, 4*np.pi, 0.1)\nr = a*theta\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x,y);\nplt.subplot(2,2,3) # Plot a parabola\nx = np.arange(-6, 5, 0.2); y = 5*x**2 + 4*x - 1\nplt.plot(x, y);\nplt.show()"
+        },
+        {
+          "alt": "Hàng trên: hoa 3 cánh và xoắn ốc; hàng dưới: parabol rộng cả hàng",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.subplot(2,2,1) # Plot a rose\na = 4; n = 3\ntheta = np.arange(0,4*np.pi,0.01)\nr = a * np.cos(n*theta)\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x, y);\nplt.subplot(2,2,2) # Plot a spiral\na = 2; theta = np.arange(0, 4*np.pi, 0.1)\nr = a*theta\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x,y);\nplt.subplot(2,2,(3,4)) # Plot a parabola\nx = np.arange(-6, 5, 0.2); y = 5*x**2 + 4*x - 1\nplt.plot(x, y);\nplt.show()"
+        },
+        {
+          "alt": "Hàng trên: hoa 8 cánh và xoắn ốc; hàng dưới: parabol rộng cả hàng",
+          "code": null
+        },
+        {
+          "alt": "Ba hình nằm cùng một hàng",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nplt.subplot(1,3,1) # Plot a rose\na = 4; n = 4\ntheta = np.arange(0,4*np.pi,0.01)\nr = a * np.cos(n*theta)\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x, y);\nplt.subplot(1,3,2) # Plot a spiral\na = 2; theta = np.arange(0, 4*np.pi, 0.1)\nr = a*theta\nx = r*np.cos(theta); y = r*np.sin(theta)\nplt.plot(x,y);\nplt.subplot(1,3,3) # Plot a parabola\nx = np.arange(-6, 5, 0.2); y = 5*x**2 + 4*x - 1\nplt.plot(x, y);\nplt.show()"
+        }
+      ],
+      "answer": "C",
+      "reason": "subplot(2,2,1) và subplot(2,2,2) là 2 ô của hàng trên; subplot(2,2,(3,4)) gộp ô 3 và 4 thành cả hàng dưới. r = a·cos(nθ) với n = 4 (chẵn) cho hoa 2n = 8 cánh."
+    },
+    {
+      "ref": "vd-mpl/tr.29/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, a = plt.subplots(2,2)\nx = np.arange(1,5)\na[0][0].plot(x,x*x)\na[0][0].set_title('square')\na[0][1].plot(x,np.sqrt(x))\na[0][1].set_title('square root')\na[1][0].plot(x,np.exp(x))\na[1][0].set_title('exp')\na[1][1].plot(x,np.log10(x))\na[1][1].set_title('log')\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "Lưới 2×2: hàng trên square và exp; hàng dưới square root và log",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, a = plt.subplots(2,2)\nx = np.arange(1,5)\na[0][0].plot(x,x*x)\na[0][0].set_title('square')\na[1][0].plot(x,np.sqrt(x))\na[1][0].set_title('square root')\na[0][1].plot(x,np.exp(x))\na[0][1].set_title('exp')\na[1][1].plot(x,np.log10(x))\na[1][1].set_title('log')\nplt.show()"
+        },
+        {
+          "alt": "Lưới 2×2: hàng trên square và square root; hàng dưới exp và log",
+          "code": null
+        },
+        {
+          "alt": "Bốn hình nằm cùng một hàng",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, a = plt.subplots(1,4)\nx = np.arange(1,5)\na[0].plot(x,x*x)\na[0].set_title('square')\na[1].plot(x,np.sqrt(x))\na[1].set_title('square root')\na[2].plot(x,np.exp(x))\na[2].set_title('exp')\na[3].plot(x,np.log10(x))\na[3].set_title('log')\nplt.show()"
+        },
+        {
+          "alt": "Bốn đường vẽ chung một khung, tiêu đề 'log'",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots()\nx = np.arange(1,5)\nax.plot(x,x*x)\nax.plot(x,np.sqrt(x))\nax.plot(x,np.exp(x))\nax.plot(x,np.log10(x))\nax.set_title('log')\nplt.show()"
+        }
+      ],
+      "answer": "B",
+      "reason": "plt.subplots(2,2) tạo lưới 2 hàng × 2 cột; a[i][j] là ô ở hàng i, cột j. a[0][1] là ô trên bên phải (square root), a[1][0] là ô dưới bên trái (exp)."
+    },
+    {
+      "ref": "vd-mpl/tr.30/1",
+      "category": "bieu-do",
+      "content": "Đoạn code sau vẽ ra hình nào?",
+      "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\na1 = plt.subplot2grid((3,3),(0,0),colspan = 2)\na2 = plt.subplot2grid((3,3),(0,2), rowspan = 3)\na3 = plt.subplot2grid((3,3),(1,0),rowspan = 2, colspan = 2)\nx = np.arange(1,10)\na2.plot(x, x*x)\na2.set_title('square')\na1.plot(x, np.exp(x))\na1.set_title('exp')\na3.plot(x, np.log(x))\na3.set_title('log')\nplt.tight_layout()\nplt.show()",
+      "chartOptions": [
+        {
+          "alt": "exp ở trên bên trái (rộng 2 cột), square bên phải cao cả 3 hàng, log ở dưới bên trái (rộng 2 cột, cao 2 hàng)",
+          "code": null
+        },
+        {
+          "alt": "log bên phải cao cả 3 hàng, square ở dưới bên trái",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\na1 = plt.subplot2grid((3,3),(0,0),colspan = 2)\na2 = plt.subplot2grid((3,3),(0,2), rowspan = 3)\na3 = plt.subplot2grid((3,3),(1,0),rowspan = 2, colspan = 2)\nx = np.arange(1,10)\na2.plot(x, np.log(x))\na2.set_title('log')\na1.plot(x, np.exp(x))\na1.set_title('exp')\na3.plot(x, x*x)\na3.set_title('square')\nplt.tight_layout()\nplt.show()"
+        },
+        {
+          "alt": "square chỉ ở góc trên bên phải, phần dưới bên phải để trống",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\na1 = plt.subplot2grid((3,3),(0,0),colspan = 2)\na2 = plt.subplot2grid((3,3),(0,2), rowspan = 1)\na3 = plt.subplot2grid((3,3),(1,0),rowspan = 2, colspan = 2)\nx = np.arange(1,10)\na2.plot(x, x*x)\na2.set_title('square')\na1.plot(x, np.exp(x))\na1.set_title('exp')\na3.plot(x, np.log(x))\na3.set_title('log')\nplt.tight_layout()\nplt.show()"
+        },
+        {
+          "alt": "Ba hình xếp chồng thành 3 hàng, mỗi hình rộng hết chiều ngang",
+          "code": "import numpy as np\nimport matplotlib.pyplot as plt\n\na1 = plt.subplot2grid((3,1),(0,0))\na2 = plt.subplot2grid((3,1),(1,0))\na3 = plt.subplot2grid((3,1),(2,0))\nx = np.arange(1,10)\na2.plot(x, x*x)\na2.set_title('square')\na1.plot(x, np.exp(x))\na1.set_title('exp')\na3.plot(x, np.log(x))\na3.set_title('log')\nplt.tight_layout()\nplt.show()"
+        }
+      ],
+      "answer": "A",
+      "reason": "subplot2grid((3,3), (hàng, cột), rowspan, colspan) đặt khung trên lưới 3×3: a1 ở (0,0) rộng 2 cột; a2 ở (0,2) cao 3 hàng; a3 ở (1,0) chiếm 2 hàng × 2 cột."
     }
   ]
 }

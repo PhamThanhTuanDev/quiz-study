@@ -5,6 +5,8 @@ export interface StudyAnswer {
   correct: boolean
   /** Câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); null với phương án thường. */
   blanks: string[] | null
+  /** Phương án là hình (D-055); khi đó `content` là mô tả hình, dùng làm alt. */
+  imageUrl: string | null
 }
 
 /** Một câu trong chế độ "Học" (khớp StudyQuestionResponse). Phương án theo đúng thứ tự tài liệu. */

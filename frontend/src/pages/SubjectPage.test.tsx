@@ -18,9 +18,9 @@ const GDQP: SubjectDetail = {
 }
 
 const QUIZZES: QuizSummary[] = [
-  { id: 30, title: 'Thi thử: GDQP', mode: 'EXAM', chapterId: null, chapterTitle: null, chapterOrder: null, questionCount: 36, timeLimitMinutes: 45 },
-  { id: 31, title: 'Luyện tập: Bài 1', mode: 'PRACTICE', chapterId: 1, chapterTitle: 'Bài 1', chapterOrder: 1, questionCount: 6, timeLimitMinutes: null },
-  { id: 32, title: 'Luyện tập: Bài 2', mode: 'PRACTICE', chapterId: 2, chapterTitle: 'Bài 2', chapterOrder: 2, questionCount: 20, timeLimitMinutes: null },
+  { id: 30, title: 'Thi thử: GDQP', mode: 'EXAM', chapterId: null, chapterTitle: null, chapterOrder: null, questionCount: 36, timeLimitMinutes: 45, sections: [] },
+  { id: 31, title: 'Luyện tập: Bài 1', mode: 'PRACTICE', chapterId: 1, chapterTitle: 'Bài 1', chapterOrder: 1, questionCount: 6, timeLimitMinutes: null, sections: [] },
+  { id: 32, title: 'Luyện tập: Bài 2', mode: 'PRACTICE', chapterId: 2, chapterTitle: 'Bài 2', chapterOrder: 2, questionCount: 20, timeLimitMinutes: null, sections: [] },
 ]
 
 const NEW_ATTEMPT: Attempt = {
@@ -35,7 +35,7 @@ const NEW_ATTEMPT: Attempt = {
   expiresAt: null,
   remainingSeconds: null,
   questions: [
-    { questionId: 9, order: 1, content: 'Câu hỏi đầu tiên', codeSnippet: null, answers: [{ id: 1, content: 'A', blanks: null }, { id: 2, content: 'B', blanks: null }], selectedAnswerId: null, feedback: null, authored: false },
+    { questionId: 9, order: 1, content: 'Câu hỏi đầu tiên', codeSnippet: null, answers: [{ id: 1, content: 'A', blanks: null, imageUrl: null }, { id: 2, content: 'B', blanks: null, imageUrl: null }], selectedAnswerId: null, feedback: null, authored: false, sectionTitle: null },
   ],
   result: null,
 }
@@ -71,6 +71,33 @@ describe('SubjectPage', () => {
     expect(within(exam).getByRole('button', { name: 'Bắt đầu thi thử' })).toBeEnabled()
     expect(screen.getByRole('button', { name: 'Luyện tập Đối tượng, nhiệm vụ, phương pháp nghiên cứu môn học' })).toBeEnabled()
     expect(screen.getByRole('button', { name: 'Luyện tập Quan điểm cơ bản' })).toBeEnabled()
+  })
+
+  it('lists the sections of an exam built like the real one (D-055)', async () => {
+    const sections = [
+      { title: 'Khái niệm cơ bản', questionCount: 20 },
+      { title: 'Kết quả biểu đồ Matplotlib', questionCount: 2 },
+    ]
+    const quizzes = [{ ...QUIZZES[0], questionCount: 22, timeLimitMinutes: 60, sections }, ...QUIZZES.slice(1)]
+    mockApi({ 'GET /api/v1/subjects/gdqp': GDQP, 'GET /api/v1/subjects/gdqp/quizzes': quizzes })
+
+    renderRoute('/subjects/gdqp')
+
+    const exam = await screen.findByRole('region', { name: 'Thi thử cả môn' })
+    expect(exam).toHaveTextContent('22 câu ngẫu nhiên · 60 phút')
+    const parts = within(within(exam).getByRole('list', { name: 'Cấu trúc đề' })).getAllByRole('listitem')
+    expect(parts).toHaveLength(2)
+    expect(parts[0]).toHaveTextContent('1. Khái niệm cơ bản20 câu')
+    expect(parts[1]).toHaveTextContent('2. Kết quả biểu đồ Matplotlib2 câu')
+  })
+
+  it('shows no section list for an exam without sections', async () => {
+    mockApi({ 'GET /api/v1/subjects/gdqp': GDQP, 'GET /api/v1/subjects/gdqp/quizzes': QUIZZES })
+
+    renderRoute('/subjects/gdqp')
+
+    await screen.findByRole('region', { name: 'Thi thử cả môn' })
+    expect(screen.queryByRole('list', { name: 'Cấu trúc đề' })).not.toBeInTheDocument()
   })
 
   it('offers a "Học" link next to "Luyện tập" for every chapter that has questions', async () => {

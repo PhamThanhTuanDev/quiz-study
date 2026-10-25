@@ -15,6 +15,8 @@ rồi với mỗi câu thực hiện phần "verify":
               khi code báo lỗi thì phương án có tên lỗi (ví dụ "Báo lỗi ZeroDivisionError").
   fill        thay từng bộ giá trị vào các dấu … của code; bộ đúng cho kết quả "want" ở mọi trường hợp,
               mỗi bộ sai phải khác "want" ở ít nhất một trường hợp (sai kết quả hoặc báo lỗi).
+  chart       câu "kết quả biểu đồ" (D-055): vẽ lại bằng matplotlib code của đề và code của từng phương án
+              ("optionCodes", null = code của đề); chỉ phương án đáp án ra hình giống hệt hình của code đề.
   docs        câu lý thuyết: phải có link tài liệu chính thức ("refs").
   reasoning   câu không chạy được code: phải ghi nguồn ("source").
 
@@ -35,6 +37,7 @@ import sys
 import tempfile
 
 from build_python_import import BLANK_RE, LETTERS, Question, build_all, normalize
+from chart_render import ChartError, image_hash, render_png
 from python_source import GENERATED_DIR
 
 TIMEOUT_SECONDS = 5
@@ -198,6 +201,13 @@ def check(q: Question) -> tuple[list[str], bool]:
         matching = [LETTERS[i] for i, option in enumerate(q.options) if output_matches(option, got)]
         return problems + matching_problems(matching, answer), True
 
+    if kind == "chart":
+        setup = spec.get("setup", "")
+        target = image_hash(render_png(q.code or "", setup))
+        matching = [LETTERS[i] for i, code in enumerate(spec["optionCodes"])
+                    if image_hash(render_png(code if code is not None else q.code or "", setup)) == target]
+        return matching_problems(matching, answer), True
+
     if kind == "docs":
         return ([] if spec.get("refs") else ["kiểm chứng kiểu docs phải có refs"]), False
     if kind == "reasoning":
@@ -218,7 +228,8 @@ def matching_problems(matching: list[str], answer: str | None) -> list[str]:
 
 def main() -> int:
     only = set(sys.argv[1:])
-    _, questions, errors, _ = build_all(allow_incomplete=True)
+    # Không cần ảnh nhúng sẵn: kiểu "chart" tự vẽ lại để kiểm chứng.
+    _, questions, errors, _ = build_all(allow_incomplete=True, render_charts=False)
     if errors:
         print("Bản đồ vị trí còn lỗi, chạy build_python_import.py để xem.", file=sys.stderr)
         return 1
@@ -231,14 +242,14 @@ def main() -> int:
     for q in targets:
         try:
             problems, answer_tied = check(q)
-        except (KeyError, ValueError, TypeError, IndexError) as error:
+        except (KeyError, ValueError, TypeError, IndexError, ChartError) as error:
             # Lỗi cấu trúc của một mục verify: báo cho đúng câu đó, không dừng cả lượt kiểm chứng.
             problems, answer_tied = [f"verify sai cấu trúc: {type(error).__name__}: {error}"], False
         tied += answer_tied
         if problems:
             failed += 1
             print(f"✗ {q.ref} ({q.label}): " + "; ".join(problems))
-    ran = sum(1 for q in targets if q.verify.get("kind") in ("run", "runOptions", "fill", "output"))
+    ran = sum(1 for q in targets if q.verify.get("kind") in ("run", "runOptions", "fill", "output", "chart"))
     print(f"{'OK' if not failed else 'LỖI'}: kiểm chứng {len(targets)} câu ({ran} câu chạy code thật, trong đó "
           f"{tied} câu chữ cái đáp án được đối chiếu tự động với kết quả chạy), {failed} câu không đạt.")
     return 1 if failed else 0

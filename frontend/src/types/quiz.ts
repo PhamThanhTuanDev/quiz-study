@@ -16,6 +16,15 @@ export interface QuizSummary {
   questionCount: number
   /** null: không giới hạn thời gian. */
   timeLimitMinutes: number | null
+  /** Đề thi thử chia phần như đề thật (D-055), theo thứ tự câu trong đề; rỗng: đề không chia phần. */
+  sections: QuizSection[]
+}
+
+/** Một phần của đề thi thử, ví dụ "Khái niệm cơ bản: 20 câu". */
+export interface QuizSection {
+  title: string
+  /** Số câu thực tế của phần này mỗi lượt. */
+  questionCount: number
 }
 
 export interface AnswerOption {
@@ -23,6 +32,8 @@ export interface AnswerOption {
   content: string
   /** Câu điền khuyết: giá trị từng chỗ trống theo thứ tự (D-048); null với phương án thường. */
   blanks: string[] | null
+  /** Phương án là hình (câu "đoạn code vẽ ra hình nào", D-055); khi đó `content` là mô tả hình, dùng làm alt. */
+  imageUrl: string | null
 }
 
 /**
@@ -46,6 +57,8 @@ export interface AttemptQuestion {
   feedback: AnswerFeedback | null
   /** Câu soạn thêm, không có trong tài liệu nguồn (D-053): hiện nhãn "Câu tự soạn". */
   authored: boolean
+  /** Tên phần của câu trong đề thi thử chia phần (D-055); null với đề không chia phần. */
+  sectionTitle: string | null
 }
 
 /** Kết quả thi thử, thang 10. Số câu sai = tổng − đúng − bỏ trống. */

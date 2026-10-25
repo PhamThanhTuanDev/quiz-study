@@ -133,6 +133,18 @@ function ExamCard({ exam, starter }: { exam: QuizSummary; starter: StartAttemptC
         {exam.questionCount} câu ngẫu nhiên
         {exam.timeLimitMinutes !== null && ` · ${exam.timeLimitMinutes} phút`} · chấm điểm thang 10 sau khi nộp bài
       </p>
+      {exam.sections.length > 0 && (
+        <ol aria-label="Cấu trúc đề" className="mt-3 divide-y divide-line rounded-lg border border-line text-sm">
+          {exam.sections.map((section, index) => (
+            <li key={index} className="flex items-baseline justify-between gap-3 px-3 py-2">
+              <span>
+                <span className="text-muted">{index + 1}.</span> {section.title}
+              </span>
+              <span className="shrink-0 text-muted tabular-nums">{section.questionCount} câu</span>
+            </li>
+          ))}
+        </ol>
+      )}
       <Button className="mt-4" onClick={() => void starter.start(exam.id)} disabled={starter.pendingQuizId !== null}>
         {starter.pendingQuizId === exam.id ? 'Đang tạo bài thi…' : 'Bắt đầu thi thử'}
       </Button>

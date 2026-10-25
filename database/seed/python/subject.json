@@ -6,25 +6,40 @@
     "code": "IPPA233277",
     "description": null,
     "displayOrder": 2,
-    "published": true
+    "published": true,
+    "exam": {
+      "$comment": "Cấu trúc đề thi thử theo đề thật của giảng viên (D-055): 50 câu, 60 phút; câu rút ngẫu nhiên theo từng phần, các phần theo thứ tự.",
+      "timeLimitMinutes": 60,
+      "sections": [
+        { "category": "khai-niem", "title": "Khái niệm cơ bản", "questionCount": 20 },
+        { "category": "packages", "title": "Lý thuyết NumPy, Matplotlib, Pandas", "questionCount": 6 },
+        { "category": "ket-qua", "title": "Kết quả in ra / giá trị trả về", "questionCount": 10 },
+        { "category": "bieu-do", "title": "Kết quả biểu đồ Matplotlib", "questionCount": 2 },
+        { "category": "dien-code", "title": "Điền code vào chỗ trống", "questionCount": 6 },
+        { "category": "tim-loi", "title": "Tìm dòng bị báo lỗi", "questionCount": 6 }
+      ]
+    }
   },
   "chapters": [
-    { "number": 1, "code": "Bài 1", "title": "Giới thiệu" },
-    { "number": 2, "code": "Bài 2", "title": "Các khái niệm cơ bản" },
-    { "number": 3, "code": "Bài 3", "title": "Kiểu dữ liệu và cấu trúc rẽ nhánh" },
-    { "number": 4, "code": "Bài 4", "title": "Cấu trúc lặp" },
-    { "number": 5, "code": "Bài 5", "title": "List" },
-    { "number": 6, "code": "Bài 6", "title": "Tuple, Set, Dictionary" },
-    { "number": 7, "code": "Bài 7", "title": "Hàm" },
-    { "number": 8, "code": "Bài 8", "title": "Xử lý chuỗi" },
-    { "number": 9, "code": "Bài 9", "title": "Module và thư viện" },
-    { "number": 10, "code": "Bài 10", "title": "Class" },
-    { "number": 11, "code": "Bài 11", "title": "Phân tích dữ liệu và NumPy" },
-    { "number": 12, "code": "Bài 12", "title": "Biểu diễn dữ liệu với Matplotlib" },
-    { "number": 13, "code": "Bài 13", "title": "Thư viện Pandas" }
+    { "number": 1, "code": "Bài 1", "title": "Giới thiệu", "theoryCategory": "khai-niem" },
+    { "number": 2, "code": "Bài 2", "title": "Các khái niệm cơ bản", "theoryCategory": "khai-niem" },
+    { "number": 3, "code": "Bài 3", "title": "Kiểu dữ liệu và cấu trúc rẽ nhánh", "theoryCategory": "khai-niem" },
+    { "number": 4, "code": "Bài 4", "title": "Cấu trúc lặp", "theoryCategory": "khai-niem" },
+    { "number": 5, "code": "Bài 5", "title": "List", "theoryCategory": "khai-niem" },
+    { "number": 6, "code": "Bài 6", "title": "Tuple, Set, Dictionary", "theoryCategory": "khai-niem" },
+    { "number": 7, "code": "Bài 7", "title": "Hàm", "theoryCategory": "khai-niem" },
+    { "number": 8, "code": "Bài 8", "title": "Xử lý chuỗi", "theoryCategory": "khai-niem" },
+    { "number": 9, "code": "Bài 9", "title": "Module và thư viện", "theoryCategory": "khai-niem" },
+    { "number": 10, "code": "Bài 10", "title": "Class", "theoryCategory": "khai-niem" },
+    { "number": 11, "code": "Bài 11", "title": "Phân tích dữ liệu và NumPy", "theoryCategory": "packages" },
+    { "number": 12, "code": "Bài 12", "title": "Biểu diễn dữ liệu với Matplotlib", "theoryCategory": "packages" },
+    { "number": 13, "code": "Bài 13", "title": "Thư viện Pandas", "theoryCategory": "packages" }
   ],
   "authoredSources": [
-    { "key": "tomtat", "label": "Tóm tắt", "file": "TomTat_Python_IPPA233277.docx" }
+    { "key": "tomtat", "label": "Tóm tắt", "file": "TomTat_Python_IPPA233277.docx" },
+    { "key": "vd-numpy", "label": "Ví dụ slide NumPy", "sectionWord": "", "file": "[IPPA233277] w10-w11-c07_phan-tich-du-lieu-numpy (done).pdf" },
+    { "key": "vd-mpl", "label": "Ví dụ slide Matplotlib", "sectionWord": "", "file": "[IPPA233277] w12-w13-c08_bieu-dien-du-lieu-matplotlib (done).pdf" },
+    { "key": "vd-pandas", "label": "Ví dụ slide Pandas", "sectionWord": "", "file": "[IPPA233277] w14-c09_thu-vien-pandas (done).pdf" }
   ],
   "sources": [
     { "key": "w01-lt", "label": "w01 LT", "chapter": 1, "expectedQuestions": 4, "file": "[IPPA233277] w01-c01_gioi-thieu (done).pdf" },

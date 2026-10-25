@@ -17,10 +17,10 @@ const LOOPS: StudyChapter = {
       content: 'Đoạn code sau in ra gì?',
       codeSnippet: 'for i in range(3):\n    print(i)',
       answers: [
-        { id: 1, content: '1 2 3', correct: false, blanks: null },
-        { id: 2, content: '0 1 2', correct: false, blanks: null },
-        { id: 3, content: '0 1 2 3', correct: false, blanks: null },
-        { id: 4, content: '0\n1\n2', correct: true, blanks: null },
+        { id: 1, content: '1 2 3', correct: false, blanks: null, imageUrl: null },
+        { id: 2, content: '0 1 2', correct: false, blanks: null, imageUrl: null },
+        { id: 3, content: '0 1 2 3', correct: false, blanks: null, imageUrl: null },
+        { id: 4, content: '0\n1\n2', correct: true, blanks: null, imageUrl: null },
       ],
       explanation: null,
       authored: false,
@@ -31,8 +31,8 @@ const LOOPS: StudyChapter = {
       content: 'Lệnh nào thoát khỏi vòng lặp?',
       codeSnippet: null,
       answers: [
-        { id: 5, content: 'break', correct: true, blanks: null },
-        { id: 6, content: 'continue', correct: false, blanks: null },
+        { id: 5, content: 'break', correct: true, blanks: null, imageUrl: null },
+        { id: 6, content: 'continue', correct: false, blanks: null, imageUrl: null },
       ],
       explanation: 'Đã sửa so với tài liệu: thêm phương án sai thứ hai.',
       authored: true,
@@ -173,6 +173,37 @@ describe('StudyPage', () => {
 
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(toggle).toHaveFocus()
+  })
+
+  it('shows picture options in a grid, each described by its text and with a zoom button (D-055)', async () => {
+    const chart = {
+      questionId: 13,
+      order: 3,
+      content: 'Đoạn code sau vẽ ra hình nào?',
+      codeSnippet: 'plt.plot([2, 7], [1, 9])',
+      answers: [
+        { id: 7, content: 'Đoạn thẳng đi lên', correct: true, blanks: null, imageUrl: '/api/v1/media/aaa' },
+        { id: 8, content: 'Đoạn thẳng đi xuống', correct: false, blanks: null, imageUrl: '/api/v1/media/bbb' },
+      ],
+      explanation: null,
+      authored: true,
+    }
+    mockApi({ [STUDY_API]: { ...LOOPS, questions: [...LOOPS.questions, chart] } })
+    renderRoute('/subjects/python/chapters/4/study')
+
+    const card = await screen.findByRole('article', { name: 'Câu 3/3' })
+    const list = within(card).getByRole('list', { name: 'Các phương án' })
+    expect(list).toHaveClass('grid')
+    const options = within(list).getAllByRole('listitem')
+    expect(within(options[0]).getByRole('img', { name: 'Đoạn thẳng đi lên' })).toHaveAttribute('src', '/api/v1/media/aaa')
+    expect(options[0]).toHaveClass('border-success')
+    expect(options[1]).not.toHaveClass('border-success')
+
+    fireEvent.click(within(options[1]).getByRole('button', { name: 'Phóng to hình phương án B' }))
+    const dialog = screen.getByRole('dialog', { name: 'Hình phương án B' })
+    expect(within(dialog).getByRole('img', { name: 'Đoạn thẳng đi xuống' })).toBeInTheDocument()
+    // Câu thường vẫn là danh sách một cột.
+    expect(within(screen.getByRole('article', { name: 'Câu 1/3', hidden: true })).getByRole('list', { hidden: true })).not.toHaveClass('grid')
   })
 
   it('shows "not found" without a retry button for an unknown chapter', async () => {

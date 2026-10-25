@@ -5,6 +5,7 @@ import AsyncContent from '../components/AsyncContent'
 import AuthoredBadge from '../components/AuthoredBadge'
 import CodeBlock from '../components/CodeBlock'
 import EmptyState from '../components/EmptyState'
+import ImageZoom from '../components/ImageZoom'
 import QuestionDrawer, { DRAWER_PUSH } from '../components/QuestionDrawer'
 import QuestionNavigator from '../components/QuestionNavigator'
 import { scrollBehavior } from '../components/scrollBehavior'
@@ -143,7 +144,7 @@ function StudyQuestionCard({ question, total, ref }: StudyQuestionCardProps) {
       </div>
       <p className="text-base whitespace-pre-line sm:text-lg">{question.content}</p>
       {question.codeSnippet && <CodeBlock code={question.codeSnippet} />}
-      <ul className="space-y-2" aria-label="Các phương án">
+      <ul className={hasImageAnswers(question.answers) ? 'grid gap-2 sm:grid-cols-2' : 'space-y-2'} aria-label="Các phương án">
         {question.answers.map((answer, index) => (
           <StudyAnswerRow key={answer.id} answer={answer} letter={String.fromCharCode(65 + index)} />
         ))}
@@ -158,6 +159,16 @@ function StudyQuestionCard({ question, total, ref }: StudyQuestionCardProps) {
 function StudyAnswerRow({ answer, letter }: { answer: StudyAnswer; letter: string }) {
   // Trên màn hình chỉ tô xanh đáp án đúng; chữ ẩn cho trình đọc màn hình (người không nhìn thấy màu).
   const tone = answer.correct ? 'border-success bg-success-soft' : 'border-line bg-surface'
+  if (answer.imageUrl !== null) {
+    return (
+      <li className={`relative flex flex-col gap-2 rounded-lg border p-3 ${tone}`}>
+        <span className="flex min-h-11 items-center font-semibold">{letter}.</span>
+        <img src={answer.imageUrl} alt={answer.content} loading="lazy" className="h-auto w-full rounded-md border border-line" />
+        {answer.correct && <span className="sr-only"> (đáp án đúng)</span>}
+        <ImageZoom src={answer.imageUrl} alt={answer.content} label={`phương án ${letter}`} className="absolute top-3 right-3" />
+      </li>
+    )
+  }
   return (
     <li className={`flex min-h-11 items-start gap-3 rounded-lg border px-4 py-3 ${tone}`}>
       <span className="shrink-0 font-semibold">{letter}.</span>
@@ -165,4 +176,8 @@ function StudyAnswerRow({ answer, letter }: { answer: StudyAnswer; letter: strin
       {answer.correct && <span className="sr-only"> (đáp án đúng)</span>}
     </li>
   )
+}
+
+function hasImageAnswers(answers: StudyAnswer[]): boolean {
+  return answers.some((answer) => answer.imageUrl !== null)
 }

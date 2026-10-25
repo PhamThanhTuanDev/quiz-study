@@ -8,7 +8,8 @@ export type HotkeyKey = 'Enter' | 'ArrowLeft' | 'ArrowRight'
  * - có giữ Ctrl / Alt / Shift / Meta (không chặn phím tắt của trình duyệt, ví dụ Alt + ← là quay lại trang trước);
  * - đang gõ chữ (ô nhập), hoặc đang gõ tiếng Việt chưa xong (bộ gõ đang ghép dấu);
  * - Enter khi focus đang ở nút / link: trình duyệt đã tự bấm nút đó, chạy thêm phím tắt là bấm hai lần;
- * - ← → trong ô code: người dùng bàn phím đang cuộn ngang đoạn code.
+ * - ← → trong ô code: người dùng bàn phím đang cuộn ngang đoạn code;
+ * - đang mở hộp xem hình (`<dialog>`): trang phía sau đang bị che, phím không được đổi câu / bấm "Kiểm tra" ở đó.
  * Trên ô chọn đáp án (radio), ← → chuyển câu thay cho việc đổi lựa chọn; ↑ ↓ vẫn dùng để chọn đáp án.
  */
 export function useHotkey(key: HotkeyKey, onPress: () => void, enabled = true) {
@@ -36,6 +37,7 @@ export function useHotkey(key: HotkeyKey, onPress: () => void, enabled = true) {
 
 function shouldLeaveToBrowser(target: EventTarget | null, key: HotkeyKey): boolean {
   if (!(target instanceof HTMLElement)) return false
+  if (target.closest('dialog[open]') !== null) return true
   if (target.isContentEditable || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement) {
     return true
   }

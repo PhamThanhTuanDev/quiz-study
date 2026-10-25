@@ -6,6 +6,7 @@ import AnswerContent from './AnswerContent'
 import AuthoredBadge from './AuthoredBadge'
 import Button from './Button'
 import CodeBlock from './CodeBlock'
+import ImageZoom from './ImageZoom'
 import ShortcutHint from './ShortcutHint'
 
 interface QuestionViewProps {
@@ -61,25 +62,33 @@ export default function QuestionView({ question, total, mode, locked, checking, 
           Câu {question.order}/{total}
         </h2>
         {question.authored && <AuthoredBadge />}
+        {question.sectionTitle && (
+          <span className="rounded-full border border-line bg-canvas px-2.5 py-0.5 text-xs text-muted">
+            {question.sectionTitle}
+          </span>
+        )}
       </div>
       <p className="text-base whitespace-pre-line sm:text-lg">{question.content}</p>
       {question.codeSnippet && <CodeBlock code={question.codeSnippet} />}
 
-      <fieldset className="space-y-2">
+      <fieldset>
         <legend className="sr-only">Chọn một đáp án</legend>
-        {question.answers.map((answer, index) => (
-          <AnswerChoice
-            key={answer.id}
-            name={`question-${question.questionId}`}
-            answer={answer}
-            letter={letterOf(index)}
-            checked={checkedId === answer.id}
-            disabled={disabled}
-            feedback={feedback}
-            selectedAnswerId={question.selectedAnswerId}
-            onSelect={select}
-          />
-        ))}
+        {/* Phương án là hình: điện thoại một cột cho đủ to để đọc trục, màn hình rộng hơn xếp 2 cột để so nhanh. */}
+        <div className={hasImageAnswers(question.answers) ? 'grid gap-2 sm:grid-cols-2' : 'space-y-2'}>
+          {question.answers.map((answer, index) => (
+            <AnswerChoice
+              key={answer.id}
+              name={`question-${question.questionId}`}
+              answer={answer}
+              letter={letterOf(index)}
+              checked={checkedId === answer.id}
+              disabled={disabled}
+              feedback={feedback}
+              selectedAnswerId={question.selectedAnswerId}
+              onSelect={select}
+            />
+          ))}
+        </div>
       </fieldset>
 
       {canCheck && (
@@ -122,29 +131,57 @@ function AnswerChoice({ name, answer, letter, checked, disabled, feedback, selec
   else if (isWrongChoice) tone = 'border-danger bg-danger-soft'
   else if (checked) tone = 'border-primary bg-primary-soft'
 
-  return (
-    <label
-      className={`flex min-h-11 items-start gap-3 rounded-lg border px-4 py-3 ${tone} ${
-        disabled ? 'cursor-default' : 'cursor-pointer hover:border-primary'
-      }`}
-    >
-      <input
-        type="radio"
-        name={name}
-        value={answer.id}
-        checked={checked}
-        disabled={disabled}
-        onChange={() => onSelect(answer.id)}
-        className="mt-1 size-4 shrink-0 accent-primary"
-      />
-      <span className="shrink-0 font-semibold">{letter}.</span>
-      <AnswerContent content={answer.content} blanks={answer.blanks} />
-      {/* Trên màn hình chỉ tô màu (xanh: đáp án đúng, đỏ: lựa chọn sai), không thêm chữ theo ý chủ dự án;
-          chữ ẩn giữ lại cho trình đọc màn hình, vì người không nhìn thấy màu cần biết phương án nào đúng / sai. */}
+  const cursor = disabled ? 'cursor-default' : 'cursor-pointer hover:border-primary'
+  // mt-1 chỉ dùng khi đứng cạnh chữ (canh với dòng chữ đầu); cạnh chữ cái của phương án hình thì canh giữa.
+  const radio = (alignClass: string) => (
+    <input
+      type="radio"
+      name={name}
+      value={answer.id}
+      checked={checked}
+      disabled={disabled}
+      onChange={() => onSelect(answer.id)}
+      className={`size-4 shrink-0 accent-primary ${alignClass}`}
+    />
+  )
+  // Trên màn hình chỉ tô màu (xanh: đáp án đúng, đỏ: lựa chọn sai), không thêm chữ theo ý chủ dự án;
+  // chữ ẩn giữ lại cho trình đọc màn hình, vì người không nhìn thấy màu cần biết phương án nào đúng / sai.
+  const verdict = (
+    <>
       {isCorrectAnswer && <span className="sr-only"> (đáp án đúng)</span>}
       {isWrongChoice && <span className="sr-only"> (bạn chọn, sai)</span>}
+    </>
+  )
+
+  if (answer.imageUrl !== null) {
+    // Nút phóng to đặt ngoài <label> (không lồng nút trong label), để bấm phóng to không chọn luôn phương án.
+    return (
+      <div className="relative">
+        <label className={`flex h-full flex-col gap-2 rounded-lg border p-3 ${tone} ${cursor}`}>
+          <span className="flex min-h-11 items-center gap-3">
+            {radio('')}
+            <span className="font-semibold">{letter}.</span>
+          </span>
+          <img src={answer.imageUrl} alt={answer.content} loading="lazy" className="h-auto w-full rounded-md border border-line" />
+          {verdict}
+        </label>
+        <ImageZoom src={answer.imageUrl} alt={answer.content} label={`phương án ${letter}`} className="absolute top-3 right-3" />
+      </div>
+    )
+  }
+
+  return (
+    <label className={`flex min-h-11 items-start gap-3 rounded-lg border px-4 py-3 ${tone} ${cursor}`}>
+      {radio('mt-1')}
+      <span className="shrink-0 font-semibold">{letter}.</span>
+      <AnswerContent content={answer.content} blanks={answer.blanks} />
+      {verdict}
     </label>
   )
+}
+
+function hasImageAnswers(answers: AnswerOption[]): boolean {
+  return answers.some((answer) => answer.imageUrl !== null)
 }
 
 interface FeedbackMessageProps {
