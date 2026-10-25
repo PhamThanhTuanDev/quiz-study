@@ -1,0 +1,8 @@
+# Mã nguồn PHP chỉ được nạp bởi index.php, không gọi trực tiếp được.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

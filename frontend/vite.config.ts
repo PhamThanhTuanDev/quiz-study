@@ -43,9 +43,10 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Khi chạy dev, mọi request /api được chuyển sang backend Spring Boot,
-      // nên trình duyệt thấy cùng một origin và không cần cấu hình CORS.
-      '/api': 'http://localhost:8080',
+      // Khi chạy dev, mọi request /api được chuyển sang backend PHP (php -S 127.0.0.1:8080 backend-php/dev-router.php),
+      // nên trình duyệt thấy cùng một origin và không cần cấu hình CORS. Ghi 127.0.0.1 thay cho localhost: trên Windows,
+      // localhost có thể ra địa chỉ IPv6 (::1) trong khi server PHP chỉ nghe IPv4.
+      '/api': 'http://127.0.0.1:8080',
     },
   },
   test: {

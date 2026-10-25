@@ -1,7 +1,11 @@
-# Mọi request /api/v1/... vào index.php. Thư mục lib/ và config.php (có mật khẩu database) không truy cập được từ ngoài.
+# Mọi request /api/v1/... vào index.php. Thư mục lib/, migrations/ và config.php (có mật khẩu database) không truy cập
+# được từ ngoài.
 Options -Indexes -MultiViews
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^(lib/|config\.php|config\.example\.php) - [F,L]
+    RewriteRule ^(lib/|migrations/|config\.php|config\.example\.php) - [F,L]
+    # Một số hosting không chuyển header Authorization cho PHP: chép vào biến môi trường (API quản trị cần header này).
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
     RewriteRule ^v1/ index.php [L,QSA]
 </IfModule>

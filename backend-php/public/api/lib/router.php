@@ -23,6 +23,9 @@ function routes(): array
         ['PUT', 'attempts/{attemptId}/answers/{questionId:long}',
             static fn (array $p): array => save_answer($p['attemptId'], $p['questionId'], read_answer_id())],
         ['POST', 'attempts/{attemptId}/submit', static fn (array $p): array => submit_attempt($p['attemptId'])],
+        ['GET', 'media/{sha256}', static fn (array $p): RawResponse => new RawResponse(static fn () => send_media($p['sha256']))],
+        ['POST', 'admin/migrate', static fn (): array => admin_migrate()],
+        ['POST', 'admin/import', static fn (): array => admin_import()],
     ];
 }
 
@@ -37,6 +40,10 @@ function handle_request(string $method, string $requestUri): void
             throw HttpError::notFound('Không tìm thấy đường dẫn này.');
         }
         $result = $handler($params);
+        if ($result instanceof RawResponse) {
+            ($result->send)(); // tự gửi header và nội dung (ví dụ ảnh), không phải JSON
+            return;
+        }
         // Handler trả JsonResponse khi cần status khác 200 (ví dụ 201 Created), còn lại là body của 200 OK.
         $response = $result instanceof JsonResponse ? $result : new JsonResponse(200, $result);
         send_json($response->status, $response->body, $response->headers);

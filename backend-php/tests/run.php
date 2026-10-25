@@ -16,6 +16,8 @@ require __DIR__ . '/../public/api/lib/java_random.php';
 require __DIR__ . '/../public/api/lib/content.php';
 require __DIR__ . '/../public/api/lib/attempts.php';
 require __DIR__ . '/../public/api/lib/router.php';
+require __DIR__ . '/../public/api/lib/migrations.php';
+require __DIR__ . '/../public/api/lib/import.php';
 
 $failures = 0;
 $checks = 0;
@@ -65,6 +67,78 @@ $drawn = draw_questions(range(1, 50), 20, false);
 check(count($drawn) === 20 && count(array_unique($drawn)) === 20 && $drawn === array_values(array_unique($drawn)), 'rút 20 câu không trùng');
 check($drawn === (static function (array $d): array { sort($d); return $d; })($drawn), 'không xáo thì giữ thứ tự id');
 check(count(draw_questions([3, 1, 2], 40, true)) === 3, 'phạm vi ít câu hơn thì lấy hết');
+
+// Migration (D-056): checksum như Flyway, để database do bản Java tạo dùng tiếp được.
+$migrationsDir = __DIR__ . '/../public/api/migrations';
+check(flyway_checksum((string) file_get_contents("$migrationsDir/V3__add_answer_blanks.sql")) === 1026628499, 'checksum V3 bằng checksum Flyway đã ghi');
+check(flyway_checksum("\xEF\xBB\xBFSELECT 1;\r\nSELECT 2;\r\n") === flyway_checksum("SELECT 1;\nSELECT 2;"), 'checksum bỏ qua BOM và kiểu xuống dòng');
+check(array_keys(pending_files()) === [1, 2, 3, 4, 5], 'đủ migration V1–V5, theo thứ tự');
+check(migration_description('V5__exam_sections_and_media.sql') === 'exam sections and media', 'mô tả migration như Flyway');
+$v5 = split_statements((string) file_get_contents("$migrationsDir/V5__exam_sections_and_media.sql"));
+check(count($v5) === 7, 'V5 có 7 câu lệnh, đang tách được ' . count($v5));
+check(array_filter($v5, static fn (string $sql): bool => str_ends_with($sql, ';') || str_starts_with($sql, '--')) === [], 'câu lệnh không còn ";" và chú thích');
+check(split_statements("-- chú thích\nCREATE TABLE a (\n  id INT\n);\n\nDROP TABLE b; -- xoá\n") === ["CREATE TABLE a (\n  id INT\n)", 'DROP TABLE b'], 'tách câu lệnh nhiều dòng');
+
+// Import môn (D-056): kiểm tra file trước khi ghi.
+/** File import nhỏ hợp lệ: 1 bài, 2 câu; $change sửa trên bản sao. */
+function import_file(?callable $change = null): array
+{
+    $answer = static fn (string $content, bool $correct): array => ['content' => $content, 'correct' => $correct];
+    $question = static fn (string $label, string $category): array => [
+        'type' => 'SINGLE_CHOICE', 'content' => "Câu $label", 'shuffleAnswers' => true, 'status' => 'PUBLISHED',
+        'category' => $category, 'source' => ['file' => 'a.pdf', 'page' => 1, 'label' => $label],
+        'answers' => [$answer('Đúng', true), $answer('Sai', false)],
+    ];
+    $file = [
+        'formatVersion' => 1,
+        'subject' => [
+            'slug' => 'mon-thu', 'name' => 'Môn thử', 'displayOrder' => 1, 'published' => true,
+            'exam' => ['timeLimitMinutes' => 60, 'sections' => [
+                ['category' => 'khai-niem', 'title' => 'Khái niệm', 'questionCount' => 1],
+                ['category' => 'bieu-do', 'title' => 'Biểu đồ', 'questionCount' => 1],
+            ]],
+        ],
+        'chapters' => [['title' => 'Bài 1', 'displayOrder' => 1, 'questions' => [$question('Câu 1', 'khai-niem'), $question('Câu 2', 'bieu-do')]]],
+    ];
+    if ($change !== null) {
+        $change($file);
+    }
+    return $file;
+}
+check(validate_import(import_file()) === [], 'file hợp lệ: ' . implode('; ', validate_import(import_file())));
+$png = base64_encode("\x89PNG\r\n\x1a\n");
+check(validate_import(import_file(static function (array &$f) use ($png): void {
+    $f['chapters'][0]['questions'][1]['answers'][0]['image'] = ['contentType' => 'image/png', 'data' => $png];
+})) === [], 'phương án có ảnh PNG');
+$problems = static fn (callable $change): string => implode(' | ', validate_import(import_file($change)));
+check(str_contains($problems(static function (array &$f): void {
+    $f['chapters'][0]['questions'][0]['answers'][1]['correct'] = true;
+}), 'có 2 phương án đúng'), 'câu một đáp án có 2 phương án đúng');
+check(str_contains($problems(static function (array &$f): void {
+    unset($f['chapters'][0]['questions'][0]['answers'][0]['correct']);
+}), 'answers[0].correct'), 'thiếu correct thì báo, không mặc định false');
+check(str_contains($problems(static function (array &$f): void {
+    $f['chapters'][0]['questions'][1]['source']['label'] = 'Câu 1';
+}), 'trùng nguồn'), 'hai câu trùng nguồn');
+check(str_contains($problems(static function (array &$f): void {
+    $f['chapters'][0]['questions'][1]['status'] = 'NEEDS_REVIEW';
+}), "chưa có câu PUBLISHED nào thuộc loại 'bieu-do'"), 'phần của đề không có câu nào');
+check(str_contains($problems(static function (array &$f): void {
+    $f['subject']['exam']['sections'][1]['category'] = 'khai-niem';
+}), 'trùng loại câu'), 'hai phần cùng loại câu');
+check(str_contains($problems(static function (array &$f): void {
+    $f['chapters'][0]['questions'][0]['answers'][0]['image'] = ['contentType' => 'image/gif', 'data' => 'không phải base64'];
+}), 'image.contentType'), 'ảnh sai định dạng');
+check(str_contains($problems(static function (array &$f): void {
+    $f['subject']['slug'] = 'Mon Thu';
+}), 'subject.slug'), 'slug sai dạng');
+check(validate_import('không phải đối tượng') === ['File phải là một đối tượng JSON'], 'file không phải đối tượng');
+
+// So nội dung phương án khi import lại: bỏ qua khác biệt ký tự in ấn (D-043).
+check(ignoring_typography("  “a”  –\n ‘b’ ") === '"a" - \'b\'', 'ignoring_typography');
+$stored = [['content' => 'print(“x”)'], ['content' => 'cũ']];
+check(!answers_changed($stored, [['content' => 'print("x")'], ['content' => 'mới', 'previousContent' => 'cũ']]), 'chỉ khác nháy cong, hoặc ghi rõ nội dung cũ: không tính là đổi');
+check(answers_changed($stored, [['content' => 'print("x")'], ['content' => 'mới']]), 'đổi nội dung phương án');
 
 echo "$checks kiểm tra, $failures lỗi\n";
 exit($failures === 0 ? 0 : 1);

@@ -6,7 +6,7 @@
 -- và không ghi mật khẩu thật ra file nào.
 --
 -- Chạy lại nhiều lần vẫn an toàn: không xoá dữ liệu, chỉ đồng bộ mật khẩu và quyền.
--- Bảng do Flyway tạo khi backend khởi động (backend/src/main/resources/db/migration/).
+-- Bảng do migration tạo: node scripts/admin.mjs migrate (backend-php/public/api/migrations/, D-056).
 -- =====================================================================
 
 -- Database cho chạy ứng dụng (dev) và database riêng cho test tích hợp.

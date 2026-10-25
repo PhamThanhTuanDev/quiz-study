@@ -29,16 +29,22 @@ function start_attempt(int $quizId): array
     if ($quiz === null || !$quiz['is_published'] || !$quiz['subject_published']) {
         throw HttpError::notFound('Không tìm thấy đề này.');
     }
-    $candidates = $quiz['chapter_id'] !== null
-        ? db_all('SELECT id FROM questions WHERE chapter_id = ? AND status = ?', [$quiz['chapter_id'], USABLE_STATUS])
-        : db_all(
-            'SELECT q.id FROM questions q JOIN chapters c ON c.id = q.chapter_id WHERE c.subject_id = ? AND q.status = ?',
-            [$quiz['subject_id'], USABLE_STATUS],
-        );
-    if ($candidates === []) {
+    $chapterId = $quiz['chapter_id'] === null ? null : (int) $quiz['chapter_id'];
+    $sections = quiz_sections($quizId);
+    if ($sections === []) {
+        $drawn = draw_questions(candidate_ids((int) $quiz['subject_id'], $chapterId, null), (int) $quiz['question_count'], (bool) $quiz['shuffle_questions']);
+    } else {
+        // Đề chia phần (D-055): rút riêng từng phần theo loại câu, các phần nối nhau theo thứ tự như đề thật;
+        // câu chỉ xáo trong từng phần.
+        $drawn = [];
+        foreach ($sections as $section) {
+            $ids = candidate_ids((int) $quiz['subject_id'], $chapterId, $section['category']);
+            $drawn = [...$drawn, ...draw_questions($ids, $section['question_count'], (bool) $quiz['shuffle_questions'])];
+        }
+    }
+    if ($drawn === []) {
         throw HttpError::conflict('Đề này chưa có câu hỏi nào để làm.');
     }
-    $drawn = draw_questions(array_map('intval', array_column($candidates, 'id')), (int) $quiz['question_count'], (bool) $quiz['shuffle_questions']);
 
     $now = now_micros();
     $expiresAt = $quiz['mode'] === 'EXAM' && $quiz['time_limit_minutes'] !== null
@@ -63,6 +69,24 @@ function start_attempt(int $quizId): array
         );
     });
     return attempt_response(load_attempt($publicId), $now);
+}
+
+/**
+ * Id các câu PUBLISHED có thể rút: cả môn hoặc một bài, và (nếu có) chỉ một loại câu.
+ *
+ * @return list<int>
+ */
+function candidate_ids(int $subjectId, ?int $chapterId, ?string $category): array
+{
+    $sql = $chapterId !== null
+        ? 'SELECT q.id FROM questions q WHERE q.chapter_id = ? AND q.status = ?'
+        : 'SELECT q.id FROM questions q JOIN chapters c ON c.id = q.chapter_id WHERE c.subject_id = ? AND q.status = ?';
+    $params = [$chapterId ?? $subjectId, USABLE_STATUS];
+    if ($category !== null) {
+        $sql .= ' AND q.category = ?';
+        $params[] = $category;
+    }
+    return array_map('intval', array_column(db_all($sql, $params), 'id'));
 }
 
 /** GET /attempts/{attemptId}: mở lại lượt làm (tải lại trang). Thi thử đã quá hạn thì được chấm và trả về kết quả. */
@@ -196,7 +220,7 @@ function load_attempt(string $publicId, bool $forUpdate = false): array
     if ($questionIds !== []) {
         $options = answers_of($questionIds);
         $rows = db_all(
-            'SELECT id, content, code_snippet, explanation, shuffle_answers, is_authored FROM questions
+            'SELECT id, category, content, code_snippet, explanation, shuffle_answers, is_authored FROM questions
               WHERE id IN (' . placeholders(count($questionIds)) . ')',
             $questionIds,
         );
@@ -227,6 +251,8 @@ function load_attempt(string $publicId, bool $forUpdate = false): array
             'question_order' => (int) $row['question_order'],
         ], $answers),
         'questions' => $questions,
+        // Tên phần theo loại câu, để hiện "câu này thuộc phần nào" (đề không chia phần: rỗng).
+        'section_titles' => array_column(quiz_sections((int) $attempt['quiz_id']), 'title', 'category'),
     ];
 }
 
@@ -304,10 +330,12 @@ function attempt_response(array $attempt, int $now): array
                 'id' => $option['id'],
                 'content' => $option['content'],
                 'blanks' => $option['blanks'],
+                'imageUrl' => $option['imageUrl'],
             ], shuffled_options($attempt['public_id'], $question)),
             'selectedAnswerId' => $userAnswer['selected_answer_id'],
             'feedback' => $mayReveal ? feedback($userAnswer, $question) : null,
             'authored' => (bool) $question['is_authored'],
+            'sectionTitle' => $attempt['section_titles'][$question['category'] ?? ''] ?? null,
         ];
     }
     $result = null;

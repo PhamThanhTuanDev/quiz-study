@@ -49,8 +49,17 @@ final class JsonResponse
     }
 }
 
+/** Phản hồi không phải JSON (ví dụ ảnh): hàm $send tự gửi header và nội dung. */
+final class RawResponse
+{
+    public function __construct(public readonly Closure $send)
+    {
+    }
+}
+
 const STATUS_TITLES = [
     400 => 'Bad Request',
+    401 => 'Unauthorized',
     404 => 'Not Found',
     405 => 'Method Not Allowed',
     409 => 'Conflict',

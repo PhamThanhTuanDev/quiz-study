@@ -131,4 +131,4 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Host ''
 Write-Host 'Xong: đã có database quiz_study, quiz_study_test và user quiz_app@localhost.'
-Write-Host 'Kiểm tra: cd backend; .\mvnw.cmd verify'
+Write-Host 'Tiếp theo: thêm ADMIN_TOKEN vào .env, chạy php -S 127.0.0.1:8080 backend-php/dev-router.php, rồi node scripts\admin.mjs migrate'

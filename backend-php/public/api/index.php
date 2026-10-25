@@ -22,6 +22,9 @@ require __DIR__ . '/lib/db.php';
 require __DIR__ . '/lib/java_random.php';
 require __DIR__ . '/lib/content.php';
 require __DIR__ . '/lib/attempts.php';
+require __DIR__ . '/lib/migrations.php';
+require __DIR__ . '/lib/import.php';
+require __DIR__ . '/lib/admin.php';
 require __DIR__ . '/lib/router.php';
 
 handle_request($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');

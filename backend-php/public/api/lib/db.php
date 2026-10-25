@@ -7,7 +7,7 @@ declare(strict_types=1);
  * (trên hosting). Mật khẩu chỉ nằm trong config.php, file này không đưa lên Git.
  */
 
-/** @return array{db_host: string, db_port: int, db_name: string, db_user: string, db_password: string} */
+/** @return array{db_host: string, db_port: int, db_name: string, db_user: string, db_password: string, admin_token: string} */
 function app_config(): array
 {
     static $config = null;
@@ -26,6 +26,8 @@ function app_config(): array
         'db_name' => getenv('DB_NAME') ?: ($fromFile['db_name'] ?? ''),
         'db_user' => getenv('DB_USERNAME') ?: ($fromFile['db_user'] ?? ''),
         'db_password' => getenv('DB_PASSWORD') ?: ($fromFile['db_password'] ?? ''),
+        // Mã cho API quản trị (migration, import), xem lib/admin.php. Để trống thì API quản trị tắt.
+        'admin_token' => (string) (getenv('ADMIN_TOKEN') ?: ($fromFile['admin_token'] ?? '')),
     ];
     return $config;
 }

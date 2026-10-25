@@ -10,4 +10,8 @@ return [
     'db_name' => 'qdgjatryhosting_quiz-study',
     'db_user' => 'qdgjatryhosting_asm-web-ute',
     'db_password' => 'DIEN_MAT_KHAU_DATABASE_VAO_DAY',
+    // Mã cho API quản trị (chạy migration, import câu hỏi bằng scripts/admin.mjs). Chuỗi ngẫu nhiên từ 24 ký tự,
+    // ví dụ tạo bằng: node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"
+    // Để trống thì API quản trị tắt.
+    'admin_token' => '',
 ];
